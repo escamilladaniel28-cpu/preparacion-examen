@@ -4,6 +4,7 @@
 *.env
 **/.env*
 !.env.example
+CREDENCIALES_LOCALES.md
 
 # Dependencies
 node_modules/
