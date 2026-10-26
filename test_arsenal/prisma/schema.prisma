@@ -1,0 +1,85 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  passwordHash  String
+  name          String
+  role          Role           @default(USER)
+  createdAt     DateTime       @default(now())
+  refreshTokens RefreshToken[]
+  auctions      Auction[]      @relation("SellerAuctions")
+  bids          Bid[]
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  tokenHash String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  auctions Auction[]
+}
+
+model Auction {
+  id                 String    @id @default(uuid())
+  title              String
+  description        String
+  imageUrl           String?
+  startingPrice      Decimal   @db.Decimal(10, 2)
+  minIncrement       Decimal   @db.Decimal(10, 2)
+  endsAt             DateTime
+  sellerId           String
+  seller             User      @relation("SellerAuctions", fields: [sellerId], references: [id])
+  categoryId         String
+  category           Category  @relation(fields: [categoryId], references: [id])
+  cancelledAt        DateTime?
+  cancellationReason String?
+  bids               Bid[]
+  createdAt          DateTime  @default(now())
+
+  @@index([sellerId])
+  @@index([categoryId])
+  @@index([endsAt])
+}
+
+model Bid {
+  id        String   @id @default(uuid())
+  amount    Decimal  @db.Decimal(10, 2)
+  auctionId String
+  auction   Auction  @relation(fields: [auctionId], references: [id])
+  bidderId  String
+  bidder    User     @relation(fields: [bidderId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@index([auctionId])
+  @@index([bidderId])
+}
+
+model IdempotencyKey {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  userId    String
+  action    String
+  createdAt DateTime @default(now())
+}
