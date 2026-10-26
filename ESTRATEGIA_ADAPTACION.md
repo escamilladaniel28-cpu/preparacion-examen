@@ -26,3 +26,23 @@ El profesor me acaba de dar un NUEVO enunciado (lo pegaré a continuación). Tu 
 ---
 **EL NUEVO ENUNCIADO ES EL SIGUIENTE:**
 [Aquí yo (el humano) pegaré el texto de mi examen]
+
+
+## 🏁 PASOS FINALES DE EJECUCIÓN (Día del Examen - Reutilizando Infraestructura)
+
+Como vamos a reutilizar la base de datos de Supabase y el proyecto de Vercel, sigue este orden exacto:
+
+1. **Adaptación del Schema:** Pídele a Antigravity que cree el nuevo `schema.prisma`. Luego, ejecuta el comando para limpiar las tablas viejas y subir las nuevas:
+   `npx prisma db push --force-reset`
+   *(Esto borrará los datos del simulacro y creará las tablas del nuevo examen).*
+
+2. **Desarrollo del Backend:** Usa el código de `ARSENAL_BACKEND.md` (Auth, Proxy y lógica transaccional adaptada al nuevo tema).
+
+3. **Despliegue (Push a GitHub):** 
+   - Ejecuta: `git add .`
+   - Ejecuta: `git commit -m "Proyecto de examen listo"`
+   - Ejecuta: `git push origin main`
+
+4. **Vercel Automático:** Entra a Vercel y verás que el proyecto se está desplegando solo. Si te pide las variables de entorno (porque creaste un proyecto nuevo), abre el archivo local `CREDENCIALES_LOCALES.md` y copia/pega las URLs de Supabase y los secretos JWT.
+
+5. **Prueba Final:** Abre la URL de Vercel, asegúrate de que la base de datos esté limpia y haz una prueba manual (registro, login, creación de un ítem y acción principal del examen).
