@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
 
 const dict = {
   es: {
@@ -28,10 +29,53 @@ interface NavbarProps {
   userName?: string;
 }
 
-export function Navbar({ userName }: NavbarProps) {
+export function Navbar({ userName: initialUserName }: NavbarProps) {
+  const router = useRouter();
   const [lang, setLang] = useState<'es' | 'en'>('es');
+  const [user, setUser] = useState<string | null>(initialUserName || null);
   const [loggingOut, setLoggingOut] = useState(false);
   const t = dict[lang];
+
+  // Actualizar si la prop del servidor cambia
+  useEffect(() => {
+    if (initialUserName) {
+      setUser(initialUserName);
+    }
+  }, [initialUserName]);
+
+  // Verificar la sesión activamente en el cliente (útil ante botones Atrás/Adelante y bfcache)
+  const syncSession = useCallback(async () => {
+    try {
+      const res = await fetch('/api/auth/me', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user) {
+          setUser(data.user.name || data.user.email);
+        } else {
+          setUser(null);
+        }
+      }
+    } catch {
+      // Ignorar fallos de red
+    }
+  }, []);
+
+  useEffect(() => {
+    syncSession();
+
+    // Evento al volver con el botón Back del navegador
+    const handlePageShow = () => {
+      syncSession();
+    };
+
+    window.addEventListener('pageshow', handlePageShow);
+    window.addEventListener('popstate', handlePageShow);
+
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow);
+      window.removeEventListener('popstate', handlePageShow);
+    };
+  }, [syncSession]);
 
   const toggleLang = () => {
     setLang((prev) => (prev === 'es' ? 'en' : 'es'));
@@ -44,7 +88,9 @@ export function Navbar({ userName }: NavbarProps) {
     } catch (err) {
       console.error('Error al cerrar sesión:', err);
     } finally {
-      window.location.href = '/login';
+      setUser(null);
+      router.refresh();
+      window.location.href = '/';
     }
   };
 
@@ -59,6 +105,11 @@ export function Navbar({ userName }: NavbarProps) {
             <Link href="/spaces" className="hover:text-indigo-600 transition">
               {t.catalog}
             </Link>
+            {user && (
+              <Link href="/dashboard" className="hover:text-indigo-600 transition">
+                {t.dashboard}
+              </Link>
+            )}
           </nav>
         </div>
 
@@ -72,13 +123,14 @@ export function Navbar({ userName }: NavbarProps) {
             🌐 {t.lang}
           </button>
 
-          {userName ? (
+          {user ? (
             <div className="flex items-center space-x-3">
               <Link
                 href="/dashboard"
-                className="text-sm font-medium text-gray-700 hover:text-indigo-600"
+                className="text-sm font-medium text-gray-700 hover:text-indigo-600 flex items-center gap-1.5"
               >
-                {userName}
+                <span className="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
+                <span className="max-w-[150px] truncate">{user}</span>
               </Link>
               <button
                 type="button"
