@@ -22,7 +22,11 @@ export function LocalTime({
   }, []);
 
   if (!mounted) {
-    return <span className={`text-gray-400 ${className}`}>Cargando fecha...</span>;
+    return (
+      <span suppressHydrationWarning className={`text-gray-400 ${className}`}>
+        Cargando fecha...
+      </span>
+    );
   }
 
   const d = new Date(date);
@@ -45,7 +49,7 @@ export function LocalTime({
     });
 
     return (
-      <span className={className}>
+      <span suppressHydrationWarning className={className}>
         {datePart} · {startTimePart} - {endTimePart}
       </span>
     );
@@ -85,7 +89,11 @@ export function LocalTime({
       break;
   }
 
-  return <span className={className}>{formatted}</span>;
+  return (
+    <span suppressHydrationWarning className={className}>
+      {formatted}
+    </span>
+  );
 }
 
 export default LocalTime;

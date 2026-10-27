@@ -3,27 +3,7 @@
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect, useCallback } from 'react';
-
-const dict = {
-  es: {
-    logo: 'CoSpace',
-    catalog: 'Catálogo de Espacios',
-    login: 'Iniciar Sesión',
-    register: 'Crear Cuenta',
-    dashboard: 'Mi Panel',
-    logout: 'Cerrar Sesión',
-    lang: 'EN',
-  },
-  en: {
-    logo: 'CoSpace',
-    catalog: 'Explore Spaces',
-    login: 'Login',
-    register: 'Sign Up',
-    dashboard: 'Dashboard',
-    logout: 'Sign Out',
-    lang: 'ES',
-  },
-};
+import { useLanguage } from '@/components/context/LanguageContext';
 
 interface NavbarProps {
   userName?: string;
@@ -32,10 +12,9 @@ interface NavbarProps {
 export function Navbar({ userName: initialUserName }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [lang, setLang] = useState<'es' | 'en'>('es');
+  const { lang, toggleLang, t } = useLanguage();
   const [user, setUser] = useState<string | null>(initialUserName || null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const t = dict[lang];
 
   useEffect(() => {
     if (initialUserName) {
@@ -75,10 +54,6 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
     };
   }, [syncSession]);
 
-  const toggleLang = () => {
-    setLang((prev) => (prev === 'es' ? 'en' : 'es'));
-  };
-
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
@@ -103,7 +78,7 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
             className="text-xl font-black text-indigo-600 flex items-center gap-2 hover:opacity-90 transition"
           >
             <span className="text-2xl">🏢</span>
-            <span>{t.logo}</span>
+            <span>{t('logo')}</span>
           </Link>
 
           <nav className="hidden sm:flex items-center space-x-4 text-sm font-medium">
@@ -115,7 +90,7 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
-              {t.catalog}
+              {t('catalog')}
             </Link>
             {user && (
               <Link
@@ -126,7 +101,7 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                 }`}
               >
-                {t.dashboard}
+                {t('dashboard')}
               </Link>
             )}
           </nav>
@@ -137,10 +112,10 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
           <button
             onClick={toggleLang}
             type="button"
-            className="px-2.5 py-1 text-xs font-semibold rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 transition"
+            className="px-2.5 py-1 text-xs font-bold rounded-lg border border-gray-300 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 text-gray-700 transition"
             title="Cambiar idioma / Switch language"
           >
-            🌐 {t.lang}
+            🌐 {t('switchLang')}
           </button>
 
           {user ? (
@@ -159,7 +134,7 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
                 disabled={isLoggingOut}
                 className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm transition disabled:opacity-50"
               >
-                {isLoggingOut ? 'Saliendo...' : t.logout}
+                {isLoggingOut ? 'Saliendo...' : t('logout')}
               </button>
             </div>
           ) : (
@@ -168,13 +143,13 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
                 href="/login"
                 className="text-xs sm:text-sm font-semibold text-gray-700 hover:text-indigo-600 px-3 py-1.5 transition"
               >
-                {t.login}
+                {t('login')}
               </Link>
               <Link
                 href="/register"
                 className="text-xs sm:text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3.5 py-1.5 rounded-lg shadow-sm transition"
               >
-                {t.register}
+                {t('register')}
               </Link>
             </div>
           )}

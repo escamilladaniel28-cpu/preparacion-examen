@@ -1,5 +1,6 @@
 # ----------------------------------------------------
 # Multi-stage Dockerfile para CoSpace (Next.js 16 + Prisma)
+# Ejecución desde la raíz del repositorio
 # ----------------------------------------------------
 
 # Stage 1: Base de dependencias
@@ -9,15 +10,15 @@ RUN apk add --no-cache libc6-compat openssl
 
 # Stage 2: Instalación de dependencias
 FROM base AS deps
-COPY package.json package-lock.json* ./
-COPY prisma ./prisma/
+COPY test_arsenal/package.json test_arsenal/package-lock.json* ./
+COPY test_arsenal/prisma ./prisma/
 RUN npm ci
 
 # Stage 3: Compilación
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY test_arsenal/ .
 RUN npx prisma generate
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
