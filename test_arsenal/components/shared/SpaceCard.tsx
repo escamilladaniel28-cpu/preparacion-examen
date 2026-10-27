@@ -29,32 +29,39 @@ export function SpaceCard({
       : 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80';
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
-      <div className="relative h-48 w-full bg-gray-100">
+    <div className="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full">
+      {/* Contenedor de Imagen con Zoom sutil al hover */}
+      <div className="relative h-52 w-full overflow-hidden bg-slate-100">
         <Image
           src={displayImage}
           alt={name}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover"
+          className="object-cover group-hover:scale-105 transition-transform duration-300 ease-out"
           unoptimized
         />
         {!isActive && (
-          <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow">
+          <div className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow">
             {t('notAvailable')}
           </div>
         )}
       </div>
 
-      <div className="p-5 flex-1 flex flex-col justify-between">
+      <div className="p-6 flex-1 flex flex-col justify-between">
         <div>
-          <div className="flex justify-between items-start gap-2 mb-2">
-            <h3 className="font-bold text-lg text-gray-900 line-clamp-1">{name}</h3>
-            <span className="shrink-0 text-sm font-extrabold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-lg">
-              ${formattedPrice}{t('perHour')}
-            </span>
+          <h3 className="font-bold text-lg text-slate-900 line-clamp-1 group-hover:text-indigo-600 transition-colors mb-2">
+            {name}
+          </h3>
+
+          {/* Precio destacado con tipografía premium */}
+          <div className="flex items-baseline gap-1 mb-3">
+            <span className="text-2xl font-bold tracking-tight text-slate-900">${formattedPrice}</span>
+            <span className="text-xs font-medium text-slate-500">{t('perHour')}</span>
           </div>
-          <p className="text-gray-600 text-sm line-clamp-2 mb-4">{description}</p>
+
+          <p className="text-slate-600 text-sm line-clamp-2 mb-6 leading-relaxed">
+            {description}
+          </p>
         </div>
 
         <Link

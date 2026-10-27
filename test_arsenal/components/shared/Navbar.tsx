@@ -80,7 +80,7 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
   };
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Marca y Navegación Principal */}
         <div className="flex items-center space-x-6 sm:space-x-8">
