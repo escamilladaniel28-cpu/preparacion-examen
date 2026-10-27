@@ -13,7 +13,6 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Protección ante BFCache y navegación hacia atrás:
-  // Si el usuario ya tiene sesión activa en el servidor, no permitir que vea el Login
   useEffect(() => {
     const checkActiveSession = async () => {
       try {
@@ -81,21 +80,21 @@ export default function LoginPage() {
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-slate-900 text-center mb-1">Iniciar Sesión</h2>
-      <p className="text-xs text-slate-500 text-center mb-6">
+      <h2 className="text-2xl font-bold text-white text-center mb-1 tracking-tight">Iniciar Sesión</h2>
+      <p className="text-xs text-zinc-400 text-center mb-6">
         Accede a tu cuenta para gestionar y reservar espacios en CoSpace
       </p>
 
       {errorMessage && (
-        <div className="mb-5 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-center justify-between">
+        <div className="mb-5 p-3.5 bg-red-950/70 border border-red-500/40 text-red-200 text-xs rounded-xl flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
             <span className="font-medium">{errorMessage}</span>
           </div>
           <button
             type="button"
             onClick={() => setErrorMessage(null)}
-            className="text-slate-400 hover:text-slate-600 ml-2"
+            className="text-zinc-400 hover:text-white ml-2"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -104,7 +103,7 @@ export default function LoginPage() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
             Correo electrónico
           </label>
           <input
@@ -112,13 +111,13 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu-correo@ejemplo.com"
-            className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+            className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition"
             required
           />
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
             Contraseña
           </label>
           <input
@@ -126,7 +125,7 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+            className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition"
             required
           />
         </div>
@@ -134,11 +133,11 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition text-sm flex items-center justify-center gap-2"
+          className="w-full bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 disabled:opacity-50 text-black font-bold py-3 px-4 rounded-xl shadow-lg shadow-amber-500/20 transition text-sm flex items-center justify-center gap-2 tracking-wide"
         >
           {isSubmitting ? (
             <>
-              <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-4 w-4 text-black" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
               </svg>
@@ -151,37 +150,37 @@ export default function LoginPage() {
       </form>
 
       {/* Cuentas de Demostración del Seed */}
-      <div className="mt-6 border-t border-slate-100 pt-4">
-        <p className="text-xs text-slate-500 mb-2 font-medium">Accesos rápidos de prueba (Seed):</p>
-        <div className="grid grid-cols-2 gap-2">
+      <div className="mt-6 border-t border-white/10 pt-4">
+        <p className="text-xs text-zinc-400 mb-2.5 font-medium">Accesos rápidos de prueba (Seed):</p>
+        <div className="grid grid-cols-2 gap-2.5">
           <button
             type="button"
             onClick={() => handleQuickLogin('user@cospace.com', 'user123')}
-            className="text-xs bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 py-2 px-2.5 rounded-lg font-medium transition text-left"
+            className="text-xs bg-zinc-950 hover:bg-zinc-800 text-zinc-300 border border-white/10 hover:border-amber-500/40 py-2.5 px-3 rounded-xl font-medium transition text-left"
           >
-            <div className="flex items-center gap-1.5 font-semibold text-slate-800">
-              <User className="w-3.5 h-3.5 text-slate-500" />
+            <div className="flex items-center gap-1.5 font-semibold text-white">
+              <User className="w-3.5 h-3.5 text-zinc-400" />
               <span>Usuario</span>
             </div>
-            <div className="text-[10px] text-slate-400 mt-0.5 truncate">user@cospace.com</div>
+            <div className="text-[10px] text-zinc-400 mt-0.5 truncate">user@cospace.com</div>
           </button>
           <button
             type="button"
             onClick={() => handleQuickLogin('admin@cospace.com', 'admin123')}
-            className="text-xs bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 py-2 px-2.5 rounded-lg font-medium transition text-left"
+            className="text-xs bg-zinc-950 hover:bg-zinc-800 text-zinc-300 border border-white/10 hover:border-amber-500/40 py-2.5 px-3 rounded-xl font-medium transition text-left"
           >
-            <div className="flex items-center gap-1.5 font-semibold text-slate-800">
-              <Shield className="w-3.5 h-3.5 text-indigo-600" />
+            <div className="flex items-center gap-1.5 font-semibold text-white">
+              <Shield className="w-3.5 h-3.5 text-amber-500" />
               <span>Admin</span>
             </div>
-            <div className="text-[10px] text-slate-400 mt-0.5 truncate">admin@cospace.com</div>
+            <div className="text-[10px] text-zinc-400 mt-0.5 truncate">admin@cospace.com</div>
           </button>
         </div>
       </div>
 
-      <div className="mt-6 text-center text-xs text-slate-500">
+      <div className="mt-6 text-center text-xs text-zinc-400">
         ¿No tienes una cuenta aún?{' '}
-        <Link href="/register" className="text-indigo-600 font-semibold hover:underline">
+        <Link href="/register" className="text-amber-400 font-semibold hover:text-amber-300 hover:underline ml-1">
           Regístrate aquí
         </Link>
       </div>

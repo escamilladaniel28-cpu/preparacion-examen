@@ -11,49 +11,49 @@ export default async function AdminLayout({
   const session = await getSession();
 
   return (
-    <div className="min-h-screen flex bg-slate-100 text-slate-900">
-      {/* Sidebar Lateral de Administración */}
-      <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between p-4 shrink-0 shadow-lg">
+    <div className="min-h-screen flex bg-zinc-950 text-zinc-100">
+      {/* Sidebar Lateral de Administración Exclusiva */}
+      <aside className="w-64 bg-zinc-900/90 border-r border-white/10 text-zinc-300 flex flex-col justify-between p-4 shrink-0">
         <div>
           <div className="mb-8 px-2">
-            <Link href="/" className="text-xl font-bold text-white flex items-center gap-2">
-              <div className="w-7 h-7 rounded-md bg-indigo-500 text-white flex items-center justify-center">
-                <Building2 className="w-4 h-4" />
+            <Link href="/" className="text-xl font-bold text-white flex items-center gap-2 hover:text-amber-400 transition">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 text-black flex items-center justify-center font-bold shadow-md shadow-amber-500/20">
+                <Building2 className="w-5 h-5 text-black" />
               </div>
-              <span>CoSpace</span>
+              <span className="tracking-wider">CoSpace</span>
             </Link>
-            <span className="inline-block mt-2 px-2.5 py-0.5 text-xs font-semibold bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 rounded">
+            <span className="inline-block mt-3 px-2.5 py-0.5 text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/25 rounded-md">
               Panel Administrativo
             </span>
           </div>
 
-          <nav className="space-y-1">
+          <nav className="space-y-1.5">
             <Link
               href="/admin/spaces"
-              className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-slate-800 hover:text-white transition"
+              className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800/60 border border-transparent hover:border-white/5 transition"
             >
-              <Layers className="w-4 h-4 text-slate-400" />
+              <Layers className="w-4 h-4 text-amber-500" />
               <span>Gestión de Espacios</span>
             </Link>
             <Link
               href="/admin/reservations"
-              className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-slate-800 hover:text-white transition"
+              className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800/60 border border-transparent hover:border-white/5 transition"
             >
-              <Calendar className="w-4 h-4 text-slate-400" />
+              <Calendar className="w-4 h-4 text-amber-500" />
               <span>Todas las Reservas</span>
             </Link>
             <Link
               href="/spaces"
-              className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-slate-800 hover:text-white transition"
+              className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800/60 border border-transparent hover:border-white/5 transition"
             >
-              <ExternalLink className="w-4 h-4 text-slate-400" />
+              <ExternalLink className="w-4 h-4 text-zinc-400" />
               <span>Ver Catálogo</span>
             </Link>
           </nav>
         </div>
 
-        <div className="border-t border-slate-800 pt-4 px-2">
-          <div className="text-xs text-slate-400 mb-2 truncate">
+        <div className="border-t border-white/10 pt-4 px-2">
+          <div className="text-xs text-zinc-400 mb-2 truncate">
             Admin: {session?.email || 'admin@cospace.com'}
           </div>
           <LogoutButton
@@ -65,17 +65,19 @@ export default async function AdminLayout({
       </aside>
 
       {/* Contenido Principal */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-white border-b border-slate-200 h-16 flex items-center px-6 justify-between">
-          <h1 className="text-base font-bold text-slate-900">Administración de CoSpace</h1>
+      <div className="flex-1 flex flex-col min-w-0 bg-zinc-950">
+        <header className="bg-zinc-900/60 border-b border-white/10 h-16 flex items-center px-6 justify-between backdrop-blur-md">
+          <h1 className="text-sm font-bold text-white tracking-wide uppercase">
+            Administración de Plataforma
+          </h1>
           <Link
             href="/"
-            className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-md transition"
+            className="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-white/10 px-3.5 py-1.5 rounded-lg transition"
           >
             Volver a la App
           </Link>
         </header>
-        <main className="flex-1 p-6 overflow-auto">{children}</main>
+        <main className="flex-1 p-6 lg:p-8 overflow-auto">{children}</main>
       </div>
     </div>
   );

@@ -16,40 +16,34 @@ export default async function PrivateLayout({
   const userName = String(session?.name || session?.email || 'Mi Cuenta');
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100">
+      <header className="bg-zinc-950/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-6 sm:space-x-8">
             <Link
               href="/"
-              className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2 hover:text-indigo-600 transition"
+              className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5 hover:text-amber-400 transition"
             >
-              <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
-                <Building2 className="w-5 h-5" />
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 text-black flex items-center justify-center font-bold shadow-md shadow-amber-500/20">
+                <Building2 className="w-5 h-5 text-black" />
               </div>
-              <span>CoSpace</span>
+              <span className="tracking-wider">CoSpace</span>
             </Link>
-            <nav className="flex space-x-4 text-sm font-medium text-slate-600">
-              <Link href="/spaces" className="hover:text-indigo-600 transition">
+            <nav className="flex space-x-4 text-sm font-medium">
+              <Link href="/spaces" className="text-zinc-400 hover:text-white transition">
                 Catálogo
               </Link>
-              <Link href="/dashboard" className="text-indigo-600 font-semibold">
+              <Link href="/dashboard" className="text-amber-400 font-semibold border-b-2 border-amber-500 pb-1">
                 Mi Panel
               </Link>
             </nav>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="text-sm font-medium text-slate-700 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-              <span className="max-w-[150px] truncate">{userName}</span>
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            <div className="text-xs sm:text-sm font-medium text-zinc-300 bg-zinc-900/80 border border-white/10 px-3 py-1.5 rounded-lg flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
+              <span className="max-w-[140px] sm:max-w-[200px] truncate">{userName}</span>
             </div>
-            <Link
-              href="/dashboard"
-              className="text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-md font-medium transition"
-            >
-              Dashboard
-            </Link>
             <LogoutButton redirectTo="/login" />
           </div>
         </div>

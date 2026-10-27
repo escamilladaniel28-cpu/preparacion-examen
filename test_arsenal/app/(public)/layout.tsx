@@ -16,7 +16,7 @@ export default async function PublicLayout({
       : undefined;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900">
+    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100">
       <Navbar userName={userName} />
       <main className="flex-1">{children}</main>
       <Footer />

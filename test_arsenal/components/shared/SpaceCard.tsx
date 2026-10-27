@@ -29,9 +29,9 @@ export function SpaceCard({
       : 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80';
 
   return (
-    <div className="group bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full">
+    <div className="group bg-zinc-900 border border-white/10 rounded-xl overflow-hidden shadow-lg shadow-black/50 hover:border-amber-500/50 hover:shadow-amber-500/10 transition-all duration-300 flex flex-col h-full">
       {/* Contenedor de Imagen con Zoom sutil al hover */}
-      <div className="relative h-52 w-full overflow-hidden bg-slate-100">
+      <div className="relative h-52 w-full overflow-hidden bg-zinc-950">
         <Image
           src={displayImage}
           alt={name}
@@ -41,7 +41,7 @@ export function SpaceCard({
           unoptimized
         />
         {!isActive && (
-          <div className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow">
+          <div className="absolute top-3 right-3 bg-red-950/80 text-red-300 border border-red-800 text-xs font-bold px-2.5 py-1 rounded-md shadow backdrop-blur-md">
             {t('notAvailable')}
           </div>
         )}
@@ -49,24 +49,24 @@ export function SpaceCard({
 
       <div className="p-6 flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="font-bold text-lg text-slate-900 line-clamp-1 group-hover:text-indigo-600 transition-colors mb-2">
+          <h3 className="font-bold text-lg text-white line-clamp-1 group-hover:text-amber-400 transition-colors mb-2">
             {name}
           </h3>
 
-          {/* Precio destacado con tipografía premium */}
-          <div className="flex items-baseline gap-1 mb-3">
-            <span className="text-2xl font-bold tracking-tight text-slate-900">${formattedPrice}</span>
-            <span className="text-xs font-medium text-slate-500">{t('perHour')}</span>
+          {/* Precio destacado en dorado */}
+          <div className="flex items-baseline gap-1.5 mb-3">
+            <span className="text-2xl font-bold tracking-tight text-amber-500">${formattedPrice}</span>
+            <span className="text-xs font-medium text-zinc-400">{t('perHour')}</span>
           </div>
 
-          <p className="text-slate-600 text-sm line-clamp-2 mb-6 leading-relaxed">
+          <p className="text-zinc-400 text-sm line-clamp-2 mb-6 leading-relaxed">
             {description}
           </p>
         </div>
 
         <Link
           href={`/spaces/${id}`}
-          className="w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition-colors block shadow-sm"
+          className="w-full text-center bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold py-2.5 px-4 rounded-xl text-sm transition-all duration-200 block shadow-md shadow-amber-500/20"
         >
           {t('bookNow')}
         </Link>
