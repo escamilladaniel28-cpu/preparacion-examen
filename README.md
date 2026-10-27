@@ -143,3 +143,22 @@ docker build -t cospace -f Dockerfile .
 ```bash
 docker run -p 3000:3000 --env-file .env cospace
 ```
+
+---
+
+## 📋 Estado de Auditoría de Calidad y Robustez (QA Checklist)
+
+| Requisito / Componente | Estado | Evidencia y Ubicación en Código |
+| :--- | :---: | :--- |
+| **Logout con fetch** | ✅ Aprobado | `Navbar.tsx` y `LogoutButton.tsx` llaman a `fetch('/api/auth/logout', { method: 'POST' })` y redirigen limpiamente sin enlaces directos. |
+| **Actualización de Navbar en Login** | ✅ Aprobado | `LoginPage.tsx` y `RegisterPage.tsx` invocan `router.refresh()` antes de redirigir al dashboard. |
+| **Persistencia con botón Atrás** | ✅ Aprobado | `Navbar.tsx` escucha eventos `pageshow` y `popstate`, re-sincronizando sesión contra `GET /api/auth/me` con `no-store`. |
+| **Cero alert() y confirm()** | ✅ Aprobado | Eliminados totalmente del código. Reemplazados por alertas contextuales estilizadas y confirmaciones inline en dos pasos. |
+| **Estados de carga (isSubmitting)** | ✅ Aprobado | Todos los formularios (Login, Registro, Booking, Admin) bloquean doble clic y muestran spinner de carga interactivo. |
+| **Manejo de errores del backend** | ✅ Aprobado | Errores de API (409 solapamiento, 400 validaciones Zod, 401 sesión) renderizados en tarjetas accesibles con icono de alerta. |
+| **Home SSG (`force-static`)** | ✅ Aprobado | `app/(public)/page.tsx` declara `export const dynamic = 'force-static'`. |
+| **Catálogo y Detalle SSR (`force-dynamic`)** | ✅ Aprobado | `app/(public)/spaces/page.tsx` y `app/(public)/spaces/[id]/page.tsx` declaran `export const dynamic = 'force-dynamic'`. |
+| **Dashboard CSR (`'use client'`)** | ✅ Aprobado | `app/(private)/dashboard/page.tsx` inicia con directiva `'use client'`. |
+| **Anti-hidratación `LocalTime`** | ✅ Aprobado | `<LocalTime />` integrado en el detalle del espacio con guardia `mounted` y atributo `suppressHydrationWarning`. |
+| **next/image en `SpaceCard`** | ✅ Aprobado | `SpaceCard.tsx` renderiza imágenes con `<Image ... unoptimized />` sin usar `<img>` nativo. |
+| **Archivos base del proyecto** | ✅ Aprobado | `Dockerfile` multi-stage, `README.md` exhaustivo y `.env.example` sincronizados en la raíz y en `test_arsenal`. |
