@@ -4,10 +4,15 @@ import { SpaceCard } from '@/components/shared/SpaceCard';
 export const dynamic = 'force-dynamic';
 
 export default async function SpacesCatalogPage() {
-  const spaces = await prisma.space.findMany({
-    where: { isActive: true },
-    orderBy: { createdAt: 'desc' },
-  });
+  let spaces: any[] = [];
+  try {
+    spaces = await prisma.space.findMany({
+      where: { isActive: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch (err) {
+    console.error('Aviso: Error al consultar espacios en catálogo:', err);
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -28,7 +33,7 @@ export default async function SpacesCatalogPage() {
 
       {/* Grid de Espacios */}
       {spaces.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-xl border border-gray-200 p-8">
+        <div className="text-center py-16 bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
           <div className="text-4xl mb-3">🏢</div>
           <h3 className="text-lg font-bold text-gray-800 mb-1">No hay espacios disponibles</h3>
           <p className="text-gray-500 text-sm">

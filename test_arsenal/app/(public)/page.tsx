@@ -5,11 +5,16 @@ import { SpaceCard } from '@/components/shared/SpaceCard';
 export const dynamic = 'force-static';
 
 export default async function HomePage() {
-  const featuredSpaces = await prisma.space.findMany({
-    where: { isActive: true },
-    take: 3,
-    orderBy: { createdAt: 'desc' },
-  });
+  let featuredSpaces: any[] = [];
+  try {
+    featuredSpaces = await prisma.space.findMany({
+      where: { isActive: true },
+      take: 3,
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch (err) {
+    console.error('Aviso: Base de datos no conectada aún durante renderizado de Home:', err);
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -97,8 +102,18 @@ export default async function HomePage() {
         </div>
 
         {featuredSpaces.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-xl border border-gray-200 p-8">
-            <p className="text-gray-500">No hay espacios disponibles en este momento.</p>
+          <div className="text-center py-12 bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
+            <div className="text-4xl mb-3">🏢</div>
+            <h3 className="text-lg font-bold text-gray-800 mb-1">Catálogo listo para explorar</h3>
+            <p className="text-gray-500 text-sm mb-4">
+              Visita el catálogo completo para consultar espacios disponibles en tiempo real.
+            </p>
+            <Link
+              href="/spaces"
+              className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs px-4 py-2 rounded-lg transition"
+            >
+              Ir al Catálogo
+            </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
