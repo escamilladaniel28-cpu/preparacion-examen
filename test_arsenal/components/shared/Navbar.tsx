@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect, useCallback } from 'react';
+import { Building2, Globe } from 'lucide-react';
 import { useLanguage } from '@/components/context/LanguageContext';
 
 interface NavbarProps {
@@ -12,7 +13,7 @@ interface NavbarProps {
 export function Navbar({ userName: initialUserName }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { lang, toggleLang, t } = useLanguage();
+  const { toggleLang, t } = useLanguage();
   const [user, setUser] = useState<string | null>(initialUserName || null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -69,25 +70,27 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
   };
 
   return (
-    <header className="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Marca y Navegación Principal */}
         <div className="flex items-center space-x-6 sm:space-x-8">
           <Link
             href="/"
-            className="text-xl font-black text-indigo-600 flex items-center gap-2 hover:opacity-90 transition"
+            className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5 hover:text-indigo-600 transition"
           >
-            <span className="text-2xl">🏢</span>
+            <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+              <Building2 className="w-5 h-5" />
+            </div>
             <span>{t('logo')}</span>
           </Link>
 
-          <nav className="hidden sm:flex items-center space-x-4 text-sm font-medium">
+          <nav className="hidden sm:flex items-center space-x-2 text-sm font-medium">
             <Link
               href="/spaces"
-              className={`px-3 py-1.5 rounded-lg transition ${
+              className={`px-3 py-1.5 rounded-md transition ${
                 pathname === '/spaces'
-                  ? 'bg-indigo-50 text-indigo-700 font-semibold'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-slate-100 text-slate-900 font-semibold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
               }`}
             >
               {t('catalog')}
@@ -95,10 +98,10 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
             {user && (
               <Link
                 href="/dashboard"
-                className={`px-3 py-1.5 rounded-lg transition ${
+                className={`px-3 py-1.5 rounded-md transition ${
                   pathname === '/dashboard'
-                    ? 'bg-indigo-50 text-indigo-700 font-semibold'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    ? 'bg-slate-100 text-slate-900 font-semibold'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 {t('dashboard')}
@@ -112,17 +115,18 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
           <button
             onClick={toggleLang}
             type="button"
-            className="px-2.5 py-1 text-xs font-bold rounded-lg border border-gray-300 bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 text-gray-700 transition"
-            title="Cambiar idioma / Switch language"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition"
+            title="Switch language / Cambiar idioma"
           >
-            🌐 {t('switchLang')}
+            <Globe className="w-3.5 h-3.5 text-slate-500" />
+            <span>{t('switchLang')}</span>
           </button>
 
           {user ? (
             <div className="flex items-center space-x-2 sm:space-x-3">
               <Link
                 href="/dashboard"
-                className="bg-gray-50 border border-gray-200 hover:border-indigo-300 text-gray-800 text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-lg flex items-center gap-2 transition max-w-[140px] sm:max-w-[200px]"
+                className="bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-800 text-xs sm:text-sm font-medium px-3 py-1.5 rounded-md flex items-center gap-2 transition max-w-[140px] sm:max-w-[200px]"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
                 <span className="truncate">{user}</span>
@@ -132,7 +136,7 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm transition disabled:opacity-50"
+                className="bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-700 border border-slate-200 hover:border-red-200 text-xs font-semibold px-3 py-1.5 rounded-md transition disabled:opacity-50"
               >
                 {isLoggingOut ? 'Saliendo...' : t('logout')}
               </button>
@@ -141,13 +145,13 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
             <div className="flex items-center space-x-2 sm:space-x-3">
               <Link
                 href="/login"
-                className="text-xs sm:text-sm font-semibold text-gray-700 hover:text-indigo-600 px-3 py-1.5 transition"
+                className="text-xs sm:text-sm font-semibold text-slate-700 hover:text-indigo-600 px-3 py-1.5 transition"
               >
                 {t('login')}
               </Link>
               <Link
                 href="/register"
-                className="text-xs sm:text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3.5 py-1.5 rounded-lg shadow-sm transition"
+                className="text-xs sm:text-sm bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3.5 py-1.5 rounded-md shadow-sm transition"
               >
                 {t('register')}
               </Link>

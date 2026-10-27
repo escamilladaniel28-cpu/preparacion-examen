@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Building2 } from 'lucide-react';
 import { getSession } from '@/lib/auth';
 import { Footer } from '@/components/shared/Footer';
 import { LogoutButton } from '@/components/shared/LogoutButton';
@@ -12,14 +13,20 @@ export default async function PrivateLayout({
   const userName = String(session?.name || session?.email || 'Mi Cuenta');
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-6">
-            <Link href="/" className="text-xl font-bold text-indigo-600 flex items-center gap-2">
-              <span>🏢</span> CoSpace
+            <Link
+              href="/"
+              className="text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2 hover:text-indigo-600 transition"
+            >
+              <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+                <Building2 className="w-5 h-5" />
+              </div>
+              <span>CoSpace</span>
             </Link>
-            <nav className="flex space-x-4 text-sm font-medium text-gray-600">
+            <nav className="flex space-x-4 text-sm font-medium text-slate-600">
               <Link href="/spaces" className="hover:text-indigo-600 transition">
                 Catálogo
               </Link>
@@ -30,13 +37,13 @@ export default async function PrivateLayout({
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
+            <div className="text-sm font-medium text-slate-700 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
               <span className="max-w-[150px] truncate">{userName}</span>
             </div>
             <Link
               href="/dashboard"
-              className="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-3 py-1.5 rounded font-medium transition"
+              className="text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 px-3 py-1.5 rounded-md font-medium transition"
             >
               Dashboard
             </Link>

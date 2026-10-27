@@ -7,8 +7,8 @@ export type Language = 'es' | 'en';
 export const translations = {
   // Navbar
   logo: { es: 'CoSpace', en: 'CoSpace' },
-  catalog: { es: 'Catálogo de Espacios', en: 'Explore Spaces' },
-  login: { es: 'Iniciar Sesión', en: 'Login' },
+  catalog: { es: 'Espacios', en: 'Spaces' },
+  login: { es: 'Iniciar Sesión', en: 'Log In' },
   register: { es: 'Crear Cuenta', en: 'Sign Up' },
   dashboard: { es: 'Mi Panel', en: 'Dashboard' },
   logout: { es: 'Cerrar Sesión', en: 'Sign Out' },
@@ -16,58 +16,58 @@ export const translations = {
 
   // Home Hero
   heroBadge: {
-    es: '✨ Espacios modernos para equipos ágiles',
-    en: '✨ Modern workspaces for agile teams',
+    es: 'Plataforma de reservas de espacios de trabajo',
+    en: 'Workspace reservation platform',
   },
   heroTitle: {
-    es: 'Reserva el espacio de trabajo perfecto por hora',
-    en: 'Book the perfect workspace by the hour',
+    es: 'Reserva el espacio de trabajo que necesitas por hora',
+    en: 'Book the workspace you need by the hour',
   },
   heroSubtitle: {
-    es: 'Salas de juntas, oficinas privadas y cabinas insonorizadas diseñadas para maximizar tu concentración y productividad.',
-    en: 'Meeting rooms, private offices, and soundproof pods designed to maximize your focus and productivity.',
+    es: 'Salas de juntas, oficinas privadas y estaciones individuales con confirmación inmediata.',
+    en: 'Meeting rooms, private offices, and individual desks with instant confirmation.',
   },
-  heroExploreBtn: { es: 'Explorar Catálogo de Espacios', en: 'Explore Spaces Catalog' },
+  heroExploreBtn: { es: 'Ver Espacios Disponibles', en: 'View Available Spaces' },
   heroReservationsBtn: { es: 'Mis Reservas', en: 'My Bookings' },
 
   // Home Features
-  feature1Title: { es: 'Horas Exactas y Flexibles', en: 'Exact and Flexible Hours' },
+  feature1Title: { es: 'Horarios flexibles por hora', en: 'Flexible hourly booking' },
   feature1Desc: {
-    es: 'Reserva de 1 a 4 horas consecutivas entre las 07:00 y las 21:00 con confirmación instantánea.',
-    en: 'Book 1 to 4 consecutive hours between 07:00 and 21:00 with instant confirmation.',
+    es: 'Reserva el tiempo exacto que necesitas, de 1 a 4 horas entre las 07:00 y las 21:00 UTC con confirmación inmediata.',
+    en: 'Book the exact duration you need, from 1 to 4 hours between 07:00 and 21:00 UTC with instant confirmation.',
   },
-  feature2Title: { es: 'Sin Solapamientos', en: 'Zero Overlaps' },
+  feature2Title: { es: 'Disponibilidad en tiempo real', en: 'Real-time availability' },
   feature2Desc: {
-    es: 'Motor transaccional ACID en PostgreSQL que garantiza disponibilidad exclusiva en tiempo real.',
-    en: 'ACID transactional engine in PostgreSQL guaranteeing exclusive real-time availability.',
+    es: 'Evita reservas duplicadas con nuestro sistema de bloqueo inmediato.',
+    en: 'Prevent duplicate reservations with our immediate slot locking system.',
   },
-  feature3Title: { es: 'Tarifa Transparente', en: 'Transparent Pricing' },
+  feature3Title: { es: 'Tarifas transparentes', en: 'Transparent pricing' },
   feature3Desc: {
-    es: 'Precios calculados estrictamente por hora en el servidor, sin costos ocultos ni sorpresas.',
-    en: 'Prices strictly calculated per hour on the server, with no hidden fees or surprises.',
+    es: 'Calculadas por hora exacta sin cargos adicionales ni costos ocultos.',
+    en: 'Calculated strictly per hour with no additional charges or hidden fees.',
   },
   featuredHeading: { es: 'Espacios Destacados', en: 'Featured Spaces' },
   featuredSubheading: {
-    es: 'Conoce los espacios más solicitados listos para tus sesiones de trabajo',
-    en: 'Discover the most requested workspaces ready for your work sessions',
+    es: 'Selecciona una ubicación y confirma tu reserva al instante',
+    en: 'Select a location and confirm your booking instantly',
   },
-  viewAllSpaces: { es: 'Ver todos los espacios →', en: 'View all spaces →' },
+  viewAllSpaces: { es: 'Ver todos los espacios', en: 'View all spaces' },
 
   // Space Card & Catalog
-  perHour: { es: '/hora', en: '/hour' },
+  perHour: { es: '/h', en: '/hr' },
   bookNow: { es: 'Ver detalles y reservar', en: 'View details & book' },
   notAvailable: { es: 'No disponible', en: 'Unavailable' },
   catalogTitle: { es: 'Catálogo de Espacios', en: 'Spaces Catalog' },
   catalogSubtitle: {
-    es: 'Explora y reserva salas disponibles con confirmación inmediata',
-    en: 'Explore and reserve available rooms with instant confirmation',
+    es: 'Explora salas y oficinas disponibles con reserva inmediata',
+    en: 'Explore available rooms and offices with instant booking',
   },
-  totalActive: { es: 'Total de espacios activos:', en: 'Total active spaces:' },
+  totalActive: { es: 'Espacios activos:', en: 'Active spaces:' },
 
   // Footer
   footerCopyright: {
-    es: 'CoSpace © 2026 — Plataforma de Coworking',
-    en: 'CoSpace © 2026 — Coworking Platform',
+    es: 'CoSpace — Plataforma de Coworking',
+    en: 'CoSpace — Coworking Platform',
   },
   footerSpaces: { es: 'Espacios', en: 'Spaces' },
   footerAccess: { es: 'Acceso', en: 'Sign In' },

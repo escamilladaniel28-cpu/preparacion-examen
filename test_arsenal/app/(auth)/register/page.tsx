@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { AlertCircle, X } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -44,30 +45,30 @@ export default function RegisterPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 text-center mb-1">Crear Cuenta</h2>
-      <p className="text-xs text-gray-500 text-center mb-6">
+      <h2 className="text-xl font-bold text-slate-900 text-center mb-1">Crear Cuenta</h2>
+      <p className="text-xs text-slate-500 text-center mb-6">
         Únete a CoSpace para reservar salas y oficinas privadas
       </p>
 
       {errorMessage && (
-        <div className="mb-5 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center justify-between shadow-sm animate-fadeIn">
+        <div className="mb-5 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-sm">⚠️</span>
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
             <span className="font-medium">{errorMessage}</span>
           </div>
           <button
             type="button"
             onClick={() => setErrorMessage(null)}
-            className="text-xs font-bold text-red-400 hover:text-red-700 ml-2"
+            className="text-slate-400 hover:text-slate-600 ml-2"
           >
-            ✕
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
             Nombre Completo
           </label>
           <input
@@ -75,14 +76,14 @@ export default function RegisterPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Juan Pérez"
-            className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition"
+            className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
             required
             minLength={2}
           />
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
             Correo electrónico
           </label>
           <input
@@ -90,13 +91,13 @@ export default function RegisterPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu-correo@ejemplo.com"
-            className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition"
+            className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
             required
           />
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
             Contraseña
           </label>
           <input
@@ -104,7 +105,7 @@ export default function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mínimo 6 caracteres"
-            className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition"
+            className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
             required
             minLength={6}
           />
@@ -113,7 +114,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition text-sm flex items-center justify-center gap-2"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm transition text-sm flex items-center justify-center gap-2"
         >
           {isSubmitting ? (
             <>
@@ -129,9 +130,9 @@ export default function RegisterPage() {
         </button>
       </form>
 
-      <div className="mt-6 text-center text-xs text-gray-500">
+      <div className="mt-6 text-center text-xs text-slate-500">
         ¿Ya tienes una cuenta?{' '}
-        <Link href="/login" className="text-indigo-600 font-bold hover:underline">
+        <Link href="/login" className="text-indigo-600 font-semibold hover:underline">
           Inicia sesión aquí
         </Link>
       </div>
