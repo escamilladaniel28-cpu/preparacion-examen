@@ -140,8 +140,12 @@ docker build -t cospace .
 docker build -t cospace -f Dockerfile .
 ```
 
-### Ejecutar el contenedor:
+### Ejecutar el contenedor con Docker o Docker Compose:
 ```bash
+# Opción 1: Docker Compose (Recomendado)
+docker compose up --build -d
+
+# Opción 2: Docker CLI directo
 docker run -p 3000:3000 --env-file .env cospace
 ```
 
@@ -164,3 +168,5 @@ docker run -p 3000:3000 --env-file .env cospace
 | **next/image en `SpaceCard`** | ✅ Aprobado | `SpaceCard.tsx` renderiza imágenes con `<Image ... unoptimized />` sin usar `<img>` nativo. |
 | **Archivos base del proyecto** | ✅ Aprobado | `Dockerfile` multi-stage, `README.md` exhaustivo y `.env.example` sincronizados en la raíz y en `test_arsenal`. |
 | **Idempotencia (`x-idempotency-key`)** | ✅ Aprobado | Header `x-idempotency-key` generado en `BookingForm.tsx`, persistido en tabla `IdempotencyKey` en `prisma.$transaction` para prevenir duplicados. |
+| **Rate Limiting en Login (Extra)** | ✅ Aprobado | Bloqueo por IP en memoria en `app/api/auth/login/route.ts` tras 5 intentos fallidos en 15 min con HTTP 429 y header `Retry-After`. |
+| **Docker Compose (Extra)** | ✅ Aprobado | Archivo `docker-compose.yml` en la raíz configurado con servicio `cospace-app`, mapeo 3000:3000 y lectura de `.env`. |
