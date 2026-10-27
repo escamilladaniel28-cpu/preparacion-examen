@@ -5,92 +5,74 @@ const prisma = new PrismaClient();
 
 async function main() {
   const adminPassword = await bcrypt.hash('admin123', 10);
+  const userPassword = await bcrypt.hash('user123', 10);
 
-  // 1. Admin
+  // 1. Usuarios (Admin y Normal)
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@bithub.com' },
-    update: {},
+    where: { email: 'admin@cospace.com' },
+    update: {
+      passwordHash: adminPassword,
+      role: 'ADMIN',
+    },
     create: {
-      email: 'admin@bithub.com',
-      name: 'Admin',
+      email: 'admin@cospace.com',
+      name: 'Admin CoSpace',
       passwordHash: adminPassword,
       role: 'ADMIN',
     },
   });
 
-  // 2. Categorías
-  const catCartas = await prisma.category.upsert({
-    where: { name: 'Cartas' },
-    update: {},
-    create: { name: 'Cartas' },
-  });
-
-  // 3. Subastas
-  const now = new Date();
-
-  // Activa (cierra en 2 días)
-  await prisma.auction.create({
-    data: {
-      title: 'Carta de Charizard',
-      description: 'Primera edición',
-      startingPrice: 100,
-      minIncrement: 10,
-      endsAt: new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000),
-      sellerId: admin.id,
-      categoryId: catCartas.id,
+  const normalUser = await prisma.user.upsert({
+    where: { email: 'user@cospace.com' },
+    update: {
+      passwordHash: userPassword,
+      role: 'USER',
+    },
+    create: {
+      email: 'user@cospace.com',
+      name: 'Usuario CoSpace',
+      passwordHash: userPassword,
+      role: 'USER',
     },
   });
 
-  // Cerrada (cierra en el pasado, con ofertas)
-  const closedAuction = await prisma.auction.create({
-    data: {
-      title: 'Reloj Antiguo',
-      description: 'De colección',
-      startingPrice: 50,
-      minIncrement: 5,
-      endsAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000),
-      sellerId: admin.id,
-      categoryId: catCartas.id,
+  // 2. Espacios de Coworking
+  const spacesData = [
+    {
+      name: 'Escritorio Ventana',
+      description: 'Puesto individual con abundante luz natural y vista panorámica, ideal para trabajo enfocado.',
+      pricePerHour: 10,
+      isActive: true,
     },
-  });
-  await prisma.bid.create({
-    data: { amount: 60, auctionId: closedAuction.id, bidderId: admin.id },
-  });
-
-  // Desierta (cierra en el pasado, sin ofertas)
-  await prisma.auction.create({
-    data: {
-      title: 'Vinilo Raro',
-      description: 'Sin ofertas',
-      startingPrice: 20,
-      minIncrement: 2,
-      endsAt: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000),
-      sellerId: admin.id,
-      categoryId: catCartas.id,
+    {
+      name: 'Sala de Juntas A',
+      description: 'Sala ejecutiva equipada con proyector, pizarra interactiva y capacidad para 8 personas.',
+      pricePerHour: 25,
+      isActive: true,
     },
-  });
-
-  // Cancelada
-  await prisma.auction.create({
-    data: {
-      title: 'Figura Rota',
-      description: 'Cancelada por admin',
-      startingPrice: 10,
-      minIncrement: 1,
-      endsAt: new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000),
-      sellerId: admin.id,
-      categoryId: catCartas.id,
-      cancelledAt: new Date(),
-      cancellationReason: 'Artículo defectuoso',
+    {
+      name: 'Cabina Silenciosa',
+      description: 'Cabina individual insonorizada diseñada para llamadas confidenciales y reuniones virtuales.',
+      pricePerHour: 15,
+      isActive: true,
     },
-  });
+  ];
 
-  console.log('Seed completado con éxito en Supabase!');
+  for (const space of spacesData) {
+    await prisma.space.create({
+      data: space,
+    });
+  }
+
+  console.log('Seed de CoSpace completado con éxito!');
+  console.log(`- Admin: ${admin.email}`);
+  console.log(`- Usuario: ${normalUser.email}`);
+  console.log(`- Espacios creados: ${spacesData.length}`);
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('Error ejecutando el seed:', e);
     process.exit(1);
   })
   .finally(async () => {

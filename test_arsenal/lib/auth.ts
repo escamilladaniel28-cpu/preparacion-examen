@@ -71,41 +71,53 @@ export async function verifyRefreshToken(token: string): Promise<TokenPayload | 
 // Cookies Management (Next.js App Router)
 // ----------------------------------------------------
 export async function setAuthCookies(accessToken: string, refreshToken: string) {
-  const cookieStore = await cookies();
+  try {
+    const cookieStore = await cookies();
 
-  cookieStore.set('access_token', accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 15 * 60, // 15 minutos
-  });
+    cookieStore.set('access_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 15 * 60, // 15 minutos
+    });
 
-  cookieStore.set('refresh_token', refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 7 * 24 * 60 * 60, // 7 días
-  });
+    cookieStore.set('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60, // 7 días
+    });
+  } catch {
+    // Si se ejecuta fuera del scope de Next.js
+  }
 }
 
 export async function clearAuthCookies() {
-  const cookieStore = await cookies();
-  cookieStore.delete('access_token');
-  cookieStore.delete('refresh_token');
+  try {
+    const cookieStore = await cookies();
+    cookieStore.delete('access_token');
+    cookieStore.delete('refresh_token');
+  } catch {
+    // Si se ejecuta fuera del scope de Next.js
+  }
 }
 
 // ----------------------------------------------------
 // Session Retrieval Helper
 // ----------------------------------------------------
 export async function getSession(): Promise<TokenPayload | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('access_token')?.value;
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('access_token')?.value;
 
-  if (!token) {
+    if (!token) {
+      return null;
+    }
+
+    return verifyAccessToken(token);
+  } catch {
     return null;
   }
-
-  return verifyAccessToken(token);
 }

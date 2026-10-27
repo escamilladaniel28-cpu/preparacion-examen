@@ -21,8 +21,7 @@ model User {
   role          Role           @default(USER)
   createdAt     DateTime       @default(now())
   refreshTokens RefreshToken[]
-  auctions      Auction[]      @relation("SellerAuctions")
-  bids          Bid[]
+  reservations  Reservation[]
 }
 
 model RefreshToken {
@@ -35,45 +34,31 @@ model RefreshToken {
   createdAt DateTime  @default(now())
 }
 
-model Category {
-  id       String    @id @default(uuid())
-  name     String    @unique
-  auctions Auction[]
+model Space {
+  id           String        @id @default(uuid())
+  name         String
+  description  String
+  imageUrl     String?
+  pricePerHour Decimal       @db.Decimal(10, 2)
+  isActive     Boolean       @default(true) // Regla: No se elimina, se desactiva
+  reservations Reservation[]
+  createdAt    DateTime      @default(now())
 }
 
-model Auction {
-  id                 String    @id @default(uuid())
-  title              String
-  description        String
-  imageUrl           String?
-  startingPrice      Decimal   @db.Decimal(10, 2)
-  minIncrement       Decimal   @db.Decimal(10, 2)
-  endsAt             DateTime
-  sellerId           String
-  seller             User      @relation("SellerAuctions", fields: [sellerId], references: [id])
-  categoryId         String
-  category           Category  @relation(fields: [categoryId], references: [id])
-  cancelledAt        DateTime?
-  cancellationReason String?
-  bids               Bid[]
-  createdAt          DateTime  @default(now())
+model Reservation {
+  id         String   @id @default(uuid())
+  startTime  DateTime
+  endTime    DateTime
+  totalPrice Decimal  @db.Decimal(10, 2) // Calculado en el servidor
+  status     String   @default("CONFIRMED") // CONFIRMED o CANCELLED
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  spaceId    String
+  space      Space    @relation(fields: [spaceId], references: [id])
+  createdAt  DateTime @default(now())
 
-  @@index([sellerId])
-  @@index([categoryId])
-  @@index([endsAt])
-}
-
-model Bid {
-  id        String   @id @default(uuid())
-  amount    Decimal  @db.Decimal(10, 2)
-  auctionId String
-  auction   Auction  @relation(fields: [auctionId], references: [id])
-  bidderId  String
-  bidder    User     @relation(fields: [bidderId], references: [id])
-  createdAt DateTime @default(now())
-
-  @@index([auctionId])
-  @@index([bidderId])
+  @@index([userId])
+  @@index([spaceId])
 }
 
 model IdempotencyKey {

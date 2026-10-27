@@ -1,8 +1,8 @@
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'BidHub Test',
-  description: 'Test Arsenal',
+  title: 'CoSpace — Espacios de Coworking',
+  description: 'Reserva salas de juntas, escritorios y cabinas de trabajo por hora',
 };
 
 export default function RootLayout({
