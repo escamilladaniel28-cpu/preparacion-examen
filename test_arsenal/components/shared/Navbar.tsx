@@ -10,6 +10,7 @@ const dict = {
     login: 'Ingresar',
     register: 'Registro',
     dashboard: 'Mi Panel',
+    logout: 'Salir',
     lang: 'EN',
   },
   en: {
@@ -18,6 +19,7 @@ const dict = {
     login: 'Login',
     register: 'Sign Up',
     dashboard: 'Dashboard',
+    logout: 'Logout',
     lang: 'ES',
   },
 };
@@ -28,10 +30,22 @@ interface NavbarProps {
 
 export function Navbar({ userName }: NavbarProps) {
   const [lang, setLang] = useState<'es' | 'en'>('es');
+  const [loggingOut, setLoggingOut] = useState(false);
   const t = dict[lang];
 
   const toggleLang = () => {
     setLang((prev) => (prev === 'es' ? 'en' : 'es'));
+  };
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (err) {
+      console.error('Error al cerrar sesión:', err);
+    } finally {
+      window.location.href = '/login';
+    }
   };
 
   return (
@@ -66,14 +80,14 @@ export function Navbar({ userName }: NavbarProps) {
               >
                 {userName}
               </Link>
-              <form action="/api/auth/logout" method="POST">
-                <button
-                  type="submit"
-                  className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded font-medium transition"
-                >
-                  Salir
-                </button>
-              </form>
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={loggingOut}
+                className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded font-medium transition disabled:opacity-50"
+              >
+                {loggingOut ? '...' : t.logout}
+              </button>
             </div>
           ) : (
             <div className="flex items-center space-x-3">

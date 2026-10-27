@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getSession } from '@/lib/auth';
 import { Footer } from '@/components/shared/Footer';
+import { LogoutButton } from '@/components/shared/LogoutButton';
 
 export default async function PrivateLayout({
   children,
@@ -39,14 +40,7 @@ export default async function PrivateLayout({
             >
               Dashboard
             </Link>
-            <form action="/api/auth/logout" method="POST">
-              <button
-                type="submit"
-                className="text-xs bg-gray-100 hover:bg-red-50 hover:text-red-600 text-gray-700 px-3 py-1.5 rounded font-medium transition"
-              >
-                Cerrar Sesión
-              </button>
-            </form>
+            <LogoutButton redirectTo="/login" />
           </div>
         </div>
       </header>

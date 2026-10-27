@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getSession } from '@/lib/auth';
+import { LogoutButton } from '@/components/shared/LogoutButton';
 
 export default async function AdminLayout({
   children,
@@ -48,14 +49,11 @@ export default async function AdminLayout({
           <div className="text-xs text-gray-400 mb-2 truncate">
             Admin: {session?.email || 'admin@cospace.com'}
           </div>
-          <form action="/api/auth/logout" method="POST">
-            <button
-              type="submit"
-              className="w-full text-left text-xs text-red-400 hover:text-red-300 transition py-1"
-            >
-              Cerrar Sesión
-            </button>
-          </form>
+          <LogoutButton
+            label="Cerrar Sesión"
+            redirectTo="/login"
+            className="w-full text-left text-xs text-red-400 hover:text-red-300 transition py-1"
+          />
         </div>
       </aside>
 

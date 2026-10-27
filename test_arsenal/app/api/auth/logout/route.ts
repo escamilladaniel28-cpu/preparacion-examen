@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 import { verifyRefreshToken, clearAuthCookies } from '@/lib/auth';
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
     const cookieStore = await cookies();
     const refreshToken = cookieStore.get('refresh_token')?.value;
@@ -25,6 +25,14 @@ export async function POST() {
     }
 
     await clearAuthCookies();
+
+    // Si la petición proviene de navegación HTML nativa en el navegador, redirigir
+    const acceptHeader = request.headers.get('accept') || '';
+    if (acceptHeader.includes('text/html')) {
+      const loginUrl = new URL('/login', request.url);
+      return NextResponse.redirect(loginUrl, 303);
+    }
+
     return NextResponse.json(
       { message: 'Sesión cerrada exitosamente' },
       { status: 200 }
@@ -36,4 +44,8 @@ export async function POST() {
       { status: 500 }
     );
   }
+}
+
+export async function GET(request: Request) {
+  return POST(request);
 }
