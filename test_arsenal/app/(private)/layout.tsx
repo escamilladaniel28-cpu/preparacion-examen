@@ -4,6 +4,9 @@ import { getSession } from '@/lib/auth';
 import { Footer } from '@/components/shared/Footer';
 import { LogoutButton } from '@/components/shared/LogoutButton';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function PrivateLayout({
   children,
 }: {

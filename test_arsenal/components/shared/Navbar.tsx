@@ -42,16 +42,26 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
   useEffect(() => {
     syncSession();
 
-    const handlePageShow = () => {
+    // Detección y recuperación ante el Back/Forward Cache (BFCache)
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        // La página se cargó desde el BFCache del navegador: forzar recarga para revalidar sesión
+        window.location.reload();
+      } else {
+        syncSession();
+      }
+    };
+
+    const handlePopState = () => {
       syncSession();
     };
 
     window.addEventListener('pageshow', handlePageShow);
-    window.addEventListener('popstate', handlePageShow);
+    window.addEventListener('popstate', handlePopState);
 
     return () => {
       window.removeEventListener('pageshow', handlePageShow);
-      window.removeEventListener('popstate', handlePageShow);
+      window.removeEventListener('popstate', handlePopState);
     };
   }, [syncSession]);
 

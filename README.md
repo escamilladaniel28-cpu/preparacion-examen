@@ -157,7 +157,7 @@ docker run -p 3000:3000 --env-file .env cospace
 | :--- | :---: | :--- |
 | **Logout con fetch** | ✅ Aprobado | `Navbar.tsx` y `LogoutButton.tsx` llaman a `fetch('/api/auth/logout', { method: 'POST' })` y redirigen limpiamente sin enlaces directos. |
 | **Actualización de Navbar en Login** | ✅ Aprobado | `LoginPage.tsx` y `RegisterPage.tsx` invocan `router.refresh()` antes de redirigir al dashboard. |
-| **Persistencia con botón Atrás** | ✅ Aprobado | `Navbar.tsx` escucha eventos `pageshow` y `popstate`, re-sincronizando sesión contra `GET /api/auth/me` con `no-store`. |
+| **Persistencia y BFCache (Botón Atrás)** | ✅ Aprobado | `Navbar.tsx` y `LoginPage` manejan `pageshow` (`event.persisted`), `proxy.ts` redirige `/login` a `/dashboard`, `next.config.ts` aplica `Cache-Control: no-store` y layout privado con `force-dynamic`. |
 | **Cero alert() y confirm()** | ✅ Aprobado | Eliminados totalmente del código. Reemplazados por alertas contextuales estilizadas y confirmaciones inline en dos pasos. |
 | **Estados de carga (isSubmitting)** | ✅ Aprobado | Todos los formularios (Login, Registro, Booking, Admin) bloquean doble clic y muestran spinner de carga interactivo. |
 | **Manejo de errores del backend** | ✅ Aprobado | Errores de API (409 solapamiento, 400 validaciones Zod, 401 sesión) renderizados en tarjetas accesibles con icono de alerta. |
