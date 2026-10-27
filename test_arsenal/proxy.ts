@@ -47,5 +47,4 @@ export const config = {
   matcher: ['/dashboard/:path*', '/admin/:path*'],
 };
 
-export const middleware = proxy;
 export default proxy;
