@@ -44,6 +44,7 @@ El proyecto implementa la arquitectura de Route Groups de Next.js 16 cumpliendo 
 6. **Cálculo de Precio Servidor:** La tarifa se calcula exclusivamente en el backend (`pricePerHour * durationHours`).
 7. **Cancelaciones:** Borrado lógico (`status: 'CANCELLED'`). Los usuarios normales requieren al menos 2 horas de anticipación a `startTime`. Los administradores pueden cancelar en cualquier momento.
 8. **Desactivación de Espacios (Regla 13):** Solo administradores. Si existen reservas futuras confirmadas, el servidor rechaza la desactivación con código `409 Conflict`.
+9. **Idempotencia en Creación de Reservas (Puntos Extra):** Soporte para el header `x-idempotency-key` (UUID v4). La tabla `IdempotencyKey` persiste atómicamente la clave dentro de `prisma.$transaction`. Si se reenvía la misma clave (ej. reintento de red), el backend devuelve `200 OK` con `idempotent: true` y la reserva previa sin duplicarla.
 
 ---
 
@@ -162,3 +163,4 @@ docker run -p 3000:3000 --env-file .env cospace
 | **Anti-hidratación `LocalTime`** | ✅ Aprobado | `<LocalTime />` integrado en el detalle del espacio con guardia `mounted` y atributo `suppressHydrationWarning`. |
 | **next/image en `SpaceCard`** | ✅ Aprobado | `SpaceCard.tsx` renderiza imágenes con `<Image ... unoptimized />` sin usar `<img>` nativo. |
 | **Archivos base del proyecto** | ✅ Aprobado | `Dockerfile` multi-stage, `README.md` exhaustivo y `.env.example` sincronizados en la raíz y en `test_arsenal`. |
+| **Idempotencia (`x-idempotency-key`)** | ✅ Aprobado | Header `x-idempotency-key` generado en `BookingForm.tsx`, persistido en tabla `IdempotencyKey` en `prisma.$transaction` para prevenir duplicados. |

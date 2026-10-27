@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AlertCircle, CheckCircle2, X } from 'lucide-react';
@@ -24,6 +24,35 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [needsAuth, setNeedsAuth] = useState<boolean>(false);
+
+  // Clave de Idempotencia: Se mantiene en caso de fallo de red para permitir reintentos seguros
+  const idempotencyKeyRef = useRef<string | null>(null);
+
+  const getOrCreateIdempotencyKey = () => {
+    if (!idempotencyKeyRef.current) {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        idempotencyKeyRef.current = crypto.randomUUID();
+      } else {
+        idempotencyKeyRef.current = 'idem_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+      }
+    }
+    return idempotencyKeyRef.current;
+  };
+
+  const handleDateChange = (newDate: string) => {
+    setDate(newDate);
+    idempotencyKeyRef.current = null; // Parámetros cambiados -> nueva clave para nueva reserva
+  };
+
+  const handleStartHourChange = (newHour: number) => {
+    setStartHour(newHour);
+    idempotencyKeyRef.current = null;
+  };
+
+  const handleDurationChange = (newDuration: number) => {
+    setDurationHours(newDuration);
+    idempotencyKeyRef.current = null;
+  };
 
   const totalPrice = (pricePerHour * durationHours).toFixed(2);
   const endHour = startHour + durationHours;
@@ -50,9 +79,14 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
       const startUtc = new Date(Date.UTC(year, month, day, startHour, 0, 0, 0));
       const endUtc = new Date(Date.UTC(year, month, day, startHour + durationHours, 0, 0, 0));
 
+      const idempotencyKey = getOrCreateIdempotencyKey();
+
       const response = await fetch('/api/reservations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-idempotency-key': idempotencyKey,
+        },
         body: JSON.stringify({
           spaceId,
           startTime: startUtc.toISOString(),
@@ -70,16 +104,26 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
           setErrorMessage(data.error || 'No se pudo procesar la reserva. Revisa el horario elegido.');
         }
         setIsSubmitting(false);
+        // NOTA: No reseteamos idempotencyKeyRef para que el reintento use la misma clave
         return;
       }
 
-      setSuccessMessage('Reserva creada exitosamente. Redirigiendo a tu panel...');
+      // Éxito: Limpiar clave para futuras reservas
+      idempotencyKeyRef.current = null;
+
+      if (data.idempotent) {
+        setSuccessMessage('Operación ya procesada anteriormente (Idempotente). Redirigiendo a tu panel...');
+      } else {
+        setSuccessMessage('Reserva creada exitosamente. Redirigiendo a tu panel...');
+      }
+
       setTimeout(() => {
         router.push('/dashboard');
         router.refresh();
       }, 1200);
     } catch {
-      setErrorMessage('Error de conexión con el servidor. Intenta de nuevo.');
+      // Error de red: La clave permanece intacta en idempotencyKeyRef para reintentar sin duplicar
+      setErrorMessage('Error de conexión con el servidor. Haz clic de nuevo para reintentar con seguridad.');
       setIsSubmitting(false);
     }
   };
@@ -93,7 +137,7 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
         </p>
       </div>
 
-      {/* Alerta de Error Elegante sin Emojis */}
+      {/* Alerta de Error Elegante */}
       {errorMessage && (
         <div className="mb-5 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg text-sm flex flex-col gap-2">
           <div className="flex items-start gap-2.5">
@@ -120,7 +164,7 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
         </div>
       )}
 
-      {/* Alerta de Éxito sin Emojis */}
+      {/* Alerta de Éxito */}
       {successMessage && (
         <div className="mb-5 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-sm flex items-center gap-2.5">
           <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
@@ -137,7 +181,7 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
           <input
             type="date"
             value={date}
-            onChange={(e) => setDate(e.target.value)}
+            onChange={(e) => handleDateChange(e.target.value)}
             className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
             required
           />
@@ -150,7 +194,7 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
           </label>
           <select
             value={startHour}
-            onChange={(e) => setStartHour(parseInt(e.target.value, 10))}
+            onChange={(e) => handleStartHourChange(parseInt(e.target.value, 10))}
             className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
           >
             {[7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((hour) => (
@@ -168,7 +212,7 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
           </label>
           <select
             value={durationHours}
-            onChange={(e) => setDurationHours(parseInt(e.target.value, 10))}
+            onChange={(e) => handleDurationChange(parseInt(e.target.value, 10))}
             className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm text-slate-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
           >
             {[1, 2, 3, 4]

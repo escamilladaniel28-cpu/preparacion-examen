@@ -27,9 +27,10 @@ const createReservationSchema = z
   .strict(); // Asegura que no se reciban campos inesperados como totalPrice
 
 // ----------------------------------------------------
-// POST /api/reservations
+// POST /api/reservations (Soporte de Idempotencia estricto)
 // ----------------------------------------------------
 export async function POST(request: Request) {
+  let idempotencyKey: string | null = null;
   try {
     // 1. Autenticación (Cookies o Header Authorization)
     let session = await getSession();
@@ -47,7 +48,52 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. Parseo y Validación de Entrada
+    // 2. Detección de Idempotencia (Header x-idempotency-key)
+    idempotencyKey = request.headers.get('x-idempotency-key')?.trim() || null;
+
+    if (idempotencyKey) {
+      const existingKey = await prisma.idempotencyKey.findUnique({
+        where: { key: idempotencyKey },
+      });
+
+      if (existingKey) {
+        let existingReservation = null;
+        if (existingKey.action.startsWith('CREATE_RESERVATION:')) {
+          const reservationId = existingKey.action.replace('CREATE_RESERVATION:', '');
+          existingReservation = await prisma.reservation.findUnique({
+            where: { id: reservationId },
+            include: {
+              space: {
+                select: {
+                  id: true,
+                  name: true,
+                  pricePerHour: true,
+                  imageUrl: true,
+                },
+              },
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+          });
+        }
+
+        return NextResponse.json(
+          {
+            message: 'Operación ya procesada (Respuesta idempotente)',
+            reservation: existingReservation,
+            idempotent: true,
+          },
+          { status: 200 }
+        );
+      }
+    }
+
+    // 3. Parseo y Validación de Entrada
     const body = await request.json();
     const validationResult = createReservationSchema.safeParse(body);
 
@@ -66,8 +112,8 @@ export async function POST(request: Request) {
     const end = new Date(rawEnd);
     const now = new Date();
 
-    // 3. Reglas de Negocio de Fechas y Horas (pre-transacción)
-    // 3.1. startTime no puede ser en el pasado
+    // 4. Reglas de Negocio de Fechas y Horas (pre-transacción)
+    // 4.1. startTime no puede ser en el pasado
     if (start < now) {
       return NextResponse.json(
         { error: 'La fecha de inicio (startTime) no puede ser en el pasado' },
@@ -75,7 +121,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3.2. startTime no puede ser mayor a 30 días desde hoy
+    // 4.2. startTime no puede ser mayor a 30 días desde hoy
     const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
     if (start > thirtyDaysFromNow) {
       return NextResponse.json(
@@ -84,7 +130,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3.3. endTime debe ser estrictamente posterior a startTime
+    // 4.3. endTime debe ser estrictamente posterior a startTime
     if (end <= start) {
       return NextResponse.json(
         { error: 'La fecha de fin (endTime) debe ser posterior a la fecha de inicio' },
@@ -92,7 +138,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3.4. Horas exactas (minutos, segundos y milisegundos en 0)
+    // 4.4. Horas exactas (minutos, segundos y milisegundos en 0)
     if (
       start.getUTCMinutes() !== 0 ||
       start.getUTCSeconds() !== 0 ||
@@ -107,7 +153,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3.5. Duración de 1 a 4 horas exactas
+    // 4.5. Duración de 1 a 4 horas exactas
     const durationMs = end.getTime() - start.getTime();
     const durationHours = durationMs / (1000 * 60 * 60);
 
@@ -118,7 +164,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3.6. Horario permitido entre las 07:00 y las 21:00 (mismo día calendario)
+    // 4.6. Horario permitido entre las 07:00 y las 21:00 (mismo día calendario)
     const startHour = start.getUTCHours();
     const endHour = end.getUTCHours();
     const isSameDay =
@@ -133,9 +179,35 @@ export async function POST(request: Request) {
       );
     }
 
-    // 4. Transacción y Concurrencia (Garantiza atomicidad y aislamiento)
-    const newReservation = await prisma.$transaction(async (tx) => {
-      // 4.1. Verificar existencia y estado activo del Espacio
+    // 5. Transacción y Concurrencia (Garantiza atomicidad, aislamiento e idempotencia)
+    const txResult = await prisma.$transaction(async (tx) => {
+      // 5.0. Verificación de Idempotencia concurrente dentro de la transacción
+      if (idempotencyKey) {
+        const keyInTx = await tx.idempotencyKey.findUnique({
+          where: { key: idempotencyKey },
+        });
+
+        if (keyInTx) {
+          let existingRes = null;
+          if (keyInTx.action.startsWith('CREATE_RESERVATION:')) {
+            const resId = keyInTx.action.replace('CREATE_RESERVATION:', '');
+            existingRes = await tx.reservation.findUnique({
+              where: { id: resId },
+              include: {
+                space: {
+                  select: { id: true, name: true, pricePerHour: true, imageUrl: true },
+                },
+                user: {
+                  select: { id: true, name: true, email: true },
+                },
+              },
+            });
+          }
+          return { reservation: existingRes, isIdempotent: true };
+        }
+      }
+
+      // 5.1. Verificar existencia y estado activo del Espacio
       const space = await tx.space.findUnique({
         where: { id: spaceId },
       });
@@ -148,7 +220,7 @@ export async function POST(request: Request) {
         throw new HttpError('No se puede reservar un espacio desactivado', 400);
       }
 
-      // 4.2. Límite de Reservas del Usuario: máximo 3 futuras CONFIRMED
+      // 5.2. Límite de Reservas del Usuario: máximo 3 futuras CONFIRMED
       const futureReservationsCount = await tx.reservation.count({
         where: {
           userId: session.userId,
@@ -164,7 +236,7 @@ export async function POST(request: Request) {
         );
       }
 
-      // 4.3. Solapamiento del Espacio: (newStart < existingEnd) AND (newEnd > existingStart)
+      // 5.3. Solapamiento del Espacio: (newStart < existingEnd) AND (newEnd > existingStart)
       const overlappingSpace = await tx.reservation.findFirst({
         where: {
           spaceId: spaceId,
@@ -183,7 +255,7 @@ export async function POST(request: Request) {
         );
       }
 
-      // 4.4. Solapamiento del Usuario: el usuario no puede tener otra reserva CONFIRMED en ese horario
+      // 5.4. Solapamiento del Usuario: el usuario no puede tener otra reserva CONFIRMED en ese horario
       const overlappingUser = await tx.reservation.findFirst({
         where: {
           userId: session.userId,
@@ -202,12 +274,12 @@ export async function POST(request: Request) {
         );
       }
 
-      // 4.5. Cálculo del Precio en el servidor
+      // 5.5. Cálculo del Precio en el servidor
       const pricePerHour = Number(space.pricePerHour);
       const totalPrice = Number((pricePerHour * durationHours).toFixed(2));
 
-      // 4.6. Crear la reserva
-      return await tx.reservation.create({
+      // 5.6. Crear la reserva
+      const createdReservation = await tx.reservation.create({
         data: {
           spaceId: space.id,
           userId: session.userId,
@@ -234,18 +306,71 @@ export async function POST(request: Request) {
           },
         },
       });
+
+      // 5.7. Registrar clave de idempotencia en la misma transacción atómica
+      if (idempotencyKey) {
+        await tx.idempotencyKey.create({
+          data: {
+            key: idempotencyKey,
+            userId: session.userId,
+            action: `CREATE_RESERVATION:${createdReservation.id}`,
+          },
+        });
+      }
+
+      return { reservation: createdReservation, isIdempotent: false };
     });
+
+    if (txResult.isIdempotent) {
+      return NextResponse.json(
+        {
+          message: 'Operación ya procesada (Respuesta idempotente)',
+          reservation: txResult.reservation,
+          idempotent: true,
+        },
+        { status: 200 }
+      );
+    }
 
     return NextResponse.json(
       {
         message: 'Reserva creada exitosamente',
-        reservation: newReservation,
+        reservation: txResult.reservation,
       },
       { status: 201 }
     );
   } catch (error: unknown) {
     if (error instanceof HttpError) {
       return NextResponse.json({ error: error.message }, { status: error.statusCode });
+    }
+
+    // Detección de colisión concurrente de clave de idempotencia (Prisma P2002)
+    if ((error as { code?: string })?.code === 'P2002' && idempotencyKey) {
+      try {
+        const existingKey = await prisma.idempotencyKey.findUnique({
+          where: { key: idempotencyKey },
+        });
+        if (existingKey && existingKey.action.startsWith('CREATE_RESERVATION:')) {
+          const reservationId = existingKey.action.replace('CREATE_RESERVATION:', '');
+          const existingReservation = await prisma.reservation.findUnique({
+            where: { id: reservationId },
+            include: {
+              space: { select: { id: true, name: true, pricePerHour: true, imageUrl: true } },
+              user: { select: { id: true, name: true, email: true } },
+            },
+          });
+          return NextResponse.json(
+            {
+              message: 'Operación ya procesada (Respuesta idempotente)',
+              reservation: existingReservation,
+              idempotent: true,
+            },
+            { status: 200 }
+          );
+        }
+      } catch {
+        // Fallback al error general
+      }
     }
 
     console.error('Error en POST /api/reservations:', error);
