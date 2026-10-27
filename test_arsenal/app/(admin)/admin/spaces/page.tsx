@@ -16,6 +16,7 @@ export default function AdminSpacesPage() {
   const [spaces, setSpaces] = useState<SpaceItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [confirmDeactivateId, setConfirmDeactivateId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(
     null
   );
@@ -26,7 +27,7 @@ export default function AdminSpacesPage() {
   const [newDescription, setNewDescription] = useState('');
   const [newPrice, setNewPrice] = useState('25.00');
   const [newImageUrl, setNewImageUrl] = useState('');
-  const [creating, setCreating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchSpaces = useCallback(async () => {
     try {
@@ -36,7 +37,7 @@ export default function AdminSpacesPage() {
         setSpaces(data.spaces || []);
       } else {
         setFeedback({
-          message: 'Error al cargar la lista de espacios. Requiere privilegios de ADMIN.',
+          message: 'Error al consultar espacios. Requiere privilegios de ADMIN.',
           type: 'error',
         });
       }
@@ -55,12 +56,9 @@ export default function AdminSpacesPage() {
   }, [fetchSpaces]);
 
   const handleDeactivate = async (spaceId: string, spaceName: string) => {
-    if (!confirm(`¿Estás seguro de que deseas desactivar el espacio "${spaceName}"?`)) {
-      return;
-    }
-
     setActionLoading(spaceId);
     setFeedback(null);
+    setConfirmDeactivateId(null);
 
     try {
       const res = await fetch(`/api/spaces/${spaceId}/deactivate`, {
@@ -73,18 +71,17 @@ export default function AdminSpacesPage() {
         setFeedback({
           message:
             data.error ||
-            'No se pudo desactivar el espacio. Si tiene reservas futuras confirmadas, no se puede desactivar (Regla 13).',
+            'No se puede desactivar el espacio porque tiene reservas futuras confirmadas (Regla 13).',
           type: 'error',
         });
         return;
       }
 
       setFeedback({
-        message: `Espacio "${spaceName}" desactivado exitosamente (Regla 13 cumplida).`,
+        message: `Espacio "${spaceName}" desactivado con éxito (Regla 13 cumplida).`,
         type: 'success',
       });
 
-      // Actualizar estado local
       setSpaces((prev) =>
         prev.map((s) => (s.id === spaceId ? { ...s, isActive: false } : s))
       );
@@ -100,7 +97,7 @@ export default function AdminSpacesPage() {
 
   const handleCreateSpace = async (e: React.FormEvent) => {
     e.preventDefault();
-    setCreating(true);
+    setIsSubmitting(true);
     setFeedback(null);
 
     try {
@@ -122,7 +119,7 @@ export default function AdminSpacesPage() {
           message: data.error || 'Error al crear el espacio.',
           type: 'error',
         });
-        setCreating(false);
+        setIsSubmitting(false);
         return;
       }
 
@@ -139,11 +136,11 @@ export default function AdminSpacesPage() {
       fetchSpaces();
     } catch {
       setFeedback({
-        message: 'Error al enviar la solicitud.',
+        message: 'Error de red al crear el espacio.',
         type: 'error',
       });
     } finally {
-      setCreating(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -153,7 +150,7 @@ export default function AdminSpacesPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Gestión de Espacios (Admin)</h1>
           <p className="text-gray-500 text-xs mt-1">
-            Control de inventario, tarifas y desactivación bajo regla 13 (sin reservas futuras)
+            Control de inventario, precios y desactivación bajo Regla 13
           </p>
         </div>
 
@@ -163,13 +160,13 @@ export default function AdminSpacesPage() {
               setLoading(true);
               fetchSpaces();
             }}
-            className="text-xs bg-white hover:bg-gray-100 text-gray-700 font-medium px-3 py-2 rounded-lg border border-gray-300 transition"
+            className="text-xs bg-white hover:bg-gray-100 text-gray-700 font-semibold px-3 py-2 rounded-xl border border-gray-300 transition shadow-sm"
           >
             🔄 Recargar
           </button>
           <button
             onClick={() => setShowCreateForm(!showCreateForm)}
-            className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3.5 py-2 rounded-lg shadow-sm transition"
+            className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3.5 py-2 rounded-xl shadow-sm transition"
           >
             {showCreateForm ? 'Cancelar' : '+ Nuevo Espacio'}
           </button>
@@ -178,15 +175,15 @@ export default function AdminSpacesPage() {
 
       {feedback && (
         <div
-          className={`p-4 rounded-lg text-sm border flex items-center justify-between ${
+          className={`p-4 rounded-xl text-sm border flex items-center justify-between shadow-sm animate-fadeIn ${
             feedback.type === 'success'
-              ? 'bg-green-50 border-green-200 text-green-800'
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
               : 'bg-red-50 border-red-200 text-red-800'
           }`}
         >
-          <div className="flex items-center gap-2">
-            <span>{feedback.type === 'success' ? '✅' : '⚠️'}</span>
-            <span>{feedback.message}</span>
+          <div className="flex items-center gap-2.5">
+            <span className="text-lg">{feedback.type === 'success' ? '✅' : '⚠️'}</span>
+            <span className="font-medium">{feedback.message}</span>
           </div>
           <button
             onClick={() => setFeedback(null)}
@@ -197,30 +194,30 @@ export default function AdminSpacesPage() {
         </div>
       )}
 
-      {/* Formulario de Creación de Espacio */}
+      {/* Formulario de Creación */}
       {showCreateForm && (
         <form
           onSubmit={handleCreateSpace}
-          className="bg-white border border-indigo-200 rounded-xl p-5 shadow-sm space-y-4"
+          className="bg-white border border-indigo-200 rounded-2xl p-6 shadow-md space-y-4"
         >
-          <h3 className="text-base font-bold text-indigo-900 mb-2">Crear Nuevo Espacio</h3>
+          <h3 className="text-base font-bold text-indigo-900">Crear Nuevo Espacio</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Nombre</label>
+              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Nombre</label>
               <input
                 type="text"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder="Ej. Sala Creativa Nexus"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
+                className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500"
                 required
                 minLength={3}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
+              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
                 Precio por Hora ($)
               </label>
               <input
@@ -229,27 +226,27 @@ export default function AdminSpacesPage() {
                 min="1"
                 value={newPrice}
                 onChange={(e) => setNewPrice(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
+                className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Descripción</label>
+            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Descripción</label>
             <textarea
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
               placeholder="Descripción del espacio y características..."
               rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
+              className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500"
               required
               minLength={5}
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">
+            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
               URL de Imagen (Opcional)
             </label>
             <input
@@ -257,7 +254,7 @@ export default function AdminSpacesPage() {
               value={newImageUrl}
               onChange={(e) => setNewImageUrl(e.target.value)}
               placeholder="https://images.unsplash.com/..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
+              className="w-full px-3.5 py-2 border border-gray-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
@@ -265,27 +262,27 @@ export default function AdminSpacesPage() {
             <button
               type="button"
               onClick={() => setShowCreateForm(false)}
-              className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium"
+              className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-xl"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              disabled={creating}
-              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg shadow"
+              disabled={isSubmitting}
+              className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl shadow transition disabled:opacity-50 flex items-center gap-1.5"
             >
-              {creating ? 'Guardando...' : 'Crear Espacio'}
+              {isSubmitting ? 'Guardando espacio...' : 'Crear Espacio'}
             </button>
           </div>
         </form>
       )}
 
       {/* Tabla de Espacios */}
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
         {loading ? (
-          <div className="p-8 text-center text-gray-500 text-sm">Cargando espacios...</div>
+          <div className="p-10 text-center text-gray-500 text-sm">Cargando espacios...</div>
         ) : spaces.length === 0 ? (
-          <div className="p-8 text-center text-gray-500 text-sm">
+          <div className="p-10 text-center text-gray-500 text-sm">
             No se encontraron espacios registrados.
           </div>
         ) : (
@@ -311,7 +308,7 @@ export default function AdminSpacesPage() {
                     </td>
                     <td className="px-6 py-4">
                       {space.isActive ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
                           ● Activo
                         </span>
                       ) : (
@@ -322,14 +319,31 @@ export default function AdminSpacesPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       {space.isActive ? (
-                        <button
-                          onClick={() => handleDeactivate(space.id, space.name)}
-                          disabled={actionLoading === space.id}
-                          className="text-xs bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-semibold px-3 py-1.5 rounded transition disabled:opacity-50"
-                          title="Desactivar espacio (valida que no tenga reservas futuras)"
-                        >
-                          {actionLoading === space.id ? 'Verificando...' : 'Desactivar'}
-                        </button>
+                        confirmDeactivateId === space.id ? (
+                          <div className="inline-flex items-center gap-1.5">
+                            <button
+                              onClick={() => handleDeactivate(space.id, space.name)}
+                              disabled={actionLoading === space.id}
+                              className="text-xs bg-red-600 hover:bg-red-700 text-white font-bold px-2.5 py-1.5 rounded-lg shadow-sm transition disabled:opacity-50"
+                            >
+                              {actionLoading === space.id ? 'Comprobando...' : 'Sí, desactivar'}
+                            </button>
+                            <button
+                              onClick={() => setConfirmDeactivateId(null)}
+                              className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-2 py-1.5 rounded-lg transition"
+                            >
+                              Cancelar
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmDeactivateId(space.id)}
+                            disabled={actionLoading === space.id}
+                            className="text-xs bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-semibold px-3 py-1.5 rounded-lg transition disabled:opacity-50"
+                          >
+                            Desactivar
+                          </button>
+                        )
                       ) : (
                         <span className="text-xs text-gray-400 font-medium">Desactivado</span>
                       )}

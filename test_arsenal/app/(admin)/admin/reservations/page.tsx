@@ -24,6 +24,7 @@ export default function AdminReservationsPage() {
   const [reservations, setReservations] = useState<AdminReservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(
     null
   );
@@ -49,12 +50,9 @@ export default function AdminReservationsPage() {
   }, [fetchReservations]);
 
   const handleAdminCancel = async (id: string) => {
-    if (!confirm('Como Administrador puedes cancelar esta reserva sin restricción de 2 horas. ¿Continuar?')) {
-      return;
-    }
-
     setCancellingId(id);
     setFeedback(null);
+    setConfirmingId(null);
 
     try {
       const res = await fetch(`/api/reservations/${id}/cancel`, { method: 'PATCH' });
@@ -90,7 +88,7 @@ export default function AdminReservationsPage() {
             setLoading(true);
             fetchReservations();
           }}
-          className="text-xs bg-white hover:bg-gray-100 text-gray-700 font-medium px-3 py-2 rounded-lg border border-gray-300 transition"
+          className="text-xs bg-white hover:bg-gray-100 text-gray-700 font-semibold px-3 py-2 rounded-xl border border-gray-300 transition shadow-sm"
         >
           🔄 Recargar
         </button>
@@ -98,24 +96,27 @@ export default function AdminReservationsPage() {
 
       {feedback && (
         <div
-          className={`p-4 rounded-lg text-sm border flex items-center justify-between ${
+          className={`p-4 rounded-xl text-sm border flex items-center justify-between shadow-sm animate-fadeIn ${
             feedback.type === 'success'
-              ? 'bg-green-50 border-green-200 text-green-800'
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
               : 'bg-red-50 border-red-200 text-red-800'
           }`}
         >
-          <span>{feedback.message}</span>
-          <button onClick={() => setFeedback(null)} className="text-xs font-bold px-2 py-0.5">
+          <div className="flex items-center gap-2">
+            <span>{feedback.type === 'success' ? '✅' : '⚠️'}</span>
+            <span className="font-medium">{feedback.message}</span>
+          </div>
+          <button onClick={() => setFeedback(null)} className="text-xs font-bold px-2 py-0.5 rounded">
             ✕
           </button>
         </div>
       )}
 
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
         {loading ? (
-          <div className="p-8 text-center text-gray-500 text-sm">Cargando reservas...</div>
+          <div className="p-10 text-center text-gray-500 text-sm">Cargando reservas...</div>
         ) : reservations.length === 0 ? (
-          <div className="p-8 text-center text-gray-500 text-sm">
+          <div className="p-10 text-center text-gray-500 text-sm">
             No hay reservas registradas en el sistema.
           </div>
         ) : (
@@ -149,7 +150,7 @@ export default function AdminReservationsPage() {
                       <span
                         className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
                           r.status === 'CONFIRMED'
-                            ? 'bg-green-100 text-green-800'
+                            ? 'bg-emerald-100 text-emerald-800'
                             : 'bg-gray-100 text-gray-600'
                         }`}
                       >
@@ -158,13 +159,30 @@ export default function AdminReservationsPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       {r.status === 'CONFIRMED' ? (
-                        <button
-                          onClick={() => handleAdminCancel(r.id)}
-                          disabled={cancellingId === r.id}
-                          className="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1 rounded font-medium disabled:opacity-50"
-                        >
-                          {cancellingId === r.id ? '...' : 'Cancelar'}
-                        </button>
+                        confirmingId === r.id ? (
+                          <div className="inline-flex items-center gap-1.5">
+                            <button
+                              onClick={() => handleAdminCancel(r.id)}
+                              disabled={cancellingId === r.id}
+                              className="text-xs bg-red-600 hover:bg-red-700 text-white font-bold px-2 py-1 rounded shadow-sm disabled:opacity-50"
+                            >
+                              {cancellingId === r.id ? '...' : 'Sí, cancelar'}
+                            </button>
+                            <button
+                              onClick={() => setConfirmingId(null)}
+                              className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded"
+                            >
+                              No
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmingId(r.id)}
+                            className="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1 rounded font-semibold"
+                          >
+                            Cancelar
+                          </button>
+                        )
                       ) : (
                         <span className="text-xs text-gray-400">Cancelada</span>
                       )}

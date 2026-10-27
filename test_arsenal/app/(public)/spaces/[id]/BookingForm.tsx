@@ -12,7 +12,7 @@ interface BookingFormProps {
 export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
   const router = useRouter();
 
-  // Fecha predeterminada: Mañana a las 09:00 UTC
+  // Fecha por defecto: Mañana
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const defaultDateStr = tomorrow.toISOString().split('T')[0];
@@ -20,42 +20,40 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
   const [date, setDate] = useState<string>(defaultDateStr);
   const [startHour, setStartHour] = useState<number>(9);
   const [durationHours, setDurationHours] = useState<number>(2);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [needsAuth, setNeedsAuth] = useState<boolean>(false);
 
-  // Calcular precio estimado
   const totalPrice = (pricePerHour * durationHours).toFixed(2);
   const endHour = startHour + durationHours;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
     setNeedsAuth(false);
 
     try {
       if (!date) {
-        setError('Por favor selecciona una fecha');
-        setLoading(false);
+        setErrorMessage('Por favor selecciona una fecha válida.');
+        setIsSubmitting(false);
         return;
       }
 
       const [yearStr, monthStr, dayStr] = date.split('-');
       const year = parseInt(yearStr, 10);
-      const month = parseInt(monthStr, 10) - 1; // 0-indexed
+      const month = parseInt(monthStr, 10) - 1;
       const day = parseInt(dayStr, 10);
 
-      // Crear Date en UTC para garantizar horas exactas según la regla del backend
+      // Fecha en UTC con minutos 00 exactos para cumplir las reglas del servidor
       const startUtc = new Date(Date.UTC(year, month, day, startHour, 0, 0, 0));
       const endUtc = new Date(Date.UTC(year, month, day, startHour + durationHours, 0, 0, 0));
 
       const response = await fetch('/api/reservations', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           spaceId,
           startTime: startUtc.toISOString(),
@@ -68,139 +66,157 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
       if (!response.ok) {
         if (response.status === 401) {
           setNeedsAuth(true);
-          setError('Debes iniciar sesión para realizar una reserva.');
+          setErrorMessage('Debes iniciar sesión para confirmar tu reserva.');
         } else {
-          setError(data.error || 'No se pudo completar la reserva. Verifica el horario.');
+          setErrorMessage(data.error || 'No se pudo procesar la reserva. Revisa el horario elegido.');
         }
-        setLoading(false);
+        setIsSubmitting(false);
         return;
       }
 
-      setSuccess(true);
+      setSuccessMessage('¡Reserva creada exitosamente! Redirigiendo a tu panel...');
       setTimeout(() => {
         router.push('/dashboard');
         router.refresh();
-      }, 1500);
-    } catch (err: unknown) {
-      console.error('Error al reservar:', err);
-      setError('Error de conexión con el servidor. Intenta nuevamente.');
-    } finally {
-      setLoading(false);
+      }, 1200);
+    } catch {
+      setErrorMessage('Error de conexión con el servidor. Intenta de nuevo.');
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-      <h3 className="text-xl font-bold text-gray-900 mb-2">Reservar este espacio</h3>
-      <p className="text-gray-500 text-xs mb-6">
-        Horario de atención: 07:00 a 21:00 UTC · Duración permitida: 1 a 4 horas exactas
-      </p>
+    <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-md">
+      <div className="border-b border-gray-100 pb-4 mb-5">
+        <h3 className="text-xl font-bold text-gray-900">Reservar Espacio</h3>
+        <p className="text-gray-500 text-xs mt-1">
+          Atención: 07:00 a 21:00 UTC · Duración: 1 a 4 horas consecutivas
+        </p>
+      </div>
 
-      {error && (
-        <div className="mb-5 p-3.5 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <span>⚠️</span>
-            <span>{error}</span>
+      {/* Alerta de Error Elegante */}
+      {errorMessage && (
+        <div className="mb-5 p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl text-sm flex flex-col gap-2 animate-fadeIn">
+          <div className="flex items-start gap-2.5">
+            <span className="text-lg leading-none">⚠️</span>
+            <div className="flex-1 font-medium">{errorMessage}</div>
+            <button
+              type="button"
+              onClick={() => setErrorMessage(null)}
+              className="text-red-400 hover:text-red-600 text-xs font-bold"
+            >
+              ✕
+            </button>
           </div>
           {needsAuth && (
-            <Link
-              href="/login"
-              className="inline-block mt-1 bg-red-600 hover:bg-red-700 text-white font-medium text-xs px-3 py-1.5 rounded transition text-center"
-            >
-              Iniciar Sesión Ahora →
-            </Link>
+            <div className="mt-2 pt-2 border-t border-red-200">
+              <Link
+                href="/login"
+                className="w-full block text-center bg-red-600 hover:bg-red-700 text-white font-semibold text-xs py-2 px-3 rounded-lg shadow-sm transition"
+              >
+                Iniciar Sesión Aquí →
+              </Link>
+            </div>
           )}
         </div>
       )}
 
-      {success && (
-        <div className="mb-5 p-3.5 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg flex items-center gap-2">
-          <span>✅</span>
-          <span>¡Reserva confirmada con éxito! Redirigiendo a tu panel...</span>
+      {/* Alerta de Éxito */}
+      {successMessage && (
+        <div className="mb-5 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-sm flex items-center gap-2.5 animate-fadeIn">
+          <span className="text-lg leading-none">✅</span>
+          <span className="font-semibold">{successMessage}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Selección de Fecha */}
+        {/* Fecha */}
         <div>
-          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
-            Fecha de la reserva
+          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+            Fecha de reserva
           </label>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+            className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition"
             required
           />
         </div>
 
-        {/* Hora de Inicio */}
+        {/* Hora de inicio */}
         <div>
-          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
-            Hora de Inicio
+          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+            Hora de inicio (07:00 - 20:00)
           </label>
           <select
             value={startHour}
             onChange={(e) => setStartHour(parseInt(e.target.value, 10))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white"
+            className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition"
           >
-            {[7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((hour) => {
-              const hourLabel = `${hour.toString().padStart(2, '0')}:00`;
-              return (
-                <option key={hour} value={hour}>
-                  {hourLabel}
-                </option>
-              );
-            })}
+            {[7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((hour) => (
+              <option key={hour} value={hour}>
+                {hour.toString().padStart(2, '0')}:00 UTC
+              </option>
+            ))}
           </select>
         </div>
 
         {/* Duración */}
         <div>
-          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
-            Duración (Horas)
+          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+            Duración
           </label>
           <select
             value={durationHours}
             onChange={(e) => setDurationHours(parseInt(e.target.value, 10))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white"
+            className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition"
           >
             {[1, 2, 3, 4]
               .filter((dur) => startHour + dur <= 21)
               .map((dur) => (
                 <option key={dur} value={dur}>
-                  {dur} {dur === 1 ? 'hora' : 'horas'} (hasta las {(startHour + dur).toString().padStart(2, '0')}:00)
+                  {dur} {dur === 1 ? 'hora' : 'horas'} (hasta las {(startHour + dur).toString().padStart(2, '0')}:00 UTC)
                 </option>
               ))}
           </select>
         </div>
 
-        {/* Resumen de Tarifa */}
-        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-4">
+        {/* Resumen Financiero */}
+        <div className="bg-indigo-50/60 border border-indigo-100 rounded-xl p-4 my-4">
           <div className="flex justify-between text-xs text-gray-600 mb-1">
             <span>Tarifa por hora:</span>
-            <span>${pricePerHour.toFixed(2)}/h</span>
+            <span className="font-semibold text-gray-900">${pricePerHour.toFixed(2)}/h</span>
           </div>
           <div className="flex justify-between text-xs text-gray-600 mb-2">
-            <span>Horario seleccionado:</span>
-            <span>
-              {startHour.toString().padStart(2, '0')}:00 - {endHour.toString().padStart(2, '0')}:00
+            <span>Horario elegido:</span>
+            <span className="font-semibold text-gray-900">
+              {startHour.toString().padStart(2, '0')}:00 - {endHour.toString().padStart(2, '0')}:00 UTC
             </span>
           </div>
-          <div className="border-t border-gray-200 pt-2 flex justify-between items-center font-bold text-gray-900">
-            <span className="text-sm">Total estimado:</span>
-            <span className="text-lg text-indigo-600">${totalPrice}</span>
+          <div className="border-t border-indigo-100 pt-2 flex justify-between items-center">
+            <span className="text-sm font-bold text-gray-800">Total a pagar:</span>
+            <span className="text-xl font-extrabold text-indigo-700">${totalPrice}</span>
           </div>
         </div>
 
-        {/* Botón de Enviar */}
+        {/* Botón de Envío con Estado de Carga */}
         <button
           type="submit"
-          disabled={loading || success || endHour > 21}
-          className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white font-semibold py-2.5 px-4 rounded-lg shadow transition"
+          disabled={isSubmitting || Boolean(successMessage) || endHour > 21}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white font-bold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2"
         >
-          {loading ? 'Procesando reserva...' : 'Confirmar Reserva'}
+          {isSubmitting ? (
+            <>
+              <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              <span>Procesando reserva...</span>
+            </>
+          ) : (
+            <span>Confirmar y Reservar</span>
+          )}
         </button>
       </form>
     </div>

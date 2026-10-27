@@ -9,19 +9,20 @@ interface LogoutButtonProps {
 }
 
 export function LogoutButton({
-  className = 'text-xs bg-gray-100 hover:bg-red-50 hover:text-red-600 text-gray-700 px-3 py-1.5 rounded font-medium transition',
+  className = 'bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm transition disabled:opacity-50',
   label = 'Cerrar Sesión',
   redirectTo = '/login',
 }: LogoutButtonProps) {
-  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogout = async () => {
-    setLoading(true);
+    setIsSubmitting(true);
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
     } catch (err) {
       console.error('Error al cerrar sesión:', err);
     } finally {
+      setIsSubmitting(false);
       window.location.href = redirectTo;
     }
   };
@@ -30,10 +31,10 @@ export function LogoutButton({
     <button
       type="button"
       onClick={handleLogout}
-      disabled={loading}
+      disabled={isSubmitting}
       className={className}
     >
-      {loading ? 'Saliendo...' : label}
+      {isSubmitting ? 'Cerrando sesión...' : label}
     </button>
   );
 }

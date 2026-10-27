@@ -9,13 +9,13 @@ export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    setIsSubmitting(true);
+    setErrorMessage(null);
 
     try {
       const res = await fetch('/api/auth/register', {
@@ -27,19 +27,18 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Error al crear la cuenta');
-        setLoading(false);
+        setErrorMessage(data.error || 'Error al crear la cuenta');
+        setIsSubmitting(false);
         return;
       }
 
-      // Refrescar el árbol de componentes de Next.js antes de redirigir
       router.refresh();
       setTimeout(() => {
         window.location.href = '/dashboard';
       }, 100);
     } catch {
-      setError('Error al comunicarse con el servidor.');
-      setLoading(false);
+      setErrorMessage('Error al comunicarse con el servidor.');
+      setIsSubmitting(false);
     }
   };
 
@@ -50,16 +49,25 @@ export default function RegisterPage() {
         Únete a CoSpace para reservar salas y oficinas privadas
       </p>
 
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-center gap-2">
-          <span>⚠️</span>
-          <span>{error}</span>
+      {errorMessage && (
+        <div className="mb-5 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center justify-between shadow-sm animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <span className="text-sm">⚠️</span>
+            <span className="font-medium">{errorMessage}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setErrorMessage(null)}
+            className="text-xs font-bold text-red-400 hover:text-red-700 ml-2"
+          >
+            ✕
+          </button>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
             Nombre Completo
           </label>
           <input
@@ -67,14 +75,14 @@ export default function RegisterPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Juan Pérez"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition"
             required
             minLength={2}
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
             Correo electrónico
           </label>
           <input
@@ -82,13 +90,13 @@ export default function RegisterPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu-correo@ejemplo.com"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition"
             required
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+          <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
             Contraseña
           </label>
           <input
@@ -96,7 +104,7 @@ export default function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mínimo 6 caracteres"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition"
             required
             minLength={6}
           />
@@ -104,16 +112,26 @@ export default function RegisterPage() {
 
         <button
           type="submit"
-          disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow transition disabled:bg-gray-400 text-sm"
+          disabled={isSubmitting}
+          className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition text-sm flex items-center justify-center gap-2"
         >
-          {loading ? 'Registrando...' : 'Registrarse'}
+          {isSubmitting ? (
+            <>
+              <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              <span>Registrando cuenta...</span>
+            </>
+          ) : (
+            <span>Registrarse en CoSpace</span>
+          )}
         </button>
       </form>
 
       <div className="mt-6 text-center text-xs text-gray-500">
         ¿Ya tienes una cuenta?{' '}
-        <Link href="/login" className="text-indigo-600 font-semibold hover:underline">
+        <Link href="/login" className="text-indigo-600 font-bold hover:underline">
           Inicia sesión aquí
         </Link>
       </div>

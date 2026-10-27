@@ -20,7 +20,8 @@ interface ReservationItem {
 export default function DashboardPage() {
   const [reservations, setReservations] = useState<ReservationItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(
     null
   );
@@ -33,7 +34,7 @@ export default function DashboardPage() {
         setReservations(data.reservations || []);
       } else {
         setFeedback({
-          message: 'Error al cargar tus reservas. Inicia sesión nuevamente si el problema persiste.',
+          message: 'Error al consultar tus reservas. Inicia sesión nuevamente si el problema persiste.',
           type: 'error',
         });
       }
@@ -52,12 +53,9 @@ export default function DashboardPage() {
   }, [fetchReservations]);
 
   const handleCancelReservation = async (reservationId: string) => {
-    if (!confirm('¿Estás seguro de que deseas cancelar esta reserva?')) {
-      return;
-    }
-
-    setActionLoading(reservationId);
+    setCancellingId(reservationId);
     setFeedback(null);
+    setConfirmingId(null);
 
     try {
       const res = await fetch(`/api/reservations/${reservationId}/cancel`, {
@@ -79,7 +77,6 @@ export default function DashboardPage() {
         type: 'success',
       });
 
-      // Actualizar lista local de reservas
       setReservations((prev) =>
         prev.map((r) => (r.id === reservationId ? { ...r, status: 'CANCELLED' } : r))
       );
@@ -89,7 +86,7 @@ export default function DashboardPage() {
         type: 'error',
       });
     } finally {
-      setActionLoading(null);
+      setCancellingId(null);
     }
   };
 
@@ -115,31 +112,31 @@ export default function DashboardPage() {
               setLoading(true);
               fetchReservations();
             }}
-            className="text-xs bg-white hover:bg-gray-100 text-gray-700 font-medium px-3.5 py-2 rounded-lg border border-gray-300 transition"
+            className="text-xs bg-white hover:bg-gray-100 text-gray-700 font-semibold px-3.5 py-2 rounded-xl border border-gray-300 transition shadow-sm"
           >
             🔄 Actualizar
           </button>
           <Link
             href="/spaces"
-            className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg shadow-sm transition"
+            className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl shadow-sm transition"
           >
             + Nueva Reserva
           </Link>
         </div>
       </div>
 
-      {/* Mensajes de Alerta */}
+      {/* Mensajes de Feedback Estilizados */}
       {feedback && (
         <div
-          className={`p-4 rounded-lg text-sm border flex items-center justify-between ${
+          className={`p-4 rounded-xl text-sm border flex items-center justify-between shadow-sm animate-fadeIn ${
             feedback.type === 'success'
-              ? 'bg-green-50 border-green-200 text-green-800'
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
               : 'bg-red-50 border-red-200 text-red-800'
           }`}
         >
-          <div className="flex items-center gap-2">
-            <span>{feedback.type === 'success' ? '✅' : '⚠️'}</span>
-            <span>{feedback.message}</span>
+          <div className="flex items-center gap-2.5">
+            <span className="text-lg">{feedback.type === 'success' ? '✅' : '⚠️'}</span>
+            <span className="font-medium">{feedback.message}</span>
           </div>
           <button
             onClick={() => setFeedback(null)}
@@ -157,20 +154,23 @@ export default function DashboardPage() {
             <span>🟢</span> Reservas Confirmadas ({activeReservations.length})
           </h2>
           <span className="text-xs text-gray-500">
-            Regla: Las cancelaciones deben hacerse con al menos 2 horas de anticipación
+            Regla: Cancelaciones con al menos 2 horas de anticipación
           </span>
         </div>
 
         {loading ? (
-          <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
+          <div className="text-center py-12 bg-white rounded-2xl border border-gray-200">
+            <div className="inline-block animate-spin h-6 w-6 border-2 border-indigo-600 border-t-transparent rounded-full mb-2"></div>
             <p className="text-gray-500 text-sm">Cargando tus reservas...</p>
           </div>
         ) : activeReservations.length === 0 ? (
-          <div className="text-center py-10 bg-white rounded-xl border border-gray-200 p-6">
-            <p className="text-gray-500 text-sm mb-3">No tienes reservas activas en este momento.</p>
+          <div className="text-center py-12 bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+            <div className="text-4xl mb-3">📅</div>
+            <h3 className="text-base font-bold text-gray-800 mb-1">Sin reservas activas</h3>
+            <p className="text-gray-500 text-sm mb-4">No tienes horarios reservados en este momento.</p>
             <Link
               href="/spaces"
-              className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition"
+              className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition"
             >
               Explorar espacios disponibles
             </Link>
@@ -180,12 +180,12 @@ export default function DashboardPage() {
             {activeReservations.map((item) => (
               <div
                 key={item.id}
-                className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow transition flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition flex flex-col md:flex-row md:items-center md:justify-between gap-4"
               >
                 <div>
                   <div className="flex items-center gap-3 mb-1">
                     <h3 className="font-bold text-gray-900 text-base">{item.space.name}</h3>
-                    <span className="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded-full">
+                    <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full">
                       CONFIRMED
                     </span>
                   </div>
@@ -197,18 +197,36 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-3 md:pt-0">
                   <div className="text-right">
                     <div className="text-xs text-gray-500">Total a pagar</div>
-                    <div className="text-lg font-bold text-indigo-600">
+                    <div className="text-lg font-extrabold text-indigo-600">
                       ${Number(item.totalPrice).toFixed(2)}
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => handleCancelReservation(item.id)}
-                    disabled={actionLoading === item.id}
-                    className="bg-white hover:bg-red-50 text-red-600 border border-red-300 hover:border-red-400 text-xs font-semibold py-2 px-3.5 rounded-lg transition disabled:opacity-50"
-                  >
-                    {actionLoading === item.id ? 'Cancelando...' : 'Cancelar Reserva'}
-                  </button>
+                  {confirmingId === item.id ? (
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleCancelReservation(item.id)}
+                        disabled={cancellingId === item.id}
+                        className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-2 px-3 rounded-lg shadow transition disabled:opacity-50"
+                      >
+                        {cancellingId === item.id ? 'Cancelando...' : 'Sí, cancelar'}
+                      </button>
+                      <button
+                        onClick={() => setConfirmingId(null)}
+                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold py-2 px-3 rounded-lg transition"
+                      >
+                        Atrás
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmingId(item.id)}
+                      disabled={cancellingId === item.id}
+                      className="bg-white hover:bg-red-50 text-red-600 border border-red-300 hover:border-red-400 text-xs font-semibold py-2 px-3.5 rounded-lg transition"
+                    >
+                      Cancelar Reserva
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -227,12 +245,12 @@ export default function DashboardPage() {
             {pastOrCancelled.map((item) => (
               <div
                 key={item.id}
-                className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2 opacity-80"
+                className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2 opacity-80"
               >
                 <div>
                   <div className="flex items-center gap-2">
                     <h4 className="font-semibold text-gray-700 text-sm">{item.space.name}</h4>
-                    <span className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded">
+                    <span className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded font-medium">
                       CANCELLED
                     </span>
                   </div>
