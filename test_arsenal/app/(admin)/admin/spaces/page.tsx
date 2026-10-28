@@ -1,7 +1,19 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, Plus, AlertCircle, CheckCircle2, X } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import {
+  RefreshCw,
+  Plus,
+  AlertCircle,
+  CheckCircle2,
+  X,
+  Pencil,
+  Ban,
+  Building2,
+  DollarSign,
+  AlertTriangle,
+  Image as ImageIcon,
+} from 'lucide-react';
 
 interface SpaceItem {
   id: string;
@@ -22,13 +34,18 @@ export default function AdminSpacesPage() {
     null
   );
 
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [newName, setNewName] = useState('');
-  const [newDescription, setNewDescription] = useState('');
-  const [newPrice, setNewPrice] = useState('25.00');
-  const [newImageUrl, setNewImageUrl] = useState('');
+  // Estado del Formulario Unificado (Creación y Edición)
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingSpace, setEditingSpace] = useState<SpaceItem | null>(null);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [pricePerHour, setPricePerHour] = useState('25.00');
+  const [imageUrl, setImageUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const formRef = useRef<HTMLDivElement>(null);
+
+  // Consultar todos los espacios (incluidos inactivos para ADMIN)
   const fetchSpaces = useCallback(async () => {
     try {
       const res = await fetch('/api/spaces?all=true');
@@ -55,6 +72,130 @@ export default function AdminSpacesPage() {
     fetchSpaces();
   }, [fetchSpaces]);
 
+  // Abrir formulario para nuevo espacio
+  const handleOpenCreate = () => {
+    setEditingSpace(null);
+    setName('');
+    setDescription('');
+    setPricePerHour('25.00');
+    setImageUrl('');
+    setIsFormOpen(true);
+    setFeedback(null);
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  };
+
+  // Abrir formulario para editar espacio existente
+  const handleOpenEdit = (space: SpaceItem) => {
+    setEditingSpace(space);
+    setName(space.name);
+    setDescription(space.description);
+    setPricePerHour(String(space.pricePerHour));
+    setImageUrl(space.imageUrl || '');
+    setIsFormOpen(true);
+    setFeedback(null);
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  };
+
+  // Cerrar y resetear formulario
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+    setEditingSpace(null);
+    setName('');
+    setDescription('');
+    setPricePerHour('25.00');
+    setImageUrl('');
+  };
+
+  // Enviar formulario (POST para crear o PATCH para editar)
+  const handleSubmitForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setFeedback(null);
+
+    const priceNum = parseFloat(pricePerHour);
+    if (isNaN(priceNum) || priceNum <= 0) {
+      setFeedback({
+        message: 'El precio por hora debe ser un número válido mayor a 0.',
+        type: 'error',
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    const payload = {
+      name: name.trim(),
+      description: description.trim(),
+      pricePerHour: priceNum,
+      imageUrl: imageUrl.trim() ? imageUrl.trim() : null,
+    };
+
+    try {
+      if (editingSpace) {
+        // Modo Edición -> PATCH /api/spaces/[id]
+        const res = await fetch(`/api/spaces/${editingSpace.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          setFeedback({
+            message: data.error || 'Error al actualizar el espacio.',
+            type: 'error',
+          });
+          setIsSubmitting(false);
+          return;
+        }
+
+        setFeedback({
+          message: `Espacio "${payload.name}" actualizado exitosamente.`,
+          type: 'success',
+        });
+        handleCloseForm();
+        fetchSpaces();
+      } else {
+        // Modo Creación -> POST /api/spaces
+        const res = await fetch('/api/spaces', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          setFeedback({
+            message: data.error || 'Error al crear el espacio.',
+            type: 'error',
+          });
+          setIsSubmitting(false);
+          return;
+        }
+
+        setFeedback({
+          message: `Espacio "${payload.name}" creado exitosamente.`,
+          type: 'success',
+        });
+        handleCloseForm();
+        fetchSpaces();
+      }
+    } catch {
+      setFeedback({
+        message: 'Error de red al procesar la solicitud.',
+        type: 'error',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Desactivación con verificación estricta de Regla 13 y manejo de error 409
   const handleDeactivate = async (spaceId: string, spaceName: string) => {
     setActionLoading(spaceId);
     setFeedback(null);
@@ -67,11 +208,20 @@ export default function AdminSpacesPage() {
 
       const data = await res.json();
 
-      if (!res.ok) {
+      if (res.status === 409) {
+        // Conflicto: Regla 13 - Reservas futuras existentes
         setFeedback({
           message:
             data.error ||
-            'No se puede desactivar el espacio porque tiene reservas futuras confirmadas (Regla 13).',
+            `Conflicto (409): No se puede desactivar "${spaceName}" porque cuenta con reservas futuras confirmadas (Regla 13 de negocio).`,
+          type: 'error',
+        });
+        return;
+      }
+
+      if (!res.ok) {
+        setFeedback({
+          message: data.error || `Error (${res.status}) al intentar desactivar el espacio.`,
           type: 'error',
         });
         return;
@@ -87,7 +237,7 @@ export default function AdminSpacesPage() {
       );
     } catch {
       setFeedback({
-        message: 'Error al comunicarse con el servidor.',
+        message: 'Error de red al comunicarse con el servidor.',
         type: 'error',
       });
     } finally {
@@ -95,201 +245,220 @@ export default function AdminSpacesPage() {
     }
   };
 
-  const handleCreateSpace = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setFeedback(null);
-
-    try {
-      const res = await fetch('/api/spaces', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: newName,
-          description: newDescription,
-          pricePerHour: parseFloat(newPrice),
-          imageUrl: newImageUrl.trim() ? newImageUrl.trim() : null,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setFeedback({
-          message: data.error || 'Error al crear el espacio.',
-          type: 'error',
-        });
-        setIsSubmitting(false);
-        return;
-      }
-
-      setFeedback({
-        message: 'Espacio creado exitosamente.',
-        type: 'success',
-      });
-
-      setNewName('');
-      setNewDescription('');
-      setNewPrice('25.00');
-      setNewImageUrl('');
-      setShowCreateForm(false);
-      fetchSpaces();
-    } catch {
-      setFeedback({
-        message: 'Error de red al crear el espacio.',
-        type: 'error',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <div className="space-y-6">
+      {/* Encabezado y Acciones Principales */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-white/10">
         <div>
           <h1 className="text-xl font-bold text-white tracking-wide">Gestión de Espacios (Admin)</h1>
           <p className="text-zinc-400 text-xs mt-1">
-            Control de inventario, precios y desactivación bajo Regla 13
+            Control de inventario, edición de tarifas y desactivación lógica protegida (Regla 13)
           </p>
         </div>
 
-        <div className="flex gap-2.5">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => {
               setLoading(true);
               fetchSpaces();
             }}
             className="text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-semibold px-3.5 py-2 rounded-xl border border-white/10 transition shadow-sm inline-flex items-center gap-1.5"
+            title="Refrescar catálogo"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-amber-500 ${loading ? 'animate-spin' : ''}`} />
             <span>Refrescar</span>
           </button>
           <button
-            onClick={() => setShowCreateForm(!showCreateForm)}
+            onClick={() => (isFormOpen && !editingSpace ? handleCloseForm() : handleOpenCreate())}
             className="text-xs bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold px-4 py-2 rounded-xl shadow-lg shadow-amber-500/20 transition inline-flex items-center gap-1.5"
           >
-            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>{showCreateForm ? 'Cerrar Formulario' : 'Nuevo Espacio'}</span>
+            {isFormOpen && !editingSpace ? (
+              <>
+                <X className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span>Cerrar</span>
+              </>
+            ) : (
+              <>
+                <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span>Nuevo Espacio</span>
+              </>
+            )}
           </button>
         </div>
       </div>
 
-      {/* Alerta de Feedback */}
+      {/* Alerta de Feedback Visual (Sin alert() ni confirm()) */}
       {feedback && (
         <div
-          className={`p-4 rounded-xl text-sm border flex items-center justify-between shadow-lg ${
+          className={`p-4 rounded-xl text-sm border flex items-start justify-between shadow-xl backdrop-blur-md animate-fadeIn ${
             feedback.type === 'success'
-              ? 'bg-emerald-950/70 border-emerald-500/40 text-emerald-200'
-              : 'bg-red-950/70 border-red-500/40 text-red-200'
+              ? 'bg-emerald-950/80 border-emerald-500/50 text-emerald-200'
+              : 'bg-red-950/80 border-red-500/50 text-red-200'
           }`}
         >
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-start gap-3">
             {feedback.type === 'success' ? (
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
             ) : (
-              <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+              <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
             )}
-            <span className="font-medium">{feedback.message}</span>
+            <div>
+              <p className="font-semibold text-sm">
+                {feedback.type === 'success' ? 'Operación Exitosa' : 'Aviso del Sistema'}
+              </p>
+              <p className="text-xs mt-0.5 opacity-90 leading-relaxed">{feedback.message}</p>
+            </div>
           </div>
-          <button onClick={() => setFeedback(null)} className="text-zinc-400 hover:text-white">
+          <button
+            onClick={() => setFeedback(null)}
+            className="text-zinc-400 hover:text-white p-1 rounded-lg transition"
+            aria-label="Cerrar alerta"
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      {/* Formulario de Creación */}
-      {showCreateForm && (
-        <form
-          onSubmit={handleCreateSpace}
-          className="bg-zinc-900 border border-white/10 rounded-2xl p-6 shadow-2xl space-y-4 text-zinc-100 animate-fadeIn"
+      {/* Formulario Unificado (Creación / Edición) */}
+      {isFormOpen && (
+        <div
+          ref={formRef}
+          className="bg-zinc-900/90 border border-amber-500/30 rounded-2xl p-6 shadow-2xl backdrop-blur-md space-y-5 animate-fadeIn"
         >
-          <h2 className="text-base font-bold text-white mb-2">Crear Nuevo Espacio</h2>
+          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500">
+                {editingSpace ? <Pencil className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-white">
+                  {editingSpace ? `Editar Espacio: ${editingSpace.name}` : 'Crear Nuevo Espacio'}
+                </h2>
+                <p className="text-xs text-zinc-400">
+                  {editingSpace
+                    ? `Modificando registro ID: ${editingSpace.id}`
+                    : 'Ingresa los detalles para registrar un nuevo espacio en el catálogo'}
+                </p>
+              </div>
+            </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
-                Nombre del Espacio
-              </label>
-              <input
-                type="text"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                placeholder="Ej. Sala Ejecutiva VIP"
-                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 transition"
-                required
-              />
+            {editingSpace && (
+              <span className="px-2.5 py-1 text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full">
+                Modo Edición
+              </span>
+            )}
+          </div>
+
+          <form onSubmit={handleSubmitForm} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                  Nombre del Espacio *
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Ej. Suite Ejecutiva Black"
+                  className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+                  required
+                  minLength={3}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                  Precio por Hora (USD) *
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                    <DollarSign className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="1"
+                    value={pricePerHour}
+                    onChange={(e) => setPricePerHour(e.target.value)}
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+                    required
+                  />
+                </div>
+              </div>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
-                Precio por Hora (USD)
+                URL de Imagen (Opcional)
               </label>
-              <input
-                type="number"
-                step="0.01"
-                min="1"
-                value={newPrice}
-                onChange={(e) => setNewPrice(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 transition"
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                  <ImageIcon className="w-4 h-4" />
+                </div>
+                <input
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://images.unsplash.com/photo-..."
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                Descripción Completa *
+              </label>
+              <textarea
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Describe las amenidades, capacidad, equipos audiovisuales y ergonomía..."
+                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
                 required
+                minLength={5}
               />
             </div>
-          </div>
 
-          <div>
-            <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
-              URL de Imagen (Opcional)
-            </label>
-            <input
-              type="url"
-              value={newImageUrl}
-              onChange={(e) => setNewImageUrl(e.target.value)}
-              placeholder="https://images.unsplash.com/..."
-              className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 transition"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
-              Descripción
-            </label>
-            <textarea
-              rows={3}
-              value={newDescription}
-              onChange={(e) => setNewDescription(e.target.value)}
-              placeholder="Describe las comodidades, capacidad y ambiente del espacio..."
-              className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 transition"
-              required
-            />
-          </div>
-
-          <div className="flex justify-end gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => setShowCreateForm(false)}
-              className="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold px-4 py-2.5 rounded-xl border border-white/10"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="text-xs bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition disabled:opacity-50"
-            >
-              {isSubmitting ? 'Guardando espacio...' : 'Crear Espacio'}
-            </button>
-          </div>
-        </form>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleCloseForm}
+                className="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold px-4 py-2.5 rounded-xl border border-white/10 transition"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="text-xs bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition disabled:opacity-50 inline-flex items-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-black" />
+                    <span>{editingSpace ? 'Guardando cambios...' : 'Creando espacio...'}</span>
+                  </>
+                ) : (
+                  <span>{editingSpace ? 'Guardar Cambios' : 'Crear Espacio'}</span>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       )}
 
       {/* Tabla de Espacios */}
       <div className="bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
         {loading ? (
-          <div className="p-10 text-center text-zinc-400 text-sm">Cargando espacios...</div>
+          <div className="p-12 text-center text-zinc-400 text-sm flex flex-col items-center justify-center gap-3">
+            <RefreshCw className="w-6 h-6 text-amber-500 animate-spin" />
+            <span>Cargando inventario de espacios...</span>
+          </div>
         ) : spaces.length === 0 ? (
-          <div className="p-10 text-center text-zinc-400 text-sm">
-            No se encontraron espacios registrados.
+          <div className="p-12 text-center text-zinc-400 text-sm">
+            <Building2 className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
+            <p className="font-semibold text-white">No se encontraron espacios registrados</p>
+            <p className="text-xs text-zinc-500 mt-1">Crea el primer espacio usando el botón superior.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -297,63 +466,123 @@ export default function AdminSpacesPage() {
               <thead className="bg-zinc-950/80 text-xs font-bold text-zinc-400 uppercase border-b border-white/10">
                 <tr>
                   <th className="px-6 py-4">Espacio</th>
-                  <th className="px-6 py-4">Precio / Hora</th>
+                  <th className="px-6 py-4">Tarifa</th>
                   <th className="px-6 py-4">Estado</th>
                   <th className="px-6 py-4 text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/10">
                 {spaces.map((space) => (
-                  <tr key={space.id} className="hover:bg-zinc-800/40 transition">
+                  <tr
+                    key={space.id}
+                    className={`transition ${
+                      editingSpace?.id === space.id
+                        ? 'bg-amber-500/5 border-l-2 border-amber-500'
+                        : 'hover:bg-zinc-800/40'
+                    }`}
+                  >
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-white">{space.name}</div>
-                      <div className="text-xs text-zinc-400 line-clamp-1">{space.description}</div>
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-11 h-11 rounded-xl bg-zinc-950 border border-white/10 overflow-hidden shrink-0 flex items-center justify-center">
+                          {space.imageUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={space.imageUrl}
+                              alt={space.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLElement).style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <Building2 className="w-5 h-5 text-zinc-600" />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-semibold text-white truncate">{space.name}</div>
+                          <div className="text-xs text-zinc-400 line-clamp-1 max-w-xs sm:max-w-md">
+                            {space.description}
+                          </div>
+                        </div>
+                      </div>
                     </td>
-                    <td className="px-6 py-4 font-bold text-amber-500">
-                      ${Number(space.pricePerHour).toFixed(2)}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="font-bold text-amber-500">
+                        ${Number(space.pricePerHour).toFixed(2)}
+                      </div>
+                      <div className="text-[11px] text-zinc-500">por hora</div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       {space.isActive ? (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/70 text-emerald-400 border border-emerald-500/30">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                           Activo
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-zinc-800 text-zinc-400 border border-white/10">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-zinc-800 text-zinc-400 border border-white/10">
+                          <Ban className="w-3 h-3 text-zinc-500" />
                           Inactivo
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      {space.isActive ? (
-                        confirmDeactivateId === space.id ? (
-                          <div className="inline-flex items-center gap-2">
+                    <td className="px-6 py-4 text-right whitespace-nowrap">
+                      <div className="inline-flex items-center justify-end gap-2">
+                        {/* Botón de Edición */}
+                        <button
+                          onClick={() => handleOpenEdit(space)}
+                          className={`text-xs px-3 py-1.5 rounded-lg font-semibold inline-flex items-center gap-1.5 transition border ${
+                            editingSpace?.id === space.id
+                              ? 'bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/20'
+                              : 'bg-zinc-950 hover:bg-zinc-800 text-amber-400 hover:text-amber-300 border-amber-500/25'
+                          }`}
+                          title="Editar información del espacio"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                          <span>Editar</span>
+                        </button>
+
+                        {/* Botón de Desactivación Lógica (Regla 13) */}
+                        {space.isActive ? (
+                          confirmDeactivateId === space.id ? (
+                            <div className="inline-flex items-center gap-1.5">
+                              <button
+                                onClick={() => handleDeactivate(space.id, space.name)}
+                                disabled={actionLoading === space.id}
+                                className="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition disabled:opacity-50 inline-flex items-center gap-1"
+                              >
+                                {actionLoading === space.id ? (
+                                  <>
+                                    <RefreshCw className="w-3 h-3 animate-spin" />
+                                    <span>Verificando...</span>
+                                  </>
+                                ) : (
+                                  <span>¿Confirmar?</span>
+                                )}
+                              </button>
+                              <button
+                                onClick={() => setConfirmDeactivateId(null)}
+                                className="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium px-2.5 py-1.5 rounded-lg transition border border-white/10"
+                              >
+                                Cancelar
+                              </button>
+                            </div>
+                          ) : (
                             <button
-                              onClick={() => handleDeactivate(space.id, space.name)}
+                              onClick={() => setConfirmDeactivateId(space.id)}
                               disabled={actionLoading === space.id}
-                              className="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition disabled:opacity-50"
+                              className="text-xs bg-zinc-950 hover:bg-red-950/70 text-red-400 hover:text-red-300 border border-red-900/40 hover:border-red-500/40 font-medium px-3 py-1.5 rounded-lg transition disabled:opacity-50 inline-flex items-center gap-1"
+                              title="Desactivar espacio (Regla 13)"
                             >
-                              {actionLoading === space.id ? 'Comprobando...' : 'Confirmar'}
+                              <Ban className="w-3.5 h-3.5" />
+                              <span>Desactivar</span>
                             </button>
-                            <button
-                              onClick={() => setConfirmDeactivateId(null)}
-                              className="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium px-2.5 py-1.5 rounded-lg transition border border-white/10"
-                            >
-                              Cancelar
-                            </button>
-                          </div>
+                          )
                         ) : (
-                          <button
-                            onClick={() => setConfirmDeactivateId(space.id)}
-                            disabled={actionLoading === space.id}
-                            className="text-xs bg-zinc-950 hover:bg-red-950/70 text-red-400 border border-red-900/40 font-medium px-3.5 py-1.5 rounded-lg transition disabled:opacity-50 hover:border-red-500/40"
-                          >
-                            Desactivar
-                          </button>
-                        )
-                      ) : (
-                        <span className="text-xs text-zinc-500 font-medium">Desactivado</span>
-                      )}
+                          <span className="text-xs text-zinc-500 font-medium px-2 py-1">
+                            Desactivado
+                          </span>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
