@@ -97,20 +97,23 @@ export async function POST(request: Request) {
   }
 }
 
+export const dynamic = 'force-dynamic';
+
 // ----------------------------------------------------
 // GET /api/spaces (Listar espacios)
 // ----------------------------------------------------
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const includeInactive = searchParams.get('all') === 'true';
+    const isAdminRequested =
+      searchParams.get('admin') === 'true' || searchParams.get('all') === 'true';
 
-    // Si pide inactivos, comprobar si es admin
-    let whereClause = { isActive: true };
-    if (includeInactive) {
+    // Si pide inactivos mediante ?admin=true (o ?all=true), comprobar rol ADMIN
+    let whereClause: { isActive?: boolean } = { isActive: true };
+    if (isAdminRequested) {
       const session = await getAdminSession(request);
       if (session && session.role === 'ADMIN') {
-        whereClause = undefined as any; // Retornar todos
+        whereClause = {}; // Retornar todos (activos e inactivos)
       }
     }
 

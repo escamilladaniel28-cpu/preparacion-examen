@@ -45,10 +45,10 @@ export default function AdminSpacesPage() {
 
   const formRef = useRef<HTMLDivElement>(null);
 
-  // Consultar todos los espacios (incluidos inactivos para ADMIN)
+  // Consultar todos los espacios (incluidos inactivos para ADMIN con ?admin=true)
   const fetchSpaces = useCallback(async () => {
     try {
-      const res = await fetch('/api/spaces?all=true');
+      const res = await fetch('/api/spaces?admin=true', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setSpaces(data.spaces || []);
@@ -234,6 +234,44 @@ export default function AdminSpacesPage() {
 
       setSpaces((prev) =>
         prev.map((s) => (s.id === spaceId ? { ...s, isActive: false } : s))
+      );
+    } catch {
+      setFeedback({
+        message: 'Error de red al comunicarse con el servidor.',
+        type: 'error',
+      });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // Reactivación lógica de espacio (Solo ADMIN)
+  const handleActivate = async (spaceId: string, spaceName: string) => {
+    setActionLoading(spaceId);
+    setFeedback(null);
+
+    try {
+      const res = await fetch(`/api/spaces/${spaceId}/activate`, {
+        method: 'PATCH',
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setFeedback({
+          message: data.error || `Error (${res.status}) al reactivar el espacio.`,
+          type: 'error',
+        });
+        return;
+      }
+
+      setFeedback({
+        message: `Espacio "${spaceName}" reactivado con éxito.`,
+        type: 'success',
+      });
+
+      setSpaces((prev) =>
+        prev.map((s) => (s.id === spaceId ? { ...s, isActive: true } : s))
       );
     } catch {
       setFeedback({
@@ -489,7 +527,9 @@ export default function AdminSpacesPage() {
                     className={`transition ${
                       editingSpace?.id === space.id
                         ? 'bg-amber-500/5 border-l-2 border-amber-500'
-                        : 'hover:bg-zinc-800/40'
+                        : space.isActive
+                        ? 'hover:bg-zinc-800/40'
+                        : 'opacity-50 hover:opacity-80 bg-zinc-950/40'
                     }`}
                   >
                     <td className="px-6 py-4">
@@ -530,8 +570,8 @@ export default function AdminSpacesPage() {
                           Activo
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-zinc-800 text-zinc-400 border border-white/10">
-                          <Ban className="w-3 h-3 text-zinc-500" />
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-950/70 text-red-400 border border-red-500/30">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
                           Inactivo
                         </span>
                       )}
@@ -589,9 +629,24 @@ export default function AdminSpacesPage() {
                             </button>
                           )
                         ) : (
-                          <span className="text-xs text-zinc-500 font-medium px-2 py-1">
-                            Desactivado
-                          </span>
+                          <button
+                            onClick={() => handleActivate(space.id, space.name)}
+                            disabled={actionLoading === space.id}
+                            className="text-xs bg-emerald-950 hover:bg-emerald-900/80 text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 font-medium px-3 py-1.5 rounded-lg transition disabled:opacity-50 inline-flex items-center gap-1.5 shadow-sm"
+                            title="Reactivar espacio"
+                          >
+                            {actionLoading === space.id ? (
+                              <>
+                                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                <span>Reactivando...</span>
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span>Reactivar</span>
+                              </>
+                            )}
+                          </button>
                         )}
                       </div>
                     </td>
