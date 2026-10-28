@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { RefreshCw, Calendar, CheckCircle2, AlertCircle, X, Plus } from 'lucide-react';
+import { RefreshCw, Calendar, CheckCircle2, AlertCircle, X, Plus, Shield, ArrowRight } from 'lucide-react';
 import { LocalTime } from '@/components/shared/LocalTime';
 
 interface ReservationItem {
@@ -21,11 +21,26 @@ interface ReservationItem {
 export default function DashboardPage() {
   const [reservations, setReservations] = useState<ReservationItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(
     null
   );
+
+  const fetchSession = useCallback(async () => {
+    try {
+      const res = await fetch('/api/auth/me', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user?.role) {
+          setUserRole(data.user.role);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   const fetchReservations = useCallback(async () => {
     try {
@@ -50,8 +65,9 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
+    fetchSession();
     fetchReservations();
-  }, [fetchReservations]);
+  }, [fetchSession, fetchReservations]);
 
   const handleCancelReservation = async (reservationId: string) => {
     setCancellingId(reservationId);
@@ -127,6 +143,35 @@ export default function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      {/* Banner de Acceso Rápido para Administradores */}
+      {userRole === 'ADMIN' && (
+        <div className="bg-gradient-to-r from-amber-500/15 via-zinc-900 to-zinc-900 border border-amber-500/40 rounded-2xl p-5 shadow-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fadeIn">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+              <Shield className="w-5 h-5 stroke-[2.5]" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-bold text-white">Privilegios de Administrador Activos</h3>
+                <span className="text-[10px] bg-amber-500 text-black font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  ADMIN
+                </span>
+              </div>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                Accede a la interfaz de gestión para crear nuevos espacios, editar tarifas y aplicar desactivación protegida.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/admin/spaces"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold text-xs px-4 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition shrink-0"
+          >
+            <span>Gestionar Espacios (Admin)</span>
+            <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+          </Link>
+        </div>
+      )}
 
       {/* Mensajes de Feedback */}
       {feedback && (

@@ -34,8 +34,8 @@ export default function AdminSpacesPage() {
     null
   );
 
-  // Estado del Formulario Unificado (Creación y Edición)
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  // Estado del Formulario Unificado (Creación y Edición) - Abierto por defecto
+  const [isFormOpen, setIsFormOpen] = useState(true);
   const [editingSpace, setEditingSpace] = useState<SpaceItem | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -269,13 +269,24 @@ export default function AdminSpacesPage() {
             <span>Refrescar</span>
           </button>
           <button
-            onClick={() => (isFormOpen && !editingSpace ? handleCloseForm() : handleOpenCreate())}
+            onClick={() => {
+              if (editingSpace) {
+                handleOpenCreate();
+              } else {
+                setIsFormOpen(!isFormOpen);
+              }
+            }}
             className="text-xs bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold px-4 py-2 rounded-xl shadow-lg shadow-amber-500/20 transition inline-flex items-center gap-1.5"
           >
-            {isFormOpen && !editingSpace ? (
+            {editingSpace ? (
+              <>
+                <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span>Crear Nuevo</span>
+              </>
+            ) : isFormOpen ? (
               <>
                 <X className="w-3.5 h-3.5 stroke-[2.5]" />
-                <span>Cerrar</span>
+                <span>Ocultar Formulario</span>
               </>
             ) : (
               <>

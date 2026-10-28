@@ -20,7 +20,10 @@ export default function LoginPage() {
         if (res.ok) {
           const data = await res.json();
           if (data.user) {
-            router.replace('/dashboard');
+            const searchParams = new URLSearchParams(window.location.search);
+            const redirectParam = searchParams.get('redirect');
+            const target = redirectParam || (data.user.role === 'ADMIN' ? '/admin/spaces' : '/dashboard');
+            router.replace(target);
           }
         }
       } catch {
@@ -62,9 +65,14 @@ export default function LoginPage() {
         return;
       }
 
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirectParam = searchParams.get('redirect');
+      const targetDestination =
+        redirectParam || (data.user?.role === 'ADMIN' ? '/admin/spaces' : '/dashboard');
+
       router.refresh();
       setTimeout(() => {
-        window.location.href = '/dashboard';
+        window.location.href = targetDestination;
       }, 100);
     } catch {
       setErrorMessage('Error al comunicarse con el servidor. Intenta nuevamente.');

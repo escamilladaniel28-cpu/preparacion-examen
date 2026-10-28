@@ -3,25 +3,30 @@
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect, useCallback } from 'react';
-import { Building2, Globe } from 'lucide-react';
+import { Building2, Globe, Shield } from 'lucide-react';
 import { useLanguage } from '@/components/context/LanguageContext';
 
 interface NavbarProps {
   userName?: string;
+  userRole?: string;
 }
 
-export function Navbar({ userName: initialUserName }: NavbarProps) {
+export function Navbar({ userName: initialUserName, userRole: initialUserRole }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { toggleLang, t } = useLanguage();
   const [user, setUser] = useState<string | null>(initialUserName || null);
+  const [role, setRole] = useState<string | null>(initialUserRole || null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     if (initialUserName) {
       setUser(initialUserName);
     }
-  }, [initialUserName]);
+    if (initialUserRole) {
+      setRole(initialUserRole);
+    }
+  }, [initialUserName, initialUserRole]);
 
   const syncSession = useCallback(async () => {
     try {
@@ -30,8 +35,10 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
         const data = await res.json();
         if (data.user) {
           setUser(data.user.name || data.user.email);
+          setRole(data.user.role || null);
         } else {
           setUser(null);
+          setRole(null);
         }
       }
     } catch {
@@ -117,11 +124,35 @@ export function Navbar({ userName: initialUserName }: NavbarProps) {
                 {t('dashboard')}
               </Link>
             )}
+            {role === 'ADMIN' && (
+              <Link
+                href="/admin/spaces"
+                className={`px-3 py-1.5 rounded-lg transition inline-flex items-center gap-1.5 ${
+                  pathname?.startsWith('/admin')
+                    ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
+                    : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30'
+                }`}
+              >
+                <Shield className="w-3.5 h-3.5 text-amber-400" />
+                <span>Admin Espacios</span>
+              </Link>
+            )}
           </nav>
         </div>
 
         {/* Acciones del Usuario */}
-        <div className="flex items-center space-x-3 sm:space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          {role === 'ADMIN' && (
+            <Link
+              href="/admin/spaces"
+              className="sm:hidden inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-500 text-black shadow-md shadow-amber-500/20 transition"
+              title="Panel de Administración"
+            >
+              <Shield className="w-3 h-3 stroke-[2.5]" />
+              <span>Admin</span>
+            </Link>
+          )}
+
           <button
             onClick={toggleLang}
             type="button"

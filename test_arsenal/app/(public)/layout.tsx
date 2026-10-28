@@ -14,10 +14,11 @@ export default async function PublicLayout({
     session?.name || session?.email
       ? String(session.name || session.email)
       : undefined;
+  const userRole = session?.role;
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100">
-      <Navbar userName={userName} />
+      <Navbar userName={userName} userRole={userRole} />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>
