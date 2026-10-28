@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Building2 } from 'lucide-react';
+import { Building2, ArrowLeft } from 'lucide-react';
 
 export default function AuthLayout({
   children,
@@ -8,6 +8,17 @@ export default function AuthLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-zinc-950 text-zinc-100 p-4 relative overflow-hidden">
+      {/* Botón Volver al inicio */}
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-zinc-300 hover:text-white bg-zinc-900/80 hover:bg-zinc-800 border border-white/10 px-3.5 py-2 rounded-xl backdrop-blur-md transition shadow-md hover:border-amber-500/30"
+        >
+          <ArrowLeft className="w-3.5 h-3.5 text-amber-500" />
+          <span>Volver al inicio</span>
+        </Link>
+      </div>
+
       {/* Luz ambiental sutil en el fondo */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
 

@@ -141,6 +141,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (user.isActive === false) {
+      return NextResponse.json(
+        { error: 'Esta cuenta ha sido desactivada por un administrador.' },
+        { status: 403 }
+      );
+    }
+
     // Login exitoso: Limpiar contador de intentos fallidos para esta IP
     resetFailedAttempts(clientIp);
 

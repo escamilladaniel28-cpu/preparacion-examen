@@ -1,11 +1,30 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Building2 } from 'lucide-react';
+import { Building2, Shield } from 'lucide-react';
 import { useLanguage } from '@/components/context/LanguageContext';
 
 export function Footer() {
   const { t } = useLanguage();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkRole = async () => {
+      try {
+        const res = await fetch('/api/auth/me', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user?.role === 'ADMIN') {
+            setIsAdmin(true);
+          }
+        }
+      } catch {
+        // ignore
+      }
+    };
+    checkRole();
+  }, []);
 
   return (
     <footer className="bg-zinc-950 text-zinc-400 py-10 border-t border-white/10 mt-auto">
@@ -16,16 +35,22 @@ export function Footer() {
           </div>
           <span>{t('footerCopyright')}</span>
         </div>
-        <div className="flex space-x-6 text-xs sm:text-sm">
-          <Link href="/spaces" className="hover:text-amber-400 transition">
-            {t('footerSpaces')}
+        <div className="flex items-center space-x-6 text-xs sm:text-sm">
+          <Link href="/" className="hover:text-amber-400 transition font-medium">
+            Inicio
           </Link>
-          <Link href="/login" className="hover:text-amber-400 transition">
-            {t('footerAccess')}
+          <Link href="/spaces" className="hover:text-amber-400 transition font-medium">
+            Catálogo
           </Link>
-          <Link href="/dashboard" className="hover:text-amber-400 transition">
-            {t('footerDashboard')}
-          </Link>
+          {isAdmin && (
+            <Link
+              href="/admin/spaces"
+              className="text-amber-400 hover:text-amber-300 transition font-semibold inline-flex items-center gap-1.5"
+            >
+              <Shield className="w-3.5 h-3.5" />
+              <span>Panel Admin</span>
+            </Link>
+          )}
         </div>
       </div>
     </footer>

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Building2, Layers, Calendar, ExternalLink } from 'lucide-react';
+import { Building2, Layers, Calendar, ExternalLink, Users } from 'lucide-react';
 import { getSession } from '@/lib/auth';
 import { LogoutButton } from '@/components/shared/LogoutButton';
 
@@ -27,33 +27,40 @@ export default async function AdminLayout({
             </span>
             <LogoutButton
               label="Salir"
-              redirectTo="/login"
+              redirectTo="/"
               className="text-xs text-red-400 hover:text-red-300 px-2 py-1"
             />
           </div>
         </div>
 
         {/* Pestañas de Navegación Móvil */}
-        <div className="grid grid-cols-3 gap-1.5 text-xs">
+        <div className="grid grid-cols-4 gap-1 text-[11px]">
           <Link
             href="/admin/spaces"
-            className="flex items-center justify-center gap-1.5 py-2 px-2 bg-zinc-950 border border-amber-500/40 text-amber-400 rounded-lg font-semibold"
+            className="flex flex-col items-center justify-center py-2 px-1 bg-zinc-950 border border-white/10 hover:border-amber-500/40 text-amber-400 rounded-lg font-semibold transition text-center"
           >
-            <Layers className="w-3.5 h-3.5" />
+            <Layers className="w-3.5 h-3.5 mb-0.5" />
             <span>Espacios</span>
           </Link>
           <Link
-            href="/admin/reservations"
-            className="flex items-center justify-center gap-1.5 py-2 px-2 bg-zinc-800/80 hover:bg-zinc-800 text-zinc-300 rounded-lg font-medium border border-white/5"
+            href="/admin/users"
+            className="flex flex-col items-center justify-center py-2 px-1 bg-zinc-950 border border-white/10 hover:border-amber-500/40 text-amber-400 rounded-lg font-semibold transition text-center"
           >
-            <Calendar className="w-3.5 h-3.5 text-amber-500" />
+            <Users className="w-3.5 h-3.5 mb-0.5" />
+            <span>Usuarios</span>
+          </Link>
+          <Link
+            href="/admin/reservations"
+            className="flex flex-col items-center justify-center py-2 px-1 bg-zinc-800/80 hover:bg-zinc-800 text-zinc-300 rounded-lg font-medium border border-white/5 transition text-center"
+          >
+            <Calendar className="w-3.5 h-3.5 text-amber-500 mb-0.5" />
             <span>Reservas</span>
           </Link>
           <Link
             href="/spaces"
-            className="flex items-center justify-center gap-1.5 py-2 px-2 bg-zinc-800/80 hover:bg-zinc-800 text-zinc-300 rounded-lg font-medium border border-white/5"
+            className="flex flex-col items-center justify-center py-2 px-1 bg-zinc-800/80 hover:bg-zinc-800 text-zinc-300 rounded-lg font-medium border border-white/5 transition text-center"
           >
-            <ExternalLink className="w-3.5 h-3.5 text-zinc-400" />
+            <ExternalLink className="w-3.5 h-3.5 text-zinc-400 mb-0.5" />
             <span>Catálogo</span>
           </Link>
         </div>
@@ -83,6 +90,13 @@ export default async function AdminLayout({
               <span>Gestión de Espacios</span>
             </Link>
             <Link
+              href="/admin/users"
+              className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800/60 border border-transparent hover:border-white/5 transition"
+            >
+              <Users className="w-4 h-4 text-amber-500" />
+              <span>Gestión de Usuarios</span>
+            </Link>
+            <Link
               href="/admin/reservations"
               className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg text-zinc-300 hover:text-white hover:bg-zinc-800/60 border border-transparent hover:border-white/5 transition"
             >
@@ -105,7 +119,7 @@ export default async function AdminLayout({
           </div>
           <LogoutButton
             label="Cerrar Sesión"
-            redirectTo="/login"
+            redirectTo="/"
             className="w-full text-left text-xs text-red-400 hover:text-red-300 transition py-1"
           />
         </div>

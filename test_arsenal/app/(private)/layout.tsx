@@ -55,7 +55,7 @@ export default async function PrivateLayout({
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
               <span className="max-w-[100px] sm:max-w-[200px] truncate">{userName}</span>
             </div>
-            <LogoutButton redirectTo="/login" />
+            <LogoutButton redirectTo="/" />
           </div>
         </div>
       </header>

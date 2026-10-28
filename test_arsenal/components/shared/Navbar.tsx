@@ -82,7 +82,7 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
       setUser(null);
       setIsLoggingOut(false);
       router.refresh();
-      window.location.href = '/login';
+      window.location.href = '/';
     }
   };
 

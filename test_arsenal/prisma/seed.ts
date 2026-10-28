@@ -13,12 +13,14 @@ async function main() {
     update: {
       passwordHash: adminPassword,
       role: 'ADMIN',
+      isActive: true,
     },
     create: {
       email: 'admin@cospace.com',
       name: 'Admin CoSpace',
       passwordHash: adminPassword,
       role: 'ADMIN',
+      isActive: true,
     },
   });
 
@@ -27,12 +29,14 @@ async function main() {
     update: {
       passwordHash: userPassword,
       role: 'USER',
+      isActive: true,
     },
     create: {
       email: 'user@cospace.com',
       name: 'Usuario CoSpace',
       passwordHash: userPassword,
       role: 'USER',
+      isActive: true,
     },
   });
 
