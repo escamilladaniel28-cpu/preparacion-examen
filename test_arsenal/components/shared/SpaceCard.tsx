@@ -2,76 +2,105 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useLanguage } from '@/components/context/LanguageContext';
+import { motion } from 'framer-motion';
 
-export interface SpaceCardProps {
+export interface SpaceItemData {
   id: string;
   name: string;
-  description: string;
+  description?: string;
+  pricePerHour: number | string | { toNumber?: () => number; toString?: () => string };
   imageUrl?: string | null;
-  pricePerHour: number | string | { toString(): string };
   isActive?: boolean;
 }
 
-export function SpaceCard({
-  id,
-  name,
-  description,
-  imageUrl,
-  pricePerHour,
-  isActive = true,
-}: SpaceCardProps) {
-  const { t } = useLanguage();
-  const formattedPrice = Number(pricePerHour).toFixed(2);
-  const displayImage =
-    imageUrl && imageUrl.trim().length > 0
-      ? imageUrl
-      : 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80';
+export interface SpaceCardProps {
+  id?: string;
+  name?: string;
+  description?: string;
+  imageUrl?: string | null;
+  pricePerHour?: number | string | { toNumber?: () => number; toString?: () => string };
+  isActive?: boolean;
+  space?: SpaceItemData;
+}
+
+export function SpaceCard(props: SpaceCardProps) {
+  const item: SpaceItemData = props.space || {
+    id: props.id || '',
+    name: props.name || '',
+    description: props.description,
+    imageUrl: props.imageUrl,
+    pricePerHour: props.pricePerHour ?? 0,
+    isActive: props.isActive !== undefined ? props.isActive : true,
+  };
+
+  let price = 0;
+  if (typeof item.pricePerHour === 'number') {
+    price = item.pricePerHour;
+  } else if (item.pricePerHour && typeof (item.pricePerHour as any).toNumber === 'function') {
+    price = (item.pricePerHour as any).toNumber();
+  } else if (item.pricePerHour) {
+    price = Number(String(item.pricePerHour));
+  }
+
+  const isAvailable = item.isActive !== false;
+  const descriptionText =
+    item.description && item.description.trim().length > 0
+      ? item.description
+      : 'Espacio de alto rendimiento diseñado para tu productividad.';
 
   return (
-    <div className="group bg-zinc-900 border border-white/10 rounded-xl overflow-hidden shadow-lg shadow-black/50 hover:border-amber-500/50 hover:shadow-amber-500/10 transition-all duration-300 flex flex-col h-full">
-      {/* Contenedor de Imagen con Zoom sutil al hover */}
-      <div className="relative h-52 w-full overflow-hidden bg-zinc-950">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ y: -5 }}
+      className="group relative rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 hover:border-amber-500/50 transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] flex flex-col h-full"
+    >
+      <div className="relative h-56 w-full overflow-hidden bg-zinc-950">
         <Image
-          src={displayImage}
-          alt={name}
+          src={item.imageUrl || 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500'}
+          alt={item.name}
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover group-hover:scale-105 transition-transform duration-300 ease-out"
           unoptimized
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        {!isActive && (
-          <div className="absolute top-3 right-3 bg-red-950/80 text-red-300 border border-red-800 text-xs font-bold px-2.5 py-1 rounded-md shadow backdrop-blur-md">
-            {t('notAvailable')}
-          </div>
-        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80" />
       </div>
 
-      <div className="p-6 flex-1 flex flex-col justify-between">
+      <div className="p-6 relative z-10 flex flex-col justify-between flex-1">
         <div>
-          <h3 className="font-bold text-lg text-white line-clamp-1 group-hover:text-amber-400 transition-colors mb-2">
-            {name}
-          </h3>
-
-          {/* Precio destacado en dorado */}
-          <div className="flex items-baseline gap-1.5 mb-3">
-            <span className="text-2xl font-bold tracking-tight text-amber-500">${formattedPrice}</span>
-            <span className="text-xs font-medium text-zinc-400">{t('perHour')}</span>
+          <div className="flex justify-between items-start mb-2 gap-2">
+            <h3 className="font-bold text-xl text-white tracking-wide line-clamp-1">{item.name}</h3>
+            {isAvailable ? (
+              <span className="bg-amber-500/10 text-amber-400 text-xs font-bold px-2.5 py-1 rounded-md border border-amber-500/20 shrink-0">
+                Disponible
+              </span>
+            ) : (
+              <span className="bg-red-950/70 text-red-400 text-xs font-bold px-2.5 py-1 rounded-md border border-red-500/30 shrink-0">
+                No disponible
+              </span>
+            )}
           </div>
 
-          <p className="text-zinc-400 text-sm line-clamp-2 mb-6 leading-relaxed">
-            {description}
+          <p className="text-zinc-400 text-sm mb-6 line-clamp-2 leading-relaxed">
+            {descriptionText}
           </p>
         </div>
 
-        <Link
-          href={`/spaces/${id}`}
-          className="w-full text-center bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold py-2.5 px-4 rounded-xl text-sm transition-all duration-200 block shadow-md shadow-amber-500/20"
-        >
-          {t('bookNow')}
-        </Link>
+        <div className="flex items-center justify-between pt-2">
+          <p className="text-amber-500 font-extrabold text-2xl">
+            ${price.toFixed(2)} <span className="text-sm text-zinc-500 font-normal">/ hora</span>
+          </p>
+
+          <Link
+            href={`/spaces/${item.id}`}
+            className="relative overflow-hidden bg-white text-black px-5 py-2.5 rounded-xl font-bold text-sm transition-all hover:bg-amber-500 hover:text-black shadow-md shadow-white/10"
+          >
+            Reservar
+          </Link>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
