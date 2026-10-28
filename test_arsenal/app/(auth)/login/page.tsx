@@ -22,8 +22,7 @@ export default function LoginPage() {
           if (data.user) {
             const searchParams = new URLSearchParams(window.location.search);
             const redirectParam = searchParams.get('redirect');
-            const target = redirectParam || (data.user.role === 'ADMIN' ? '/admin/spaces' : '/dashboard');
-            router.replace(target);
+            router.replace(redirectParam || '/dashboard');
           }
         }
       } catch {
@@ -67,8 +66,7 @@ export default function LoginPage() {
 
       const searchParams = new URLSearchParams(window.location.search);
       const redirectParam = searchParams.get('redirect');
-      const targetDestination =
-        redirectParam || (data.user?.role === 'ADMIN' ? '/admin/spaces' : '/dashboard');
+      const targetDestination = redirectParam || '/dashboard';
 
       router.refresh();
       setTimeout(() => {
