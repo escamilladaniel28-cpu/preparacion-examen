@@ -55,6 +55,8 @@ El proyecto implementa la arquitectura de Route Groups de Next.js 16 cumpliendo 
 | **Administrador** | `admin@cospace.com` | `admin123` |
 | **Usuario Estándar** | `user@cospace.com` | `user123` |
 
+> ⚠️ **Aviso de Seguridad:** Las credenciales del seed (`admin@cospace.com` / `admin123` y `user@cospace.com` / `user123`) son exclusivamente para pruebas de desarrollo y demostración. No deben utilizarse en entornos de producción reales.
+
 ---
 
 ## 📋 Requisitos Previos
@@ -85,6 +87,9 @@ JWT_ACCESS_SECRET="clave_secreta_jwt_access_super_segura_de_al_menos_32_caracter
 
 # 4. JWT_REFRESH_SECRET: Clave criptográfica para Refresh Tokens (mínimo 32 caracteres)
 JWT_REFRESH_SECRET="clave_secreta_jwt_refresh_super_segura_de_al_menos_32_caracteres"
+
+# 5. NEXT_PUBLIC_ADMIN_PIN: Código PIN de verificación para acceso rápido de admin en login
+NEXT_PUBLIC_ADMIN_PIN="2828"
 ```
 
 ---

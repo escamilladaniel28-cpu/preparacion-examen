@@ -95,10 +95,11 @@ export default function LoginPage() {
     setErrorMessage(null);
   };
 
-  // Verificación del PIN de Administrador (exactamente 2828)
+  // Verificación del PIN de Administrador
   const handleVerifyPin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pin === '2828') {
+    const adminPin = process.env.NEXT_PUBLIC_ADMIN_PIN;
+    if (adminPin && pin === adminPin) {
       setIsPinModalOpen(false);
       setEmail('admin@cospace.com');
       setPassword('admin123');
