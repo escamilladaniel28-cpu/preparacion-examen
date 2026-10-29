@@ -76,7 +76,7 @@ export default function RegisterPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Juan Pérez"
-            className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition"
+            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
             required
             minLength={2}
           />
@@ -91,7 +91,7 @@ export default function RegisterPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu-correo@ejemplo.com"
-            className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition"
+            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
             required
           />
         </div>
@@ -105,7 +105,7 @@ export default function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mínimo 6 caracteres"
-            className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition"
+            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
             required
             minLength={6}
           />
@@ -114,11 +114,11 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 disabled:opacity-50 text-black font-bold py-3 px-4 rounded-xl shadow-lg shadow-amber-500/20 transition text-sm flex items-center justify-center gap-2 tracking-wide"
+          className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 disabled:opacity-50 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-purple-900/40 transition text-sm flex items-center justify-center gap-2 tracking-wide border border-purple-500/30"
         >
           {isSubmitting ? (
             <>
-              <svg className="animate-spin h-4 w-4 text-black" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
               </svg>
@@ -132,7 +132,7 @@ export default function RegisterPage() {
 
       <div className="mt-6 text-center text-xs text-zinc-400">
         ¿Ya tienes una cuenta?{' '}
-        <Link href="/login" className="text-amber-400 font-semibold hover:text-amber-300 hover:underline ml-1">
+        <Link href="/login" className="text-purple-400 font-semibold hover:text-purple-300 hover:underline ml-1">
           Inicia sesión aquí
         </Link>
       </div>

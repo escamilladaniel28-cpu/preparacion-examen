@@ -148,7 +148,7 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
       {/* Encabezado */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-purple-500/20">
         <div>
           <h1 className="text-xl font-bold text-white tracking-wide">Gestión de Usuarios (Admin)</h1>
           <p className="text-zinc-400 text-xs mt-1">
@@ -161,10 +161,10 @@ export default function AdminUsersPage() {
             setLoading(true);
             fetchUsers();
           }}
-          className="text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-semibold px-3.5 py-2 rounded-xl border border-white/10 transition shadow-sm inline-flex items-center gap-1.5 self-start sm:self-auto"
+          className="text-xs bg-[#140A24] hover:bg-purple-900/30 text-zinc-300 font-semibold px-3.5 py-2 rounded-xl border border-purple-500/30 transition shadow-sm inline-flex items-center gap-1.5 self-start sm:self-auto"
           title="Refrescar usuarios"
         >
-          <RefreshCw className={`w-3.5 h-3.5 text-amber-500 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${loading ? 'animate-spin' : ''}`} />
           <span>Refrescar</span>
         </button>
       </div>
@@ -202,10 +202,10 @@ export default function AdminUsersPage() {
       )}
 
       {/* Tabla de Usuarios */}
-      <div className="bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="bg-[#140A24]/60 backdrop-blur-md border border-purple-500/20 rounded-2xl overflow-hidden shadow-2xl">
         {loading ? (
           <div className="p-12 text-center text-zinc-400 text-sm flex flex-col items-center justify-center gap-3">
-            <RefreshCw className="w-6 h-6 text-amber-500 animate-spin" />
+            <RefreshCw className="w-6 h-6 text-purple-400 animate-spin" />
             <span>Cargando usuarios registrados...</span>
           </div>
         ) : users.length === 0 ? (
@@ -216,7 +216,7 @@ export default function AdminUsersPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-zinc-300">
-              <thead className="bg-zinc-950/80 text-xs font-bold text-zinc-400 uppercase border-b border-white/10">
+              <thead className="bg-[#09050D]/80 text-xs font-bold text-zinc-400 uppercase border-b border-purple-500/20">
                 <tr>
                   <th className="px-6 py-4">Usuario</th>
                   <th className="px-6 py-4">Correo</th>
@@ -225,7 +225,7 @@ export default function AdminUsersPage() {
                   <th className="px-6 py-4 text-right">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/10">
+              <tbody className="divide-y divide-purple-500/15">
                 {users.map((user) => {
                   const roleActionKey = `${user.id}-role`;
                   const statusActionKey = `${user.id}-status`;
@@ -234,7 +234,7 @@ export default function AdminUsersPage() {
                     <tr
                       key={user.id}
                       className={`transition ${
-                        user.isActive ? 'hover:bg-zinc-800/40' : 'opacity-60 bg-zinc-950/40'
+                        user.isActive ? 'hover:bg-purple-900/20' : 'opacity-60 bg-[#09050D]/40'
                       }`}
                     >
                       <td className="px-6 py-4">
@@ -243,7 +243,7 @@ export default function AdminUsersPage() {
                             className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
                               user.role === 'ADMIN'
                                 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                                : 'bg-zinc-800 text-zinc-300 border border-white/10'
+                                : 'bg-purple-600/15 text-purple-300 border border-purple-500/30'
                             }`}
                           >
                             {user.name ? user.name.slice(0, 2).toUpperCase() : 'US'}
@@ -264,7 +264,7 @@ export default function AdminUsersPage() {
                         </div>
                         {user._count?.reservations !== undefined && (
                           <div className="text-[11px] text-zinc-500 mt-0.5 flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
+                            <Calendar className="w-3 h-3 text-amber-400" />
                             <span>{user._count.reservations} reservas</span>
                           </div>
                         )}
@@ -277,7 +277,7 @@ export default function AdminUsersPage() {
                             ADMIN
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-zinc-800 text-zinc-300 border border-white/10">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-purple-600/10 text-purple-300 border border-purple-500/25">
                             USER
                           </span>
                         )}
@@ -305,7 +305,7 @@ export default function AdminUsersPage() {
                             disabled={actionLoading === roleActionKey}
                             className={`text-xs px-3 py-1.5 rounded-lg font-semibold inline-flex items-center gap-1.5 transition border disabled:opacity-50 ${
                               user.role === 'ADMIN'
-                                ? 'bg-zinc-950 hover:bg-zinc-800 text-zinc-300 border-white/10'
+                                ? 'bg-[#09050D] hover:bg-[#140A24] text-zinc-300 border-purple-500/25'
                                 : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border-amber-500/30'
                             }`}
                             title={user.role === 'ADMIN' ? 'Quitar rol de Administrador' : 'Hacer Administrador'}
@@ -331,7 +331,7 @@ export default function AdminUsersPage() {
                             disabled={actionLoading === statusActionKey}
                             className={`text-xs px-3 py-1.5 rounded-lg font-semibold inline-flex items-center gap-1.5 transition border disabled:opacity-50 ${
                               user.isActive
-                                ? 'bg-zinc-950 hover:bg-red-950/70 text-red-400 hover:text-red-300 border-red-900/40 hover:border-red-500/40'
+                                ? 'bg-[#09050D] hover:bg-red-950/70 text-red-400 hover:text-red-300 border-red-900/40 hover:border-red-500/40'
                                 : 'bg-emerald-950 hover:bg-emerald-900/80 text-emerald-400 hover:text-emerald-300 border-emerald-500/30'
                             }`}
                             title={user.isActive ? 'Desactivar acceso al usuario' : 'Activar acceso al usuario'}

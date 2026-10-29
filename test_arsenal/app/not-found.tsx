@@ -2,12 +2,13 @@ import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-zinc-950 px-4 text-center text-zinc-100 relative overflow-hidden">
-      {/* Glow ambiental */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#09050D] px-4 text-center text-zinc-100 relative overflow-hidden">
+      {/* Glow ambiental BMW Sepia II */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute top-1/4 left-1/3 w-64 h-64 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div className="max-w-md w-full bg-zinc-900/90 p-8 rounded-2xl shadow-2xl border border-white/10 backdrop-blur-xl relative z-10">
-        <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/30 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl font-extrabold shadow-inner">
+      <div className="max-w-md w-full bg-[#140A24]/80 p-8 rounded-2xl shadow-2xl border border-purple-500/20 backdrop-blur-xl relative z-10 hover:border-purple-500/50 hover:shadow-[0_0_30px_rgba(123,44,191,0.2)] transition">
+        <div className="w-16 h-16 bg-purple-600/15 border border-purple-500/30 text-amber-400 rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl font-extrabold shadow-inner">
           404
         </div>
         <h1 className="text-2xl font-extrabold text-white mb-2 tracking-tight">
@@ -20,13 +21,13 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href="/"
-            className="bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition tracking-wide"
+            className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-purple-900/30 hover:shadow-[0_0_30px_rgba(123,44,191,0.2)] transition tracking-wide"
           >
             ← Volver al Inicio
           </Link>
           <Link
             href="/spaces"
-            className="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-sm px-5 py-2.5 rounded-xl border border-white/10 transition"
+            className="bg-[#09050D] hover:bg-[#140A24] text-zinc-200 font-semibold text-sm px-5 py-2.5 rounded-xl border border-purple-500/30 transition"
           >
             Explorar Espacios
           </Link>

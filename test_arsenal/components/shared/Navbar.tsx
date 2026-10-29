@@ -87,16 +87,16 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-md border-b border-white/10 transition-colors">
+    <header className="sticky top-0 z-50 bg-[#09050D]/80 backdrop-blur-md border-b border-purple-500/20 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Marca y Navegación Principal */}
         <div className="flex items-center space-x-6 sm:space-x-8">
           <Link
             href="/"
-            className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5 hover:text-amber-400 transition"
+            className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5 hover:text-purple-300 transition"
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 text-black flex items-center justify-center font-bold shadow-md shadow-amber-500/20">
-              <Building2 className="w-5 h-5 text-black" />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-800 text-white flex items-center justify-center font-bold shadow-md shadow-purple-900/30">
+              <Building2 className="w-5 h-5 text-white" />
             </div>
             <span className="tracking-wider">{t('logo')}</span>
           </Link>
@@ -106,8 +106,8 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
               href="/spaces"
               className={`px-3 py-1.5 rounded-lg transition ${
                 pathname === '/spaces'
-                  ? 'bg-zinc-900 text-amber-400 font-semibold border border-white/10'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-900/50'
+                  ? 'bg-[#140A24]/80 text-purple-400 font-semibold border border-purple-500/30'
+                  : 'text-zinc-400 hover:text-white hover:bg-[#140A24]/50'
               }`}
             >
               {t('catalog')}
@@ -117,8 +117,8 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
                 href="/dashboard"
                 className={`px-3 py-1.5 rounded-lg transition ${
                   pathname === '/dashboard'
-                    ? 'bg-zinc-900 text-amber-400 font-semibold border border-white/10'
-                    : 'text-zinc-400 hover:text-white hover:bg-zinc-900/50'
+                    ? 'bg-[#140A24]/80 text-purple-400 font-semibold border border-purple-500/30'
+                    : 'text-zinc-400 hover:text-white hover:bg-[#140A24]/50'
                 }`}
               >
                 {t('dashboard')}
@@ -156,10 +156,10 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
           <button
             onClick={toggleLang}
             type="button"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border border-white/10 bg-zinc-900/60 hover:bg-zinc-800 text-zinc-300 transition"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border border-purple-500/20 bg-[#140A24]/60 hover:bg-[#140A24] text-zinc-300 transition"
             title="Switch language / Cambiar idioma"
           >
-            <Globe className="w-3.5 h-3.5 text-amber-400" />
+            <Globe className="w-3.5 h-3.5 text-purple-400" />
             <span>{t('switchLang')}</span>
           </button>
 
@@ -167,7 +167,7 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
             <div className="flex items-center space-x-2 sm:space-x-3">
               <Link
                 href="/dashboard"
-                className="bg-zinc-900 border border-white/10 hover:border-amber-500/40 text-zinc-200 text-xs sm:text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-2 transition max-w-[140px] sm:max-w-[200px]"
+                className="bg-[#140A24]/80 border border-purple-500/20 hover:border-purple-500/50 text-zinc-200 text-xs sm:text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-2 transition max-w-[140px] sm:max-w-[200px]"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
                 <span className="truncate">{user}</span>
@@ -177,7 +177,7 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="bg-zinc-900 hover:bg-red-950/80 text-zinc-400 hover:text-red-300 border border-white/10 hover:border-red-500/30 text-xs font-semibold px-3 py-1.5 rounded-lg transition disabled:opacity-50"
+                className="bg-[#140A24]/60 hover:bg-red-950/80 text-zinc-400 hover:text-red-300 border border-purple-500/20 hover:border-red-500/30 text-xs font-semibold px-3 py-1.5 rounded-lg transition disabled:opacity-50"
               >
                 {isLoggingOut ? 'Saliendo...' : t('logout')}
               </button>
@@ -192,7 +192,7 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
               </Link>
               <Link
                 href="/register"
-                className="text-xs sm:text-sm bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold px-3.5 py-1.5 rounded-lg shadow-md shadow-amber-500/20 transition"
+                className="text-xs sm:text-sm bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-bold px-3.5 py-1.5 rounded-lg shadow-md shadow-purple-900/30 transition"
               >
                 {t('register')}
               </Link>

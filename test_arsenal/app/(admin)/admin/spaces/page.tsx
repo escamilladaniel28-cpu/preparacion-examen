@@ -286,7 +286,7 @@ export default function AdminSpacesPage() {
   return (
     <div className="space-y-6">
       {/* Encabezado y Acciones Principales */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-purple-500/20">
         <div>
           <h1 className="text-xl font-bold text-white tracking-wide">Gestión de Espacios (Admin)</h1>
           <p className="text-zinc-400 text-xs mt-1">
@@ -300,10 +300,10 @@ export default function AdminSpacesPage() {
               setLoading(true);
               fetchSpaces();
             }}
-            className="text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-semibold px-3.5 py-2 rounded-xl border border-white/10 transition shadow-sm inline-flex items-center gap-1.5"
+            className="text-xs bg-[#140A24] hover:bg-purple-900/30 text-zinc-300 font-semibold px-3.5 py-2 rounded-xl border border-purple-500/30 transition shadow-sm inline-flex items-center gap-1.5"
             title="Refrescar catálogo"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-amber-500 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${loading ? 'animate-spin' : ''}`} />
             <span>Refrescar</span>
           </button>
           <button
@@ -314,7 +314,7 @@ export default function AdminSpacesPage() {
                 setIsFormOpen(!isFormOpen);
               }
             }}
-            className="text-xs bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold px-4 py-2 rounded-xl shadow-lg shadow-amber-500/20 transition inline-flex items-center gap-1.5"
+            className="text-xs bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-bold px-4 py-2 rounded-xl shadow-lg shadow-purple-900/30 hover:shadow-[0_0_30px_rgba(123,44,191,0.2)] transition inline-flex items-center gap-1.5"
           >
             {editingSpace ? (
               <>
@@ -372,11 +372,11 @@ export default function AdminSpacesPage() {
       {isFormOpen && (
         <div
           ref={formRef}
-          className="bg-zinc-900/90 border border-amber-500/30 rounded-2xl p-6 shadow-2xl backdrop-blur-md space-y-5 animate-fadeIn"
+          className="bg-[#140A24]/90 border border-purple-500/30 rounded-2xl p-6 shadow-2xl backdrop-blur-md space-y-5 animate-fadeIn"
         >
-          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+          <div className="flex items-center justify-between pb-3 border-b border-purple-500/20">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500">
+              <div className="w-8 h-8 rounded-lg bg-purple-600/15 border border-purple-500/30 flex items-center justify-center text-amber-400">
                 {editingSpace ? <Pencil className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
               </div>
               <div>
@@ -392,7 +392,7 @@ export default function AdminSpacesPage() {
             </div>
 
             {editingSpace && (
-              <span className="px-2.5 py-1 text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full">
+              <span className="px-2.5 py-1 text-xs font-semibold bg-purple-600/20 text-purple-300 border border-purple-500/40 rounded-full">
                 Modo Edición
               </span>
             )}
@@ -409,7 +409,7 @@ export default function AdminSpacesPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ej. Suite Ejecutiva Black"
-                  className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                   required
                   minLength={3}
                 />
@@ -421,7 +421,7 @@ export default function AdminSpacesPage() {
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                    <DollarSign className="w-4 h-4" />
+                    <DollarSign className="w-4 h-4 text-amber-400" />
                   </div>
                   <input
                     type="number"
@@ -429,7 +429,7 @@ export default function AdminSpacesPage() {
                     min="1"
                     value={pricePerHour}
                     onChange={(e) => setPricePerHour(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                     required
                   />
                 </div>
@@ -442,14 +442,14 @@ export default function AdminSpacesPage() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                  <ImageIcon className="w-4 h-4" />
+                  <ImageIcon className="w-4 h-4 text-purple-400" />
                 </div>
                 <input
                   type="url"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
                   placeholder="https://images.unsplash.com/photo-..."
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                 />
               </div>
             </div>
@@ -463,7 +463,7 @@ export default function AdminSpacesPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe las amenidades, capacidad, equipos audiovisuales y ergonomía..."
-                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
+                className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                 required
                 minLength={5}
               />
@@ -473,18 +473,18 @@ export default function AdminSpacesPage() {
               <button
                 type="button"
                 onClick={handleCloseForm}
-                className="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold px-4 py-2.5 rounded-xl border border-white/10 transition"
+                className="text-xs bg-[#09050D] hover:bg-[#140A24] text-zinc-300 font-semibold px-4 py-2.5 rounded-xl border border-purple-500/30 transition"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="text-xs bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition disabled:opacity-50 inline-flex items-center gap-2"
+                className="text-xs bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-purple-900/30 hover:shadow-[0_0_30px_rgba(123,44,191,0.2)] transition disabled:opacity-50 inline-flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <>
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-black" />
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-white" />
                     <span>{editingSpace ? 'Guardando cambios...' : 'Creando espacio...'}</span>
                   </>
                 ) : (
@@ -497,10 +497,10 @@ export default function AdminSpacesPage() {
       )}
 
       {/* Tabla de Espacios */}
-      <div className="bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="bg-[#140A24]/60 backdrop-blur-md border border-purple-500/20 rounded-2xl overflow-hidden shadow-2xl">
         {loading ? (
           <div className="p-12 text-center text-zinc-400 text-sm flex flex-col items-center justify-center gap-3">
-            <RefreshCw className="w-6 h-6 text-amber-500 animate-spin" />
+            <RefreshCw className="w-6 h-6 text-purple-400 animate-spin" />
             <span>Cargando inventario de espacios...</span>
           </div>
         ) : spaces.length === 0 ? (
@@ -512,7 +512,7 @@ export default function AdminSpacesPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-zinc-300">
-              <thead className="bg-zinc-950/80 text-xs font-bold text-zinc-400 uppercase border-b border-white/10">
+              <thead className="bg-[#09050D]/80 text-xs font-bold text-zinc-400 uppercase border-b border-purple-500/20">
                 <tr>
                   <th className="px-6 py-4">Espacio</th>
                   <th className="px-6 py-4">Tarifa</th>
@@ -520,21 +520,21 @@ export default function AdminSpacesPage() {
                   <th className="px-6 py-4 text-right">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/10">
+              <tbody className="divide-y divide-purple-500/15">
                 {spaces.map((space) => (
                   <tr
                     key={space.id}
                     className={`transition ${
                       editingSpace?.id === space.id
-                        ? 'bg-amber-500/5 border-l-2 border-amber-500'
+                        ? 'bg-purple-600/15 border-l-2 border-purple-500'
                         : space.isActive
-                        ? 'hover:bg-zinc-800/40'
-                        : 'opacity-50 hover:opacity-80 bg-zinc-950/40'
+                        ? 'hover:bg-purple-900/20'
+                        : 'opacity-50 hover:opacity-80 bg-[#09050D]/40'
                     }`}
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3.5">
-                        <div className="w-11 h-11 rounded-xl bg-zinc-950 border border-white/10 overflow-hidden shrink-0 flex items-center justify-center">
+                        <div className="w-11 h-11 rounded-xl bg-[#09050D] border border-purple-500/20 overflow-hidden shrink-0 flex items-center justify-center">
                           {space.imageUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -558,7 +558,7 @@ export default function AdminSpacesPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-bold text-amber-500">
+                      <div className="font-bold text-purple-400">
                         ${Number(space.pricePerHour).toFixed(2)}
                       </div>
                       <div className="text-[11px] text-zinc-500">por hora</div>
@@ -583,12 +583,12 @@ export default function AdminSpacesPage() {
                           onClick={() => handleOpenEdit(space)}
                           className={`text-xs px-3 py-1.5 rounded-lg font-semibold inline-flex items-center gap-1.5 transition border ${
                             editingSpace?.id === space.id
-                              ? 'bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/20'
-                              : 'bg-zinc-950 hover:bg-zinc-800 text-amber-400 hover:text-amber-300 border-amber-500/25'
+                              ? 'bg-gradient-to-r from-purple-600 to-purple-800 text-white border-purple-400 shadow-md shadow-purple-900/30'
+                              : 'bg-[#09050D] hover:bg-[#140A24] text-purple-300 hover:text-white border-purple-500/30'
                           }`}
                           title="Editar información del espacio"
                         >
-                          <Pencil className="w-3.5 h-3.5" />
+                          <Pencil className="w-3.5 h-3.5 text-amber-400" />
                           <span>Editar</span>
                         </button>
 
@@ -602,7 +602,7 @@ export default function AdminSpacesPage() {
                                 className="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition disabled:opacity-50 inline-flex items-center gap-1"
                               >
                                 {actionLoading === space.id ? (
-                                  <>
+                                   <>
                                     <RefreshCw className="w-3 h-3 animate-spin" />
                                     <span>Verificando...</span>
                                   </>
@@ -612,7 +612,7 @@ export default function AdminSpacesPage() {
                               </button>
                               <button
                                 onClick={() => setConfirmDeactivateId(null)}
-                                className="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium px-2.5 py-1.5 rounded-lg transition border border-white/10"
+                                className="text-xs bg-[#09050D] hover:bg-[#140A24] text-zinc-300 font-medium px-2.5 py-1.5 rounded-lg transition border border-purple-500/30"
                               >
                                 Cancelar
                               </button>
@@ -621,7 +621,7 @@ export default function AdminSpacesPage() {
                             <button
                               onClick={() => setConfirmDeactivateId(space.id)}
                               disabled={actionLoading === space.id}
-                              className="text-xs bg-zinc-950 hover:bg-red-950/70 text-red-400 hover:text-red-300 border border-red-900/40 hover:border-red-500/40 font-medium px-3 py-1.5 rounded-lg transition disabled:opacity-50 inline-flex items-center gap-1"
+                              className="text-xs bg-[#09050D] hover:bg-red-950/70 text-red-400 hover:text-red-300 border border-red-900/40 hover:border-red-500/40 font-medium px-3 py-1.5 rounded-lg transition disabled:opacity-50 inline-flex items-center gap-1"
                               title="Desactivar espacio (Regla 13)"
                             >
                               <Ban className="w-3.5 h-3.5" />

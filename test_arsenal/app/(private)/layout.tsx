@@ -15,7 +15,7 @@ export default async function PrivateLayout({
   const userRole = session?.role ? String(session.role) : null;
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 selection:bg-amber-500 selection:text-black">
+    <div className="min-h-screen bg-[#09050D] text-zinc-100 selection:bg-purple-600 selection:text-white">
       {/* Navegación Flotante: Sidebar en Escritorio y Barra Inferior en Móviles */}
       <PrivateNav
         user={{

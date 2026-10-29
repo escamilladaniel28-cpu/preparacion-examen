@@ -53,12 +53,12 @@ export function PrivateNav({ user }: PrivateNavProps) {
   return (
     <>
       {/* Sidebar Flotante Izquierdo (Escritorio >= md) */}
-      <aside className="fixed left-0 top-0 h-screen w-64 bg-zinc-950/80 backdrop-blur-md border-r border-white/10 z-40 hidden md:flex flex-col justify-between p-6">
+      <aside className="fixed left-0 top-0 h-screen w-64 bg-[#09050D]/90 backdrop-blur-md border-r border-purple-500/20 z-40 hidden md:flex flex-col justify-between p-6">
         <div>
           {/* Logo CoSpace */}
           <Link href="/" className="flex items-center gap-3 group px-2 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 text-black flex items-center justify-center font-bold shadow-lg shadow-amber-500/20 group-hover:scale-105 transition-transform">
-              <Building2 className="w-5 h-5 text-black" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-800 text-white flex items-center justify-center font-bold shadow-lg shadow-purple-900/30 group-hover:scale-105 transition-transform">
+              <Building2 className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-extrabold tracking-wider text-white">CoSpace</span>
@@ -78,12 +78,12 @@ export function PrivateNav({ user }: PrivateNavProps) {
                   href={link.href}
                   className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
                     link.active
-                      ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30 shadow-[0_0_15px_rgba(245,158,11,0.12)]'
-                      : 'text-zinc-400 hover:text-white hover:bg-zinc-900/60 border border-transparent hover:border-white/5'
+                      ? 'bg-purple-600/15 text-purple-300 border border-purple-500/40 shadow-[0_0_15px_rgba(123,44,191,0.2)]'
+                      : 'text-zinc-400 hover:text-white hover:bg-[#140A24]/60 border border-transparent hover:border-purple-500/20'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className={`w-4 h-4 ${link.active ? 'text-amber-400' : 'text-zinc-400'}`} />
+                    <Icon className={`w-4 h-4 ${link.active ? 'text-purple-400' : 'text-zinc-400'}`} />
                     <span>{link.label}</span>
                   </div>
                   {link.isAdminBadge && (
@@ -98,9 +98,9 @@ export function PrivateNav({ user }: PrivateNavProps) {
         </div>
 
         {/* Sección Inferior del Sidebar */}
-        <div className="space-y-4 pt-4 border-t border-white/10">
-          <div className="bg-zinc-900/60 border border-white/10 rounded-xl p-3 flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-amber-700 text-black font-extrabold flex items-center justify-center text-sm shadow-md shrink-0">
+        <div className="space-y-4 pt-4 border-t border-purple-500/20">
+          <div className="bg-[#140A24]/60 border border-purple-500/20 rounded-xl p-3 flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-700 text-white font-extrabold flex items-center justify-center text-sm shadow-md shrink-0">
               {userName.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
@@ -123,7 +123,7 @@ export function PrivateNav({ user }: PrivateNavProps) {
       </aside>
 
       {/* Barra de Navegación Inferior en Móviles (md:hidden) */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-zinc-950/90 backdrop-blur-md border-t border-white/10 md:hidden px-3 py-2 flex items-center justify-around shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#09050D]/95 backdrop-blur-md border-t border-purple-500/20 md:hidden px-3 py-2 flex items-center justify-around shadow-2xl">
         {navLinks.map((link) => {
           const Icon = link.icon;
           return (
@@ -132,11 +132,11 @@ export function PrivateNav({ user }: PrivateNavProps) {
               href={link.href}
               className={`flex flex-col items-center justify-center py-1 px-2 rounded-lg text-[11px] font-medium transition ${
                 link.active
-                  ? 'text-amber-400 font-bold'
+                  ? 'text-purple-400 font-bold'
                   : 'text-zinc-400 hover:text-white'
               }`}
             >
-              <Icon className={`w-5 h-5 mb-0.5 ${link.active ? 'text-amber-400' : 'text-zinc-400'}`} />
+              <Icon className={`w-5 h-5 mb-0.5 ${link.active ? 'text-purple-400' : 'text-zinc-400'}`} />
               <span>{link.label}</span>
             </Link>
           );

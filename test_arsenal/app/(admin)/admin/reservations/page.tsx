@@ -77,7 +77,7 @@ export default function AdminReservationsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center pb-4 border-b border-white/10">
+      <div className="flex justify-between items-center pb-4 border-b border-purple-500/20">
         <div>
           <h1 className="text-xl font-bold text-white tracking-wide">Todas las Reservas (Admin)</h1>
           <p className="text-zinc-400 text-xs mt-1">
@@ -89,9 +89,9 @@ export default function AdminReservationsPage() {
             setLoading(true);
             fetchReservations();
           }}
-          className="text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-semibold px-3.5 py-2 rounded-xl border border-white/10 transition shadow-sm inline-flex items-center gap-1.5"
+          className="text-xs bg-[#140A24] hover:bg-purple-900/30 text-zinc-300 font-semibold px-3.5 py-2 rounded-xl border border-purple-500/30 transition shadow-sm inline-flex items-center gap-1.5"
         >
-          <RefreshCw className={`w-3.5 h-3.5 text-amber-500 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${loading ? 'animate-spin' : ''}`} />
           <span>Recargar</span>
         </button>
       </div>
@@ -118,7 +118,7 @@ export default function AdminReservationsPage() {
         </div>
       )}
 
-      <div className="bg-zinc-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="bg-[#140A24]/60 backdrop-blur-md border border-purple-500/20 rounded-2xl overflow-hidden shadow-2xl">
         {loading ? (
           <div className="p-10 text-center text-zinc-400 text-sm">Cargando reservas...</div>
         ) : reservations.length === 0 ? (
@@ -128,7 +128,7 @@ export default function AdminReservationsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-zinc-300">
-              <thead className="bg-zinc-950/80 text-xs font-bold text-zinc-400 uppercase border-b border-white/10">
+              <thead className="bg-[#09050D]/80 text-xs font-bold text-zinc-400 uppercase border-b border-purple-500/20">
                 <tr>
                   <th className="px-6 py-4">Espacio</th>
                   <th className="px-6 py-4">Usuario</th>
@@ -138,9 +138,9 @@ export default function AdminReservationsPage() {
                   <th className="px-6 py-4 text-right">Acción</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/10">
+              <tbody className="divide-y divide-purple-500/15">
                 {reservations.map((r) => (
-                  <tr key={r.id} className="hover:bg-zinc-800/40 transition">
+                  <tr key={r.id} className="hover:bg-purple-900/20 transition">
                     <td className="px-6 py-4 font-semibold text-white">{r.space.name}</td>
                     <td className="px-6 py-4">
                       <div className="text-white font-medium">{r.user?.name || 'Usuario'}</div>
@@ -149,7 +149,7 @@ export default function AdminReservationsPage() {
                     <td className="px-6 py-4 text-xs text-zinc-300">
                       <LocalTime date={r.startTime} endDate={r.endTime} />
                     </td>
-                    <td className="px-6 py-4 font-bold text-amber-500">
+                    <td className="px-6 py-4 font-bold text-purple-400">
                       ${Number(r.totalPrice).toFixed(2)}
                     </td>
                     <td className="px-6 py-4">
@@ -176,7 +176,7 @@ export default function AdminReservationsPage() {
                             </button>
                             <button
                               onClick={() => setConfirmingId(null)}
-                              className="text-xs bg-zinc-800 text-zinc-300 hover:text-white px-2.5 py-1.5 rounded-lg border border-white/10"
+                              className="text-xs bg-[#09050D] text-zinc-300 hover:text-white px-2.5 py-1.5 rounded-lg border border-purple-500/30"
                             >
                               No
                             </button>
@@ -184,7 +184,7 @@ export default function AdminReservationsPage() {
                         ) : (
                           <button
                             onClick={() => setConfirmingId(r.id)}
-                            className="text-xs bg-zinc-950 hover:bg-red-950/70 text-red-400 border border-red-900/40 hover:border-red-500/40 px-3.5 py-1.5 rounded-lg font-medium transition"
+                            className="text-xs bg-[#09050D] hover:bg-red-950/70 text-red-400 border border-red-900/40 hover:border-red-500/40 px-3.5 py-1.5 rounded-lg font-medium transition"
                           >
                             Cancelar
                           </button>

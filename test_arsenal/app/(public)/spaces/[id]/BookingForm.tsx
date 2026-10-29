@@ -127,8 +127,8 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
   };
 
   return (
-    <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 shadow-2xl text-zinc-100">
-      <div className="border-b border-white/10 pb-4 mb-5">
+    <div className="bg-[#140A24]/60 backdrop-blur-md border border-purple-500/20 rounded-2xl p-6 shadow-2xl text-zinc-100">
+      <div className="border-b border-purple-500/20 pb-4 mb-5">
         <h3 className="text-xl font-bold text-white tracking-tight">Reservar Espacio</h3>
         <p className="text-zinc-400 text-xs mt-1">
           Horario de atención: 07:00 a 21:00 UTC · Duración: 1 a 4 horas
@@ -180,7 +180,7 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
             type="date"
             value={date}
             onChange={(e) => handleDateChange(e.target.value)}
-            className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition [color-scheme:dark]"
+            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition [color-scheme:dark]"
             required
           />
         </div>
@@ -193,10 +193,10 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
           <select
             value={startHour}
             onChange={(e) => handleStartHourChange(parseInt(e.target.value, 10))}
-            className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition [color-scheme:dark]"
+            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition [color-scheme:dark]"
           >
             {[7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((hour) => (
-              <option key={hour} value={hour} className="bg-zinc-900 text-white">
+              <option key={hour} value={hour} className="bg-[#140A24] text-white">
                 {hour.toString().padStart(2, '0')}:00 UTC
               </option>
             ))}
@@ -211,12 +211,12 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
           <select
             value={durationHours}
             onChange={(e) => handleDurationChange(parseInt(e.target.value, 10))}
-            className="w-full px-3.5 py-2.5 bg-zinc-950 border border-white/15 rounded-xl text-sm text-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition [color-scheme:dark]"
+            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition [color-scheme:dark]"
           >
             {[1, 2, 3, 4]
               .filter((dur) => startHour + dur <= 21)
               .map((dur) => (
-                <option key={dur} value={dur} className="bg-zinc-900 text-white">
+                <option key={dur} value={dur} className="bg-[#140A24] text-white">
                   {dur} {dur === 1 ? 'hora' : 'horas'} (hasta las {(startHour + dur).toString().padStart(2, '0')}:00 UTC)
                 </option>
               ))}
@@ -224,7 +224,7 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
         </div>
 
         {/* Resumen */}
-        <div className="bg-zinc-950/80 border border-white/10 rounded-xl p-4 my-4">
+        <div className="bg-[#09050D]/80 border border-purple-500/20 rounded-xl p-4 my-4">
           <div className="flex justify-between text-xs text-zinc-400 mb-1">
             <span>Tarifa por hora:</span>
             <span className="font-semibold text-zinc-200">${pricePerHour.toFixed(2)}/h</span>
@@ -235,9 +235,9 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
               {startHour.toString().padStart(2, '0')}:00 - {endHour.toString().padStart(2, '0')}:00 UTC
             </span>
           </div>
-          <div className="border-t border-white/10 pt-2.5 flex justify-between items-center">
+          <div className="border-t border-purple-500/20 pt-2.5 flex justify-between items-center">
             <span className="text-sm font-bold text-zinc-300">Total:</span>
-            <span className="text-2xl font-extrabold text-amber-500">${totalPrice}</span>
+            <span className="text-2xl font-extrabold text-purple-400">${totalPrice}</span>
           </div>
         </div>
 
@@ -245,11 +245,11 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
         <button
           type="submit"
           disabled={isSubmitting || Boolean(successMessage) || endHour > 21}
-          className="w-full bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 disabled:opacity-50 text-black font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2 text-sm tracking-wide"
+          className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 disabled:opacity-50 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-purple-900/40 transition flex items-center justify-center gap-2 text-sm tracking-wide border border-purple-500/30"
         >
           {isSubmitting ? (
             <>
-              <svg className="animate-spin h-4 w-4 text-black" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
               </svg>

@@ -19,15 +19,21 @@ export default async function ProfilePage() {
         </p>
       </div>
 
-      <div className="bg-zinc-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 sm:p-8 shadow-xl">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pb-8 border-b border-white/10">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 text-black flex items-center justify-center font-black text-3xl shadow-xl shadow-amber-500/20">
+      <div className="bg-[#140A24]/60 backdrop-blur-md border border-purple-500/20 rounded-2xl p-6 sm:p-8 shadow-xl hover:border-purple-500/40 transition">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pb-8 border-b border-purple-500/20">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-800 text-white flex items-center justify-center font-black text-3xl shadow-xl shadow-purple-900/40 border border-purple-400/30">
             {userName.charAt(0).toUpperCase()}
           </div>
           <div>
             <div className="flex items-center gap-3">
               <h2 className="text-2xl font-bold text-white">{userName}</h2>
-              <span className="text-xs bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+              <span
+                className={`text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                  userRole === 'ADMIN'
+                    ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                    : 'bg-purple-600/15 text-purple-300 border border-purple-500/30'
+                }`}
+              >
                 {userRole}
               </span>
             </div>
@@ -36,8 +42,8 @@ export default async function ProfilePage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6">
-          <div className="p-4 rounded-xl bg-zinc-950/60 border border-white/5 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-amber-400 border border-white/10">
+          <div className="p-4 rounded-xl bg-[#09050D]/60 border border-purple-500/20 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-lg bg-[#140A24] flex items-center justify-center text-amber-400 border border-purple-500/30 shadow-inner">
               <Mail className="w-5 h-5" />
             </div>
             <div>
@@ -46,8 +52,8 @@ export default async function ProfilePage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-zinc-950/60 border border-white/5 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-amber-400 border border-white/10">
+          <div className="p-4 rounded-xl bg-[#09050D]/60 border border-purple-500/20 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-lg bg-[#140A24] flex items-center justify-center text-amber-400 border border-purple-500/30 shadow-inner">
               <Shield className="w-5 h-5" />
             </div>
             <div>
@@ -56,8 +62,8 @@ export default async function ProfilePage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-zinc-950/60 border border-white/5 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-emerald-400 border border-white/10">
+          <div className="p-4 rounded-xl bg-[#09050D]/60 border border-purple-500/20 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-lg bg-[#140A24] flex items-center justify-center text-emerald-400 border border-emerald-500/30 shadow-inner">
               <CheckCircle2 className="w-5 h-5" />
             </div>
             <div>
@@ -66,8 +72,8 @@ export default async function ProfilePage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-zinc-950/60 border border-white/5 flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-amber-400 border border-white/10">
+          <div className="p-4 rounded-xl bg-[#09050D]/60 border border-purple-500/20 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-lg bg-[#140A24] flex items-center justify-center text-amber-400 border border-purple-500/30 shadow-inner">
               <Calendar className="w-5 h-5" />
             </div>
             <div>
@@ -77,16 +83,16 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap gap-4">
+        <div className="mt-8 pt-6 border-t border-purple-500/20 flex flex-wrap gap-4">
           <Link
             href="/dashboard"
-            className="bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition"
+            className="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-purple-900/30 hover:shadow-[0_0_30px_rgba(123,44,191,0.2)] transition"
           >
             Ir al Dashboard
           </Link>
           <Link
             href="/spaces"
-            className="bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-white/10 font-semibold text-xs px-5 py-2.5 rounded-xl transition"
+            className="bg-[#09050D] hover:bg-[#140A24] text-zinc-200 border border-purple-500/30 font-semibold text-xs px-5 py-2.5 rounded-xl transition"
           >
             Explorar Espacios
           </Link>

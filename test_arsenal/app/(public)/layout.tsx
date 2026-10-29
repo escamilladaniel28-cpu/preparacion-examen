@@ -17,7 +17,7 @@ export default async function PublicLayout({
   const userRole = session?.role;
 
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100">
+    <div className="min-h-screen flex flex-col bg-[#09050D] text-zinc-100">
       <Navbar userName={userName} userRole={userRole} />
       <main className="flex-1">{children}</main>
       <Footer />

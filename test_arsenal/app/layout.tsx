@@ -17,7 +17,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script src="https://cdn.tailwindcss.com"></script>
       </head>
-      <body className="min-h-screen bg-zinc-950 text-zinc-50 antialiased selection:bg-amber-500 selection:text-black">
+      <body className="min-h-screen bg-[#09050D] text-zinc-50 antialiased selection:bg-purple-600 selection:text-white">
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>

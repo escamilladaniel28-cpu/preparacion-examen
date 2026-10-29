@@ -54,9 +54,9 @@ export function SpaceCard(props: SpaceCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       whileHover={{ y: -5 }}
-      className="group relative rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 hover:border-amber-500/50 transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.15)] flex flex-col h-full"
+      className="group relative rounded-2xl overflow-hidden bg-[#140A24]/60 backdrop-blur-md border border-purple-500/20 hover:border-purple-500/50 transition-all duration-500 hover:shadow-[0_0_30px_rgba(123,44,191,0.2)] flex flex-col h-full"
     >
-      <div className="relative h-56 w-full overflow-hidden bg-zinc-950">
+      <div className="relative h-56 w-full overflow-hidden bg-[#09050D]">
         <Image
           src={item.imageUrl || 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500'}
           alt={item.name}
@@ -64,7 +64,7 @@ export function SpaceCard(props: SpaceCardProps) {
           unoptimized
           className="object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#09050D] via-transparent to-transparent opacity-80" />
       </div>
 
       <div className="p-6 relative z-10 flex flex-col justify-between flex-1">
@@ -88,13 +88,13 @@ export function SpaceCard(props: SpaceCardProps) {
         </div>
 
         <div className="flex items-center justify-between pt-2">
-          <p className="text-amber-500 font-extrabold text-2xl">
+          <p className="text-purple-400 font-extrabold text-2xl">
             ${price.toFixed(2)} <span className="text-sm text-zinc-500 font-normal">/ hora</span>
           </p>
 
           <Link
             href={`/spaces/${item.id}`}
-            className="relative overflow-hidden bg-white text-black px-5 py-2.5 rounded-xl font-bold text-sm transition-all hover:bg-amber-500 hover:text-black shadow-md shadow-white/10"
+            className="relative overflow-hidden bg-purple-600 hover:bg-purple-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md shadow-purple-900/30"
           >
             Reservar
           </Link>
