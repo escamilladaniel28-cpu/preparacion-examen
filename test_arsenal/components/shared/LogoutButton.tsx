@@ -6,12 +6,14 @@ interface LogoutButtonProps {
   className?: string;
   label?: string;
   redirectTo?: string;
+  children?: React.ReactNode;
 }
 
 export function LogoutButton({
   className = 'bg-zinc-900 hover:bg-red-950/70 text-zinc-300 hover:text-red-300 border border-white/10 hover:border-red-500/30 text-xs font-semibold px-3.5 py-1.5 rounded-lg shadow-sm transition disabled:opacity-50',
   label = 'Cerrar Sesión',
   redirectTo = '/',
+  children,
 }: LogoutButtonProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -34,7 +36,7 @@ export function LogoutButton({
       disabled={isSubmitting}
       className={className}
     >
-      {isSubmitting ? 'Cerrando sesión...' : label}
+      {isSubmitting ? 'Cerrando sesión...' : (children ?? label)}
     </button>
   );
 }

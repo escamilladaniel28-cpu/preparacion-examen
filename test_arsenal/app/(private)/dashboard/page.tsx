@@ -1,8 +1,20 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { RefreshCw, Calendar, CheckCircle2, AlertCircle, X, Plus, Shield, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import {
+  RefreshCw,
+  Calendar,
+  Clock,
+  Sparkles,
+  Plus,
+  CheckCircle2,
+  AlertCircle,
+  X,
+  Shield,
+  ArrowRight,
+} from 'lucide-react';
 import { LocalTime } from '@/components/shared/LocalTime';
 
 interface ReservationItem {
@@ -107,19 +119,65 @@ export default function DashboardPage() {
     }
   };
 
-  const activeReservations = reservations.filter((r) => r.status === 'CONFIRMED');
-  const pastOrCancelled = reservations.filter((r) => r.status === 'CANCELLED');
+  // Cálculos para el Bento Grid de Estadísticas
+  const { totalReservations, totalHours, favoriteSpace, favoriteSpaceSubtitle, activeCount } =
+    useMemo(() => {
+      const total = reservations.length;
+      const active = reservations.filter((r) => r.status === 'CONFIRMED').length;
+
+      // Calcular horas totales
+      let hoursSum = 0;
+      const spaceCounts: Record<string, number> = {};
+
+      reservations.forEach((r) => {
+        try {
+          const start = new Date(r.startTime).getTime();
+          const end = new Date(r.endTime).getTime();
+          if (!isNaN(start) && !isNaN(end) && end > start) {
+            hoursSum += (end - start) / (1000 * 60 * 60);
+          }
+        } catch {
+          // ignore date parse errors
+        }
+
+        const name = r.space?.name || 'Espacio';
+        spaceCounts[name] = (spaceCounts[name] || 0) + 1;
+      });
+
+      // Espacio favorito
+      let favName = 'Ninguno';
+      let maxCount = 0;
+      for (const [name, count] of Object.entries(spaceCounts)) {
+        if (count > maxCount) {
+          maxCount = count;
+          favName = name;
+        }
+      }
+
+      const favSubtitle =
+        maxCount > 0
+          ? `${maxCount} reserva${maxCount > 1 ? 's' : ''} realizada${maxCount > 1 ? 's' : ''}`
+          : 'Sin reservas previas';
+
+      return {
+        totalReservations: total,
+        totalHours: hoursSum,
+        favoriteSpace: favName,
+        favoriteSpaceSubtitle: favSubtitle,
+        activeCount: active,
+      };
+    }, [reservations]);
 
   return (
-    <div className="space-y-8">
-      {/* Encabezado */}
+    <div className="space-y-8 animate-fadeIn">
+      {/* 1. Header con Título "Bienvenido de nuevo" y Botón Dorado "Reservar Espacio" */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-white/10">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-            Panel de Usuario — Mis Reservas
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+            Bienvenido de nuevo
           </h1>
           <p className="text-zinc-400 text-sm mt-1">
-            Administra tus horarios reservados en los espacios de CoSpace
+            Administra tus reservas activas y consulta el balance de tus espacios
           </p>
         </div>
 
@@ -129,24 +187,26 @@ export default function DashboardPage() {
               setLoading(true);
               fetchReservations();
             }}
-            className="text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-semibold px-3.5 py-2.5 rounded-xl border border-white/10 transition shadow-sm inline-flex items-center gap-1.5"
+            className="text-xs bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 font-semibold px-3.5 py-3 rounded-xl border border-white/10 transition shadow-sm inline-flex items-center gap-1.5"
+            title="Actualizar datos"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-amber-500 ${loading ? 'animate-spin' : ''}`} />
-            <span>Actualizar</span>
+            <span className="hidden sm:inline">Actualizar</span>
           </button>
+
           <Link
             href="/spaces"
-            className="text-xs bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition inline-flex items-center gap-1.5 tracking-wide"
+            className="bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold px-5 py-3 rounded-xl shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 text-sm tracking-wide shrink-0"
           >
-            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>Nueva Reserva</span>
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <span>Reservar Espacio</span>
           </Link>
         </div>
       </div>
 
       {/* Banner de Acceso Rápido para Administradores */}
       {userRole === 'ADMIN' && (
-        <div className="bg-gradient-to-r from-amber-500/15 via-zinc-900 to-zinc-900 border border-amber-500/40 rounded-2xl p-5 shadow-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 animate-fadeIn">
+        <div className="bg-gradient-to-r from-amber-500/15 via-zinc-900/60 to-zinc-900/80 border border-amber-500/30 rounded-2xl p-5 shadow-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 backdrop-blur-md">
           <div className="flex items-center gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
               <Shield className="w-5 h-5 stroke-[2.5]" />
@@ -159,7 +219,7 @@ export default function DashboardPage() {
                 </span>
               </div>
               <p className="text-xs text-zinc-400 mt-0.5">
-                Accede a la interfaz de gestión para crear nuevos espacios, editar tarifas y aplicar desactivación protegida.
+                Accede a la interfaz de gestión para administrar espacios, tarifas y usuarios.
               </p>
             </div>
           </div>
@@ -167,7 +227,7 @@ export default function DashboardPage() {
             href="/admin/spaces"
             className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black font-bold text-xs px-4 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition shrink-0"
           >
-            <span>Gestionar Espacios (Admin)</span>
+            <span>Panel Administrativo</span>
             <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
           </Link>
         </div>
@@ -199,124 +259,208 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Reservas Activas */}
-      <section>
-        <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-amber-500" />
-          <span>Próximas Reservas Confirmadas ({activeReservations.length})</span>
-        </h2>
+      {/* 2. Bento Grid (Estadísticas): 3 Tarjetas de Cristal */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Tarjeta 1: Total Reservas */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="relative overflow-hidden bg-zinc-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl hover:border-amber-500/30 transition-all group"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+              Total Reservas
+            </span>
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-sm">
+              <Calendar className="w-5 h-5" />
+            </div>
+          </div>
+          <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            {loading ? '...' : totalReservations}
+          </div>
+          <p className="text-xs text-zinc-400 mt-2 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>{loading ? 'Calculando...' : `${activeCount} activas`}</span>
+          </p>
+        </motion.div>
+
+        {/* Tarjeta 2: Horas Reservadas */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="relative overflow-hidden bg-zinc-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl hover:border-amber-500/30 transition-all group"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+              Horas Reservadas
+            </span>
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-sm">
+              <Clock className="w-5 h-5" />
+            </div>
+          </div>
+          <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            {loading ? '...' : `${Number(totalHours.toFixed(1)).toString()}h`}
+          </div>
+          <p className="text-xs text-zinc-400 mt-2">
+            Tiempo acumulado de productividad
+          </p>
+        </motion.div>
+
+        {/* Tarjeta 3: Espacio Favorito */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+          className="relative overflow-hidden bg-zinc-900/50 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl hover:border-amber-500/30 transition-all group"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+              Espacio Favorito
+            </span>
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-sm">
+              <Sparkles className="w-5 h-5" />
+            </div>
+          </div>
+          <div
+            className="text-xl sm:text-2xl font-extrabold text-white tracking-tight truncate"
+            title={favoriteSpace}
+          >
+            {loading ? '...' : favoriteSpace}
+          </div>
+          <p className="text-xs text-zinc-400 mt-2 truncate">
+            {loading ? 'Calculando...' : favoriteSpaceSubtitle}
+          </p>
+        </motion.div>
+      </section>
+
+      {/* 3. Lista de Reservas (Tarjetas Horizontales con Animación Framer Motion) */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between pb-2 border-b border-white/5">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-amber-500" />
+            <span>Mis Reservas ({reservations.length})</span>
+          </h2>
+        </div>
 
         {loading ? (
-          <div className="text-center py-12 bg-zinc-900 rounded-2xl border border-white/10 text-zinc-400 text-sm">
-            Cargando reservas...
+          <div className="text-center py-16 bg-zinc-900/50 backdrop-blur-md rounded-2xl border border-white/10 text-zinc-400 text-sm">
+            Cargando historial de reservas...
           </div>
-        ) : activeReservations.length === 0 ? (
-          <div className="text-center py-16 bg-zinc-900 rounded-2xl border border-white/10 p-8 shadow-xl">
-            <div className="w-12 h-12 bg-zinc-800 text-amber-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-              <Calendar className="w-6 h-6" />
+        ) : reservations.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-16 bg-zinc-900/50 backdrop-blur-md rounded-2xl border border-white/10 p-8 shadow-xl"
+          >
+            <div className="w-14 h-14 bg-zinc-800 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/10 shadow-lg">
+              <Calendar className="w-7 h-7" />
             </div>
-            <h3 className="text-base font-semibold text-white mb-1">Sin reservas activas</h3>
-            <p className="text-zinc-400 text-sm mb-5">No tienes horarios reservados en este momento.</p>
+            <h3 className="text-lg font-bold text-white mb-1">Sin reservas registradas</h3>
+            <p className="text-zinc-400 text-sm mb-6 max-w-md mx-auto">
+              No tienes reservas en este momento. Descubre y reserva nuestros espacios de alto nivel.
+            </p>
             <Link
               href="/spaces"
-              className="inline-block bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black text-xs font-bold px-5 py-2.5 rounded-xl transition shadow-lg shadow-amber-500/20"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-black text-xs font-bold px-6 py-3 rounded-xl transition shadow-lg shadow-amber-500/20"
             >
-              Explorar espacios disponibles
+              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <span>Explorar Espacios</span>
             </Link>
-          </div>
+          </motion.div>
         ) : (
-          <div className="space-y-4">
-            {activeReservations.map((item) => (
-              <div
-                key={item.id}
-                className="bg-zinc-900 border border-white/10 rounded-2xl p-6 shadow-xl hover:border-amber-500/40 transition flex flex-col md:flex-row md:items-center md:justify-between gap-4"
-              >
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="font-bold text-white text-lg">{item.space.name}</h3>
-                    <span className="bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 text-xs font-bold px-3 py-0.5 rounded-full shadow-sm">
-                      CONFIRMED
-                    </span>
-                  </div>
-                  <div className="text-sm text-zinc-400">
-                    <LocalTime date={item.startTime} endDate={item.endTime} className="text-zinc-300 font-medium" />
-                  </div>
-                </div>
+          <div className="space-y-3.5">
+            {reservations.map((item, index) => {
+              const isConfirmed = item.status === 'CONFIRMED';
+              return (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.04 }}
+                  className={`group bg-zinc-900/50 backdrop-blur-md border rounded-2xl p-5 sm:p-6 transition-all duration-300 shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-4 ${
+                    isConfirmed
+                      ? 'border-white/10 hover:border-amber-500/40 hover:shadow-[0_0_25px_rgba(245,158,11,0.08)]'
+                      : 'border-white/5 opacity-65 bg-zinc-950/40'
+                  }`}
+                >
+                  {/* Información Izquierda: Nombre, Estado, Fecha */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-3 mb-2">
+                      <h3 className="text-lg sm:text-xl font-bold text-white tracking-wide truncate group-hover:text-amber-400 transition-colors">
+                        {item.space?.name || 'Espacio CoSpace'}
+                      </h3>
+                      {isConfirmed ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-sm">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                          Confirmado
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/30">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                          Cancelado
+                        </span>
+                      )}
+                    </div>
 
-                <div className="flex items-center justify-between md:justify-end gap-6 border-t border-white/10 md:border-t-0 pt-4 md:pt-0">
-                  <div className="text-right">
-                    <div className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Total</div>
-                    <div className="text-2xl font-extrabold text-amber-500 tracking-tight">
-                      ${Number(item.totalPrice).toFixed(2)}
+                    <div className="flex items-center gap-2 text-zinc-400 text-xs sm:text-sm">
+                      <Calendar className="w-4 h-4 text-amber-500 shrink-0" />
+                      <LocalTime
+                        date={item.startTime}
+                        endDate={item.endTime}
+                        className="text-zinc-300 font-medium"
+                      />
                     </div>
                   </div>
 
-                  {confirmingId === item.id ? (
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleCancelReservation(item.id)}
-                        disabled={cancellingId === item.id}
-                        className="bg-red-600 hover:bg-red-500 text-white text-xs font-bold py-2.5 px-3.5 rounded-xl shadow-md transition disabled:opacity-50"
-                      >
-                        {cancellingId === item.id ? 'Cancelando...' : 'Confirmar'}
-                      </button>
-                      <button
-                        onClick={() => setConfirmingId(null)}
-                        className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium py-2.5 px-3.5 rounded-xl transition border border-white/10"
-                      >
-                        Atrás
-                      </button>
+                  {/* Sección Derecha: Total y Botón de Cancelar si está activa */}
+                  <div className="flex items-center justify-between md:justify-end gap-5 border-t border-white/5 md:border-t-0 pt-3 md:pt-0 shrink-0">
+                    <div className="text-left md:text-right">
+                      <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold block">
+                        Total
+                      </span>
+                      <span className="text-xl sm:text-2xl font-extrabold text-amber-500 tracking-tight">
+                        ${Number(item.totalPrice).toFixed(2)}
+                      </span>
                     </div>
-                  ) : (
-                    <button
-                      onClick={() => setConfirmingId(item.id)}
-                      disabled={cancellingId === item.id}
-                      className="bg-zinc-950 hover:bg-red-950/70 text-red-400 border border-red-900/40 text-xs font-semibold py-2.5 px-4 rounded-xl transition hover:border-red-500/40"
-                    >
-                      Cancelar Reserva
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
+
+                    {isConfirmed && (
+                      <div>
+                        {confirmingId === item.id ? (
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleCancelReservation(item.id)}
+                              disabled={cancellingId === item.id}
+                              className="bg-red-600 hover:bg-red-500 text-white text-xs font-bold py-2.5 px-3.5 rounded-xl shadow-md transition disabled:opacity-50"
+                            >
+                              {cancellingId === item.id ? 'Cancelando...' : 'Confirmar'}
+                            </button>
+                            <button
+                              onClick={() => setConfirmingId(null)}
+                              className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium py-2.5 px-3 rounded-xl transition border border-white/10"
+                            >
+                              Atrás
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmingId(item.id)}
+                            disabled={cancellingId === item.id}
+                            className="px-4 py-2.5 rounded-xl text-xs font-bold text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/40 border border-red-900/40 hover:border-red-500/40 transition-all shadow-sm"
+                          >
+                            Cancelar
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         )}
       </section>
-
-      {/* Historial de Canceladas */}
-      {pastOrCancelled.length > 0 && (
-        <section className="pt-6 border-t border-white/10">
-          <h2 className="text-base font-bold text-zinc-400 mb-4 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-500/60 inline-block"></span>
-            <span>Reservas Canceladas ({pastOrCancelled.length})</span>
-          </h2>
-
-          <div className="space-y-3">
-            {pastOrCancelled.map((item) => (
-              <div
-                key={item.id}
-                className="bg-zinc-950/70 border border-white/5 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2 opacity-75"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-semibold text-zinc-300 text-sm">{item.space.name}</h4>
-                    <span className="bg-red-950/60 text-red-400 border border-red-500/20 text-xs px-2 py-0.5 rounded font-bold">
-                      CANCELLED
-                    </span>
-                  </div>
-                  <div className="text-xs text-zinc-500 mt-1">
-                    <LocalTime date={item.startTime} endDate={item.endTime} className="text-zinc-400" />
-                  </div>
-                </div>
-
-                <div className="text-xs text-zinc-500">
-                  Importe: ${Number(item.totalPrice).toFixed(2)} (Sin cobro)
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 }
