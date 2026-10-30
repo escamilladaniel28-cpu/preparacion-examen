@@ -148,10 +148,10 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
       {/* Encabezado */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-purple-500/20">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-white/5">
         <div>
-          <h1 className="text-xl font-bold text-white tracking-wide">Gestión de Usuarios (Admin)</h1>
-          <p className="text-zinc-400 text-xs mt-1">
+          <h1 className="text-xl font-bold text-white tracking-wide uppercase">Gestión de Usuarios (Admin)</h1>
+          <p className="text-slate-300 text-xs mt-1">
             Administración de cuentas, asignación de roles y control de acceso al sistema
           </p>
         </div>
@@ -161,10 +161,10 @@ export default function AdminUsersPage() {
             setLoading(true);
             fetchUsers();
           }}
-          className="text-xs bg-[#140A24] hover:bg-purple-900/30 text-zinc-300 font-semibold px-3.5 py-2 rounded-xl border border-purple-500/30 transition shadow-sm inline-flex items-center gap-1.5 self-start sm:self-auto"
+          className="text-xs bg-[#131A2B] hover:bg-white/10 text-slate-300 font-semibold px-4 py-2 rounded-full border border-white/10 transition shadow-sm inline-flex items-center gap-1.5 self-start sm:self-auto"
           title="Refrescar usuarios"
         >
-          <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 text-blue-400 ${loading ? 'animate-spin' : ''}`} />
           <span>Refrescar</span>
         </button>
       </div>
@@ -193,7 +193,7 @@ export default function AdminUsersPage() {
           </div>
           <button
             onClick={() => setFeedback(null)}
-            className="text-zinc-400 hover:text-white p-1 rounded-lg transition"
+            className="text-slate-400 hover:text-white p-1 rounded-lg transition"
             aria-label="Cerrar alerta"
           >
             <X className="w-4 h-4" />
@@ -202,21 +202,21 @@ export default function AdminUsersPage() {
       )}
 
       {/* Tabla de Usuarios */}
-      <div className="bg-[#140A24]/60 backdrop-blur-md border border-purple-500/20 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="bg-[#131A2B] border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
         {loading ? (
-          <div className="p-12 text-center text-zinc-400 text-sm flex flex-col items-center justify-center gap-3">
-            <RefreshCw className="w-6 h-6 text-purple-400 animate-spin" />
+          <div className="p-12 text-center text-slate-400 text-sm flex flex-col items-center justify-center gap-3">
+            <RefreshCw className="w-6 h-6 text-blue-400 animate-spin" />
             <span>Cargando usuarios registrados...</span>
           </div>
         ) : users.length === 0 ? (
-          <div className="p-12 text-center text-zinc-400 text-sm">
-            <Users className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
+          <div className="p-12 text-center text-slate-400 text-sm">
+            <Users className="w-10 h-10 text-slate-600 mx-auto mb-3" />
             <p className="font-semibold text-white">No se encontraron usuarios</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-zinc-300">
-              <thead className="bg-[#09050D]/80 text-xs font-bold text-zinc-400 uppercase border-b border-purple-500/20">
+            <table className="w-full text-left text-sm text-slate-300">
+              <thead className="bg-[#0B0F19]/80 text-xs font-bold text-slate-400 uppercase border-b border-white/10">
                 <tr>
                   <th className="px-6 py-4">Usuario</th>
                   <th className="px-6 py-4">Correo</th>
@@ -225,7 +225,7 @@ export default function AdminUsersPage() {
                   <th className="px-6 py-4 text-right">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-purple-500/15">
+              <tbody className="divide-y divide-white/5">
                 {users.map((user) => {
                   const roleActionKey = `${user.id}-role`;
                   const statusActionKey = `${user.id}-status`;
@@ -234,7 +234,7 @@ export default function AdminUsersPage() {
                     <tr
                       key={user.id}
                       className={`transition ${
-                        user.isActive ? 'hover:bg-purple-900/20' : 'opacity-60 bg-[#09050D]/40'
+                        user.isActive ? 'hover:bg-white/5' : 'opacity-60 bg-[#0B0F19]/40'
                       }`}
                     >
                       <td className="px-6 py-4">
@@ -242,15 +242,15 @@ export default function AdminUsersPage() {
                           <div
                             className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
                               user.role === 'ADMIN'
-                                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                                : 'bg-purple-600/15 text-purple-300 border border-purple-500/30'
+                                ? 'bg-gradient-to-r from-blue-500/20 to-purple-600/20 text-white border border-purple-500/30'
+                                : 'bg-[#0B0F19] text-slate-300 border border-white/10'
                             }`}
                           >
                             {user.name ? user.name.slice(0, 2).toUpperCase() : 'US'}
                           </div>
                           <div>
                             <div className="font-semibold text-white">{user.name || 'Sin nombre'}</div>
-                            <div className="text-[11px] text-zinc-500">
+                            <div className="text-[11px] text-slate-500">
                               ID: {user.id.slice(0, 8)}...
                             </div>
                           </div>
@@ -258,13 +258,13 @@ export default function AdminUsersPage() {
                       </td>
 
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1.5 text-zinc-300 text-xs">
-                          <Mail className="w-3.5 h-3.5 text-zinc-500" />
+                        <div className="flex items-center gap-1.5 text-slate-300 text-xs">
+                          <Mail className="w-3.5 h-3.5 text-slate-500" />
                           <span>{user.email}</span>
                         </div>
                         {user._count?.reservations !== undefined && (
-                          <div className="text-[11px] text-zinc-500 mt-0.5 flex items-center gap-1">
-                            <Calendar className="w-3 h-3 text-amber-400" />
+                          <div className="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1">
+                            <Calendar className="w-3 h-3 text-blue-400" />
                             <span>{user._count.reservations} reservas</span>
                           </div>
                         )}
@@ -272,12 +272,12 @@ export default function AdminUsersPage() {
 
                       <td className="px-6 py-4 whitespace-nowrap">
                         {user.role === 'ADMIN' ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm">
-                            <Shield className="w-3.5 h-3.5 text-amber-400" />
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-sm">
+                            <Shield className="w-3.5 h-3.5 text-white" />
                             ADMIN
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-purple-600/10 text-purple-300 border border-purple-500/25">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white/5 text-slate-300 border border-white/10">
                             USER
                           </span>
                         )}
@@ -285,12 +285,12 @@ export default function AdminUsersPage() {
 
                       <td className="px-6 py-4 whitespace-nowrap">
                         {user.isActive ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/70 text-emerald-400 border border-emerald-500/30">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                             Activo
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-950/70 text-red-400 border border-red-500/30">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
                             <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
                             Inactivo
                           </span>
@@ -303,10 +303,10 @@ export default function AdminUsersPage() {
                           <button
                             onClick={() => handleToggleRole(user.id, user.role, user.name || user.email)}
                             disabled={actionLoading === roleActionKey}
-                            className={`text-xs px-3 py-1.5 rounded-lg font-semibold inline-flex items-center gap-1.5 transition border disabled:opacity-50 ${
+                            className={`text-xs px-3.5 py-1.5 rounded-full font-semibold inline-flex items-center gap-1.5 transition border disabled:opacity-50 ${
                               user.role === 'ADMIN'
-                                ? 'bg-[#09050D] hover:bg-[#140A24] text-zinc-300 border-purple-500/25'
-                                : 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border-amber-500/30'
+                                ? 'bg-[#0B0F19] hover:bg-white/5 text-slate-300 border-white/10'
+                                : 'bg-gradient-to-r from-blue-500/15 to-purple-600/15 hover:from-blue-500/25 hover:to-purple-600/25 text-purple-300 border border-purple-500/30'
                             }`}
                             title={user.role === 'ADMIN' ? 'Quitar rol de Administrador' : 'Hacer Administrador'}
                           >
@@ -314,12 +314,12 @@ export default function AdminUsersPage() {
                               <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                             ) : user.role === 'ADMIN' ? (
                               <>
-                                <ShieldAlert className="w-3.5 h-3.5 text-zinc-400" />
+                                <ShieldAlert className="w-3.5 h-3.5 text-slate-400" />
                                 <span>Quitar Admin</span>
                               </>
                             ) : (
                               <>
-                                <Shield className="w-3.5 h-3.5 text-amber-400" />
+                                <Shield className="w-3.5 h-3.5 text-blue-400" />
                                 <span>Hacer Admin</span>
                               </>
                             )}
@@ -329,10 +329,10 @@ export default function AdminUsersPage() {
                           <button
                             onClick={() => handleToggleStatus(user.id, user.isActive, user.name || user.email)}
                             disabled={actionLoading === statusActionKey}
-                            className={`text-xs px-3 py-1.5 rounded-lg font-semibold inline-flex items-center gap-1.5 transition border disabled:opacity-50 ${
+                            className={`text-xs px-3.5 py-1.5 rounded-full font-semibold inline-flex items-center gap-1.5 transition border disabled:opacity-50 ${
                               user.isActive
-                                ? 'bg-[#09050D] hover:bg-red-950/70 text-red-400 hover:text-red-300 border-red-900/40 hover:border-red-500/40'
-                                : 'bg-emerald-950 hover:bg-emerald-900/80 text-emerald-400 hover:text-emerald-300 border-emerald-500/30'
+                                ? 'bg-[#0B0F19] hover:bg-red-950/70 text-red-400 hover:text-red-300 border border-red-900/40 hover:border-red-500/40'
+                                : 'bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 hover:text-emerald-300 border border-emerald-500/30'
                             }`}
                             title={user.isActive ? 'Desactivar acceso al usuario' : 'Activar acceso al usuario'}
                           >

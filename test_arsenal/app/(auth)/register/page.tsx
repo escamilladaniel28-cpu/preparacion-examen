@@ -45,8 +45,8 @@ export default function RegisterPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-white text-center mb-1 tracking-tight">Crear Cuenta</h2>
-      <p className="text-xs text-zinc-400 text-center mb-6">
+      <h2 className="text-2xl font-bold text-white text-center mb-1 tracking-tight uppercase">Crear Cuenta</h2>
+      <p className="text-xs text-slate-300 text-center mb-6">
         Únete a CoSpace para reservar salas y oficinas privadas de nivel ejecutivo
       </p>
 
@@ -59,7 +59,7 @@ export default function RegisterPage() {
           <button
             type="button"
             onClick={() => setErrorMessage(null)}
-            className="text-zinc-400 hover:text-white ml-2"
+            className="text-slate-400 hover:text-white ml-2"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -68,7 +68,7 @@ export default function RegisterPage() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Nombre Completo
           </label>
           <input
@@ -76,14 +76,14 @@ export default function RegisterPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Juan Pérez"
-            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
+            className="w-full px-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
             required
             minLength={2}
           />
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Correo electrónico
           </label>
           <input
@@ -91,13 +91,13 @@ export default function RegisterPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu-correo@ejemplo.com"
-            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
+            className="w-full px-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
             required
           />
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Contraseña
           </label>
           <input
@@ -105,7 +105,7 @@ export default function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mínimo 6 caracteres"
-            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
+            className="w-full px-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
             required
             minLength={6}
           />
@@ -114,7 +114,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 disabled:opacity-50 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-purple-900/40 transition text-sm flex items-center justify-center gap-2 tracking-wide border border-purple-500/30"
+          className="w-full rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 text-white font-bold py-3.5 px-6 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-[1.02] transition-all text-sm flex items-center justify-center gap-2 tracking-wide"
         >
           {isSubmitting ? (
             <>
@@ -130,9 +130,9 @@ export default function RegisterPage() {
         </button>
       </form>
 
-      <div className="mt-6 text-center text-xs text-zinc-400">
+      <div className="mt-6 text-center text-xs text-slate-400">
         ¿Ya tienes una cuenta?{' '}
-        <Link href="/login" className="text-purple-400 font-semibold hover:text-purple-300 hover:underline ml-1">
+        <Link href="/login" className="text-blue-400 font-semibold hover:text-purple-400 hover:underline ml-1">
           Inicia sesión aquí
         </Link>
       </div>

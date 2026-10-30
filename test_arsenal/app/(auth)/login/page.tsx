@@ -120,8 +120,8 @@ export default function LoginPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-white text-center mb-1 tracking-tight">Iniciar Sesión</h2>
-      <p className="text-xs text-zinc-400 text-center mb-6">
+      <h2 className="text-2xl font-bold text-white text-center mb-1 tracking-tight uppercase">Iniciar Sesión</h2>
+      <p className="text-xs text-slate-300 text-center mb-6">
         Accede a tu cuenta para gestionar y reservar espacios en CoSpace
       </p>
 
@@ -134,7 +134,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => setErrorMessage(null)}
-            className="text-zinc-400 hover:text-white ml-2"
+            className="text-slate-400 hover:text-white ml-2"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -143,7 +143,7 @@ export default function LoginPage() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Correo electrónico
           </label>
           <input
@@ -151,13 +151,13 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tu-correo@ejemplo.com"
-            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
+            className="w-full px-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
             required
           />
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Contraseña
           </label>
           <input
@@ -165,7 +165,7 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
+            className="w-full px-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
             required
           />
         </div>
@@ -173,7 +173,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 disabled:opacity-50 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-purple-900/40 transition text-sm flex items-center justify-center gap-2 tracking-wide border border-purple-500/30"
+          className="w-full rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 text-white font-bold py-3.5 px-6 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-[1.02] transition-all text-sm flex items-center justify-center gap-2 tracking-wide"
         >
           {isSubmitting ? (
             <>
@@ -190,19 +190,19 @@ export default function LoginPage() {
       </form>
 
       {/* Cuentas de Demostración del Seed */}
-      <div className="mt-6 border-t border-purple-500/20 pt-4">
-        <p className="text-xs text-zinc-400 mb-2.5 font-medium">Accesos rápidos de prueba (Seed):</p>
+      <div className="mt-6 border-t border-white/5 pt-4">
+        <p className="text-xs text-slate-400 mb-2.5 font-medium">Accesos rápidos de prueba (Seed):</p>
         <div className="grid grid-cols-2 gap-2.5">
           <button
             type="button"
             onClick={() => handleQuickLogin('user@cospace.com', 'user123')}
-            className="text-xs bg-[#140A24]/60 hover:bg-[#140A24] text-zinc-300 border border-purple-500/20 hover:border-purple-500/50 py-2.5 px-3 rounded-xl font-medium transition text-left"
+            className="text-xs bg-[#0B0F19] hover:bg-[#131A2B] text-slate-300 border border-white/10 hover:border-purple-500/50 py-2.5 px-3 rounded-xl font-medium transition text-left"
           >
             <div className="flex items-center gap-1.5 font-semibold text-white">
-              <User className="w-3.5 h-3.5 text-purple-400" />
+              <User className="w-3.5 h-3.5 text-blue-400" />
               <span>Usuario</span>
             </div>
-            <div className="text-[10px] text-zinc-400 mt-0.5 truncate">user@cospace.com</div>
+            <div className="text-[10px] text-slate-400 mt-0.5 truncate">user@cospace.com</div>
           </button>
 
           <button
@@ -212,24 +212,24 @@ export default function LoginPage() {
               setPin('');
               setPinError(null);
             }}
-            className="text-xs bg-[#140A24]/60 hover:bg-[#140A24] text-zinc-300 border border-purple-500/20 hover:border-purple-500/50 py-2.5 px-3 rounded-xl font-medium transition text-left relative"
+            className="text-xs bg-[#0B0F19] hover:bg-[#131A2B] text-slate-300 border border-white/10 hover:border-purple-500/50 py-2.5 px-3 rounded-xl font-medium transition text-left relative"
             title="Requiere código de verificación de 4 dígitos"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-semibold text-white">
-                <Shield className="w-3.5 h-3.5 text-amber-500" />
+                <Shield className="w-3.5 h-3.5 text-purple-400" />
                 <span>Admin</span>
               </div>
-              <Lock className="w-3 h-3 text-amber-500" />
+              <Lock className="w-3 h-3 text-purple-400" />
             </div>
-            <div className="text-[10px] text-zinc-400 mt-0.5 truncate">admin@cospace.com (PIN)</div>
+            <div className="text-[10px] text-slate-400 mt-0.5 truncate">admin@cospace.com (PIN)</div>
           </button>
         </div>
       </div>
 
-      <div className="mt-6 text-center text-xs text-zinc-400">
+      <div className="mt-6 text-center text-xs text-slate-400">
         ¿No tienes una cuenta aún?{' '}
-        <Link href="/register" className="text-purple-400 font-semibold hover:text-purple-300 hover:underline ml-1">
+        <Link href="/register" className="text-blue-400 font-semibold hover:text-purple-400 hover:underline ml-1">
           Regístrate aquí
         </Link>
       </div>
@@ -237,29 +237,29 @@ export default function LoginPage() {
       {/* Modal de Verificación de PIN para Acceso Rápido de Admin */}
       {isPinModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-[#140A24]/95 border border-purple-500/30 rounded-2xl p-6 w-full max-w-sm shadow-2xl relative text-zinc-100 space-y-4 backdrop-blur-xl">
-            <div className="flex items-center justify-between pb-2 border-b border-purple-500/20">
+          <div className="bg-[#131A2B] border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl relative text-white space-y-4 backdrop-blur-xl">
+            <div className="flex items-center justify-between pb-2 border-b border-white/10">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500/20 to-purple-600/20 border border-white/10 flex items-center justify-center text-blue-400">
                   <Shield className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-white">Verificación de Seguridad</h3>
-                  <p className="text-[11px] text-zinc-400">Acceso Rápido Administrador</p>
+                  <p className="text-[11px] text-slate-400">Acceso Rápido Administrador</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={handleClosePinModal}
-                className="text-zinc-400 hover:text-white p-1 rounded-lg transition"
+                className="text-slate-400 hover:text-white p-1 rounded-lg transition"
                 aria-label="Cerrar modal"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <p className="text-xs text-zinc-300 leading-relaxed text-center">
-              Ingresa el <span className="text-purple-300 font-semibold">Código de Verificación de 4 dígitos</span> para autorizar las credenciales de administración.
+            <p className="text-xs text-slate-300 leading-relaxed text-center">
+              Ingresa el <span className="text-purple-400 font-semibold">Código de Verificación de 4 dígitos</span> para autorizar las credenciales de administración.
             </p>
 
             {pinError && (
@@ -283,7 +283,7 @@ export default function LoginPage() {
                     setPin(e.target.value.replace(/\D/g, '').slice(0, 4));
                   }}
                   placeholder="••••"
-                  className="w-full text-center tracking-[0.6em] text-2xl font-mono py-3 bg-[#09050D] border border-purple-500/30 rounded-xl text-purple-300 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                  className="w-full text-center tracking-[0.6em] text-2xl font-mono py-3 bg-[#0B0F19] border border-white/10 rounded-xl text-purple-300 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                   required
                 />
               </div>
@@ -292,14 +292,14 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={handleClosePinModal}
-                  className="text-xs bg-[#09050D] hover:bg-[#140A24] text-zinc-300 font-semibold px-4 py-2.5 rounded-xl border border-purple-500/20 transition"
+                  className="text-xs bg-[#0B0F19] hover:bg-white/5 text-slate-300 font-semibold px-4 py-2.5 rounded-full border border-white/10 transition"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={pin.length < 4 || isSubmitting}
-                  className="text-xs bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-purple-900/30 transition disabled:opacity-50 inline-flex items-center gap-1.5 border border-purple-500/30"
+                  className="text-xs rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold px-5 py-2.5 shadow-lg shadow-purple-500/25 transition disabled:opacity-50 inline-flex items-center gap-1.5"
                 >
                   <KeyRound className="w-3.5 h-3.5" />
                   <span>Verificar</span>

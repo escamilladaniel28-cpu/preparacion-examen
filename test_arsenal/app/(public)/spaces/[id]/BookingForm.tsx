@@ -127,15 +127,15 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
   };
 
   return (
-    <div className="bg-[#140A24]/60 backdrop-blur-md border border-purple-500/20 rounded-2xl p-6 shadow-2xl text-zinc-100">
-      <div className="border-b border-purple-500/20 pb-4 mb-5">
+    <div className="bg-[#131A2B] border border-white/5 hover:border-purple-500/50 transition-colors rounded-2xl p-6 shadow-2xl text-white">
+      <div className="border-b border-white/10 pb-4 mb-5">
         <h3 className="text-xl font-bold text-white tracking-tight">Reservar Espacio</h3>
-        <p className="text-zinc-400 text-xs mt-1">
+        <p className="text-slate-400 text-xs mt-1">
           Horario de atención: 07:00 a 21:00 UTC · Duración: 1 a 4 horas
         </p>
       </div>
 
-      {/* Alerta de Error Luxury Dark */}
+      {/* Alerta de Error */}
       {errorMessage && (
         <div className="mb-5 p-4 bg-red-950/60 border border-red-500/40 text-red-200 rounded-xl text-sm flex flex-col gap-2">
           <div className="flex items-start gap-2.5">
@@ -153,7 +153,7 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
             <div className="mt-2 pt-2 border-t border-red-500/30">
               <Link
                 href="/login"
-                className="w-full block text-center bg-red-600 hover:bg-red-500 text-white font-semibold text-xs py-2 px-3 rounded-lg transition"
+                className="w-full block text-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold text-xs py-2.5 px-4 transition"
               >
                 Iniciar Sesión Aquí
               </Link>
@@ -162,7 +162,7 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
         </div>
       )}
 
-      {/* Alerta de Éxito Luxury Dark */}
+      {/* Alerta de Éxito */}
       {successMessage && (
         <div className="mb-5 p-4 bg-emerald-950/60 border border-emerald-500/40 text-emerald-200 rounded-xl text-sm flex items-center gap-2.5">
           <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
@@ -173,30 +173,30 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Fecha */}
         <div>
-          <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Fecha de reserva
           </label>
           <input
             type="date"
             value={date}
             onChange={(e) => handleDateChange(e.target.value)}
-            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition [color-scheme:dark]"
+            className="w-full px-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition [color-scheme:dark]"
             required
           />
         </div>
 
         {/* Hora de inicio */}
         <div>
-          <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Hora de inicio (07:00 - 20:00)
           </label>
           <select
             value={startHour}
             onChange={(e) => handleStartHourChange(parseInt(e.target.value, 10))}
-            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition [color-scheme:dark]"
+            className="w-full px-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition [color-scheme:dark]"
           >
             {[7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((hour) => (
-              <option key={hour} value={hour} className="bg-[#140A24] text-white">
+              <option key={hour} value={hour} className="bg-[#131A2B] text-white">
                 {hour.toString().padStart(2, '0')}:00 UTC
               </option>
             ))}
@@ -205,18 +205,18 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
 
         {/* Duración */}
         <div>
-          <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
             Duración
           </label>
           <select
             value={durationHours}
             onChange={(e) => handleDurationChange(parseInt(e.target.value, 10))}
-            className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition [color-scheme:dark]"
+            className="w-full px-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition [color-scheme:dark]"
           >
             {[1, 2, 3, 4]
               .filter((dur) => startHour + dur <= 21)
               .map((dur) => (
-                <option key={dur} value={dur} className="bg-[#140A24] text-white">
+                <option key={dur} value={dur} className="bg-[#131A2B] text-white">
                   {dur} {dur === 1 ? 'hora' : 'horas'} (hasta las {(startHour + dur).toString().padStart(2, '0')}:00 UTC)
                 </option>
               ))}
@@ -224,28 +224,28 @@ export function BookingForm({ spaceId, pricePerHour }: BookingFormProps) {
         </div>
 
         {/* Resumen */}
-        <div className="bg-[#09050D]/80 border border-purple-500/20 rounded-xl p-4 my-4">
-          <div className="flex justify-between text-xs text-zinc-400 mb-1">
+        <div className="bg-[#0B0F19]/80 border border-white/10 rounded-xl p-4 my-4">
+          <div className="flex justify-between text-xs text-slate-400 mb-1">
             <span>Tarifa por hora:</span>
-            <span className="font-semibold text-zinc-200">${pricePerHour.toFixed(2)}/h</span>
+            <span className="font-semibold text-slate-200">${pricePerHour.toFixed(2)}/h</span>
           </div>
-          <div className="flex justify-between text-xs text-zinc-400 mb-2">
+          <div className="flex justify-between text-xs text-slate-400 mb-2">
             <span>Horario seleccionado:</span>
-            <span className="font-semibold text-zinc-200">
+            <span className="font-semibold text-slate-200">
               {startHour.toString().padStart(2, '0')}:00 - {endHour.toString().padStart(2, '0')}:00 UTC
             </span>
           </div>
-          <div className="border-t border-purple-500/20 pt-2.5 flex justify-between items-center">
-            <span className="text-sm font-bold text-zinc-300">Total:</span>
-            <span className="text-2xl font-extrabold text-purple-400">${totalPrice}</span>
+          <div className="border-t border-white/10 pt-2.5 flex justify-between items-center">
+            <span className="text-sm font-bold text-slate-300">Total:</span>
+            <span className="text-2xl font-extrabold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">${totalPrice}</span>
           </div>
         </div>
 
-        {/* Botón */}
+        {/* Botón Estilo Píldora */}
         <button
           type="submit"
           disabled={isSubmitting || Boolean(successMessage) || endHour > 21}
-          className="w-full bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 disabled:opacity-50 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-purple-900/40 transition flex items-center justify-center gap-2 text-sm tracking-wide border border-purple-500/30"
+          className="w-full rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 text-white font-bold py-3.5 px-6 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-[1.02] transition-all flex items-center justify-center gap-2 text-sm tracking-wide"
         >
           {isSubmitting ? (
             <>

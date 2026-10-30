@@ -87,65 +87,66 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#09050D]/80 backdrop-blur-md border-b border-purple-500/20 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Marca y Navegación Principal */}
-        <div className="flex items-center space-x-6 sm:space-x-8">
+    <header className="sticky top-0 z-50 bg-[#0B0F19]/80 backdrop-blur-md border-b border-white/5 transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        {/* Marca a la izquierda */}
+        <div className="flex items-center">
           <Link
             href="/"
-            className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5 hover:text-purple-300 transition"
+            className="text-xl font-bold tracking-tight text-white flex items-center gap-2.5 hover:opacity-90 transition"
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-800 text-white flex items-center justify-center font-bold shadow-md shadow-purple-900/30">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold shadow-md shadow-purple-500/25">
               <Building2 className="w-5 h-5 text-white" />
             </div>
-            <span className="tracking-wider">{t('logo')}</span>
+            <span className="tracking-wider font-extrabold">{t('logo')}</span>
           </Link>
-
-          <nav className="hidden sm:flex items-center space-x-2 text-sm font-medium">
-            <Link
-              href="/spaces"
-              className={`px-3 py-1.5 rounded-lg transition ${
-                pathname === '/spaces'
-                  ? 'bg-[#140A24]/80 text-purple-400 font-semibold border border-purple-500/30'
-                  : 'text-zinc-400 hover:text-white hover:bg-[#140A24]/50'
-              }`}
-            >
-              {t('catalog')}
-            </Link>
-            {user && (
-              <Link
-                href="/dashboard"
-                className={`px-3 py-1.5 rounded-lg transition ${
-                  pathname === '/dashboard'
-                    ? 'bg-[#140A24]/80 text-purple-400 font-semibold border border-purple-500/30'
-                    : 'text-zinc-400 hover:text-white hover:bg-[#140A24]/50'
-                }`}
-              >
-                {t('dashboard')}
-              </Link>
-            )}
-            {role === 'ADMIN' && (
-              <Link
-                href="/admin/spaces"
-                className={`px-3 py-1.5 rounded-lg transition inline-flex items-center gap-1.5 ${
-                  pathname?.startsWith('/admin')
-                    ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-                    : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30'
-                }`}
-              >
-                <Shield className="w-3.5 h-3.5 text-amber-400" />
-                <span>Admin Espacios</span>
-              </Link>
-            )}
-          </nav>
         </div>
 
-        {/* Acciones del Usuario */}
-        <div className="flex items-center space-x-2 sm:space-x-4">
+        {/* Links en el centro */}
+        <nav className="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-medium">
+          <Link
+            href="/spaces"
+            className={`px-4 py-1.5 rounded-full transition ${
+              pathname === '/spaces'
+                ? 'bg-white/10 text-white font-semibold'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            {t('catalog')}
+          </Link>
+          {user && (
+            <Link
+              href="/dashboard"
+              className={`px-4 py-1.5 rounded-full transition ${
+                pathname === '/dashboard'
+                  ? 'bg-white/10 text-white font-semibold'
+                  : 'text-slate-300 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              {t('dashboard')}
+            </Link>
+          )}
           {role === 'ADMIN' && (
             <Link
               href="/admin/spaces"
-              className="sm:hidden inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-lg bg-amber-500 text-black shadow-md shadow-amber-500/20 transition"
+              className={`px-4 py-1.5 rounded-full transition inline-flex items-center gap-1.5 ${
+                pathname?.startsWith('/admin')
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-md shadow-purple-500/25'
+                  : 'bg-white/5 text-purple-300 hover:bg-white/10 border border-white/10'
+              }`}
+            >
+              <Shield className="w-3.5 h-3.5 text-blue-400" />
+              <span>Admin Espacios</span>
+            </Link>
+          )}
+        </nav>
+
+        {/* Acciones y Botones a la derecha */}
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          {role === 'ADMIN' && (
+            <Link
+              href="/admin/spaces"
+              className="md:hidden inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md shadow-purple-500/20 transition"
               title="Panel de Administración"
             >
               <Shield className="w-3 h-3 stroke-[2.5]" />
@@ -156,18 +157,18 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
           <button
             onClick={toggleLang}
             type="button"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg border border-purple-500/20 bg-[#140A24]/60 hover:bg-[#140A24] text-zinc-300 transition"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 transition"
             title="Switch language / Cambiar idioma"
           >
-            <Globe className="w-3.5 h-3.5 text-purple-400" />
+            <Globe className="w-3.5 h-3.5 text-blue-400" />
             <span>{t('switchLang')}</span>
           </button>
 
           {user ? (
-            <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="flex items-center space-x-2">
               <Link
                 href="/dashboard"
-                className="bg-[#140A24]/80 border border-purple-500/20 hover:border-purple-500/50 text-zinc-200 text-xs sm:text-sm font-medium px-3 py-1.5 rounded-lg flex items-center gap-2 transition max-w-[140px] sm:max-w-[200px]"
+                className="bg-[#131A2B] border border-white/10 hover:border-purple-500/50 text-slate-200 text-xs sm:text-sm font-medium px-4 py-1.5 rounded-full flex items-center gap-2 transition max-w-[130px] sm:max-w-[180px]"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
                 <span className="truncate">{user}</span>
@@ -177,7 +178,7 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="bg-[#140A24]/60 hover:bg-red-950/80 text-zinc-400 hover:text-red-300 border border-purple-500/20 hover:border-red-500/30 text-xs font-semibold px-3 py-1.5 rounded-lg transition disabled:opacity-50"
+                className="bg-white/5 hover:bg-red-950/60 text-slate-400 hover:text-red-300 border border-white/10 hover:border-red-500/30 text-xs font-semibold px-3.5 py-1.5 rounded-full transition disabled:opacity-50"
               >
                 {isLoggingOut ? 'Saliendo...' : t('logout')}
               </button>
@@ -186,13 +187,13 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
             <div className="flex items-center space-x-2 sm:space-x-3">
               <Link
                 href="/login"
-                className="text-xs sm:text-sm font-semibold text-zinc-300 hover:text-white px-3 py-1.5 transition"
+                className="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white px-3 py-1.5 transition"
               >
                 {t('login')}
               </Link>
               <Link
                 href="/register"
-                className="text-xs sm:text-sm bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-bold px-3.5 py-1.5 rounded-lg shadow-md shadow-purple-900/30 transition"
+                className="text-xs sm:text-sm bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold px-6 py-2.5 rounded-full shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105 transition-all"
               >
                 {t('register')}
               </Link>

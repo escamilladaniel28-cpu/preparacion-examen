@@ -286,10 +286,10 @@ export default function AdminSpacesPage() {
   return (
     <div className="space-y-6">
       {/* Encabezado y Acciones Principales */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-purple-500/20">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-white/5">
         <div>
-          <h1 className="text-xl font-bold text-white tracking-wide">Gestión de Espacios (Admin)</h1>
-          <p className="text-zinc-400 text-xs mt-1">
+          <h1 className="text-xl font-bold text-white tracking-wide uppercase">Gestión de Espacios (Admin)</h1>
+          <p className="text-slate-300 text-xs mt-1">
             Control de inventario, edición de tarifas y desactivación lógica protegida (Regla 13)
           </p>
         </div>
@@ -300,10 +300,10 @@ export default function AdminSpacesPage() {
               setLoading(true);
               fetchSpaces();
             }}
-            className="text-xs bg-[#140A24] hover:bg-purple-900/30 text-zinc-300 font-semibold px-3.5 py-2 rounded-xl border border-purple-500/30 transition shadow-sm inline-flex items-center gap-1.5"
+            className="text-xs bg-[#131A2B] hover:bg-white/10 text-slate-300 font-semibold px-4 py-2 rounded-full border border-white/10 transition shadow-sm inline-flex items-center gap-1.5"
             title="Refrescar catálogo"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-blue-400 ${loading ? 'animate-spin' : ''}`} />
             <span>Refrescar</span>
           </button>
           <button
@@ -314,7 +314,7 @@ export default function AdminSpacesPage() {
                 setIsFormOpen(!isFormOpen);
               }
             }}
-            className="text-xs bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-bold px-4 py-2 rounded-xl shadow-lg shadow-purple-900/30 hover:shadow-[0_0_30px_rgba(123,44,191,0.2)] transition inline-flex items-center gap-1.5"
+            className="text-xs rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold px-5 py-2.5 shadow-md shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105 transition-all inline-flex items-center gap-1.5"
           >
             {editingSpace ? (
               <>
@@ -372,18 +372,18 @@ export default function AdminSpacesPage() {
       {isFormOpen && (
         <div
           ref={formRef}
-          className="bg-[#140A24]/90 border border-purple-500/30 rounded-2xl p-6 shadow-2xl backdrop-blur-md space-y-5 animate-fadeIn"
+          className="bg-[#131A2B] border border-white/10 rounded-2xl p-6 shadow-2xl backdrop-blur-md space-y-5 animate-fadeIn"
         >
-          <div className="flex items-center justify-between pb-3 border-b border-purple-500/20">
+          <div className="flex items-center justify-between pb-3 border-b border-white/10">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-purple-600/15 border border-purple-500/30 flex items-center justify-center text-amber-400">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500/20 to-purple-600/20 border border-white/10 flex items-center justify-center text-blue-400">
                 {editingSpace ? <Pencil className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
               </div>
               <div>
                 <h2 className="text-base font-bold text-white">
                   {editingSpace ? `Editar Espacio: ${editingSpace.name}` : 'Crear Nuevo Espacio'}
                 </h2>
-                <p className="text-xs text-zinc-400">
+                <p className="text-xs text-slate-400">
                   {editingSpace
                     ? `Modificando registro ID: ${editingSpace.id}`
                     : 'Ingresa los detalles para registrar un nuevo espacio en el catálogo'}
@@ -392,7 +392,7 @@ export default function AdminSpacesPage() {
             </div>
 
             {editingSpace && (
-              <span className="px-2.5 py-1 text-xs font-semibold bg-purple-600/20 text-purple-300 border border-purple-500/40 rounded-full">
+              <span className="px-3 py-1 text-xs font-semibold bg-white/10 text-slate-200 border border-white/10 rounded-full">
                 Modo Edición
               </span>
             )}
@@ -401,7 +401,7 @@ export default function AdminSpacesPage() {
           <form onSubmit={handleSubmitForm} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                   Nombre del Espacio *
                 </label>
                 <input
@@ -409,19 +409,19 @@ export default function AdminSpacesPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ej. Suite Ejecutiva Black"
-                  className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                  className="w-full px-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                   required
                   minLength={3}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                   Precio por Hora (USD) *
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
-                    <DollarSign className="w-4 h-4 text-amber-400" />
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                    <DollarSign className="w-4 h-4 text-blue-400" />
                   </div>
                   <input
                     type="number"
@@ -429,7 +429,7 @@ export default function AdminSpacesPage() {
                     min="1"
                     value={pricePerHour}
                     onChange={(e) => setPricePerHour(e.target.value)}
-                    className="w-full pl-9 pr-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                    className="w-full pl-9 pr-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                     required
                   />
                 </div>
@@ -437,11 +437,11 @@ export default function AdminSpacesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 URL de Imagen (Opcional)
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                   <ImageIcon className="w-4 h-4 text-purple-400" />
                 </div>
                 <input
@@ -449,13 +449,13 @@ export default function AdminSpacesPage() {
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
                   placeholder="https://images.unsplash.com/photo-..."
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                  className="w-full pl-9 pr-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                 Descripción Completa *
               </label>
               <textarea
@@ -463,7 +463,7 @@ export default function AdminSpacesPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe las amenidades, capacidad, equipos audiovisuales y ergonomía..."
-                className="w-full px-3.5 py-2.5 bg-[#09050D] border border-purple-500/25 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                className="w-full px-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                 required
                 minLength={5}
               />
@@ -473,14 +473,14 @@ export default function AdminSpacesPage() {
               <button
                 type="button"
                 onClick={handleCloseForm}
-                className="text-xs bg-[#09050D] hover:bg-[#140A24] text-zinc-300 font-semibold px-4 py-2.5 rounded-xl border border-purple-500/30 transition"
+                className="text-xs bg-[#0B0F19] hover:bg-white/5 text-slate-300 font-semibold px-5 py-2.5 rounded-full border border-white/10 transition"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="text-xs bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-purple-900/30 hover:shadow-[0_0_30px_rgba(123,44,191,0.2)] transition disabled:opacity-50 inline-flex items-center gap-2"
+                className="text-xs rounded-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold px-6 py-2.5 shadow-md shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105 transition-all disabled:opacity-50 inline-flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <>
@@ -497,22 +497,22 @@ export default function AdminSpacesPage() {
       )}
 
       {/* Tabla de Espacios */}
-      <div className="bg-[#140A24]/60 backdrop-blur-md border border-purple-500/20 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="bg-[#131A2B] border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
         {loading ? (
-          <div className="p-12 text-center text-zinc-400 text-sm flex flex-col items-center justify-center gap-3">
-            <RefreshCw className="w-6 h-6 text-purple-400 animate-spin" />
+          <div className="p-12 text-center text-slate-400 text-sm flex flex-col items-center justify-center gap-3">
+            <RefreshCw className="w-6 h-6 text-blue-400 animate-spin" />
             <span>Cargando inventario de espacios...</span>
           </div>
         ) : spaces.length === 0 ? (
-          <div className="p-12 text-center text-zinc-400 text-sm">
-            <Building2 className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
+          <div className="p-12 text-center text-slate-400 text-sm">
+            <Building2 className="w-10 h-10 text-slate-600 mx-auto mb-3" />
             <p className="font-semibold text-white">No se encontraron espacios registrados</p>
-            <p className="text-xs text-zinc-500 mt-1">Crea el primer espacio usando el botón superior.</p>
+            <p className="text-xs text-slate-500 mt-1">Crea el primer espacio usando el botón superior.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-zinc-300">
-              <thead className="bg-[#09050D]/80 text-xs font-bold text-zinc-400 uppercase border-b border-purple-500/20">
+            <table className="w-full text-left text-sm text-slate-300">
+              <thead className="bg-[#0B0F19]/80 text-xs font-bold text-slate-400 uppercase border-b border-white/10">
                 <tr>
                   <th className="px-6 py-4">Espacio</th>
                   <th className="px-6 py-4">Tarifa</th>
@@ -520,21 +520,21 @@ export default function AdminSpacesPage() {
                   <th className="px-6 py-4 text-right">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-purple-500/15">
+              <tbody className="divide-y divide-white/5">
                 {spaces.map((space) => (
                   <tr
                     key={space.id}
                     className={`transition ${
                       editingSpace?.id === space.id
-                        ? 'bg-purple-600/15 border-l-2 border-purple-500'
+                        ? 'bg-purple-600/10 border-l-2 border-purple-500'
                         : space.isActive
-                        ? 'hover:bg-purple-900/20'
-                        : 'opacity-50 hover:opacity-80 bg-[#09050D]/40'
+                        ? 'hover:bg-white/5'
+                        : 'opacity-50 hover:opacity-80 bg-[#0B0F19]/40'
                     }`}
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3.5">
-                        <div className="w-11 h-11 rounded-xl bg-[#09050D] border border-purple-500/20 overflow-hidden shrink-0 flex items-center justify-center">
+                        <div className="w-11 h-11 rounded-xl bg-[#0B0F19] border border-white/10 overflow-hidden shrink-0 flex items-center justify-center">
                           {space.imageUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -546,31 +546,31 @@ export default function AdminSpacesPage() {
                               }}
                             />
                           ) : (
-                            <Building2 className="w-5 h-5 text-zinc-600" />
+                            <Building2 className="w-5 h-5 text-slate-600" />
                           )}
                         </div>
                         <div className="min-w-0">
                           <div className="font-semibold text-white truncate">{space.name}</div>
-                          <div className="text-xs text-zinc-400 line-clamp-1 max-w-xs sm:max-w-md">
+                          <div className="text-xs text-slate-400 line-clamp-1 max-w-xs sm:max-w-md">
                             {space.description}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="font-bold text-purple-400">
+                      <div className="font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                         ${Number(space.pricePerHour).toFixed(2)}
                       </div>
-                      <div className="text-[11px] text-zinc-500">por hora</div>
+                      <div className="text-[11px] text-slate-500">por hora</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {space.isActive ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/70 text-emerald-400 border border-emerald-500/30">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                           Activo
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-950/70 text-red-400 border border-red-500/30">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
                           <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
                           Inactivo
                         </span>
@@ -581,14 +581,14 @@ export default function AdminSpacesPage() {
                         {/* Botón de Edición */}
                         <button
                           onClick={() => handleOpenEdit(space)}
-                          className={`text-xs px-3 py-1.5 rounded-lg font-semibold inline-flex items-center gap-1.5 transition border ${
+                          className={`text-xs px-3.5 py-1.5 rounded-full font-semibold inline-flex items-center gap-1.5 transition border ${
                             editingSpace?.id === space.id
-                              ? 'bg-gradient-to-r from-purple-600 to-purple-800 text-white border-purple-400 shadow-md shadow-purple-900/30'
-                              : 'bg-[#09050D] hover:bg-[#140A24] text-purple-300 hover:text-white border-purple-500/30'
+                              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white border-transparent shadow-sm'
+                              : 'bg-[#0B0F19] hover:bg-white/5 text-blue-400 hover:text-white border-white/10'
                           }`}
                           title="Editar información del espacio"
                         >
-                          <Pencil className="w-3.5 h-3.5 text-amber-400" />
+                          <Pencil className="w-3.5 h-3.5 text-blue-400" />
                           <span>Editar</span>
                         </button>
 
@@ -599,7 +599,7 @@ export default function AdminSpacesPage() {
                               <button
                                 onClick={() => handleDeactivate(space.id, space.name)}
                                 disabled={actionLoading === space.id}
-                                className="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition disabled:opacity-50 inline-flex items-center gap-1"
+                                className="text-xs bg-red-600 hover:bg-red-500 text-white font-bold px-3 py-1.5 rounded-full shadow-sm transition disabled:opacity-50 inline-flex items-center gap-1"
                               >
                                 {actionLoading === space.id ? (
                                    <>
@@ -612,7 +612,7 @@ export default function AdminSpacesPage() {
                               </button>
                               <button
                                 onClick={() => setConfirmDeactivateId(null)}
-                                className="text-xs bg-[#09050D] hover:bg-[#140A24] text-zinc-300 font-medium px-2.5 py-1.5 rounded-lg transition border border-purple-500/30"
+                                className="text-xs bg-[#0B0F19] hover:bg-white/10 text-slate-300 font-medium px-3 py-1.5 rounded-full transition border border-white/10"
                               >
                                 Cancelar
                               </button>
@@ -621,7 +621,7 @@ export default function AdminSpacesPage() {
                             <button
                               onClick={() => setConfirmDeactivateId(space.id)}
                               disabled={actionLoading === space.id}
-                              className="text-xs bg-[#09050D] hover:bg-red-950/70 text-red-400 hover:text-red-300 border border-red-900/40 hover:border-red-500/40 font-medium px-3 py-1.5 rounded-lg transition disabled:opacity-50 inline-flex items-center gap-1"
+                              className="text-xs bg-[#0B0F19] hover:bg-red-950/70 text-red-400 hover:text-red-300 border border-red-900/40 hover:border-red-500/40 font-medium px-3.5 py-1.5 rounded-full transition disabled:opacity-50 inline-flex items-center gap-1"
                               title="Desactivar espacio (Regla 13)"
                             >
                               <Ban className="w-3.5 h-3.5" />
@@ -632,7 +632,7 @@ export default function AdminSpacesPage() {
                           <button
                             onClick={() => handleActivate(space.id, space.name)}
                             disabled={actionLoading === space.id}
-                            className="text-xs bg-emerald-950 hover:bg-emerald-900/80 text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 font-medium px-3 py-1.5 rounded-lg transition disabled:opacity-50 inline-flex items-center gap-1.5 shadow-sm"
+                            className="text-xs bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 font-medium px-3.5 py-1.5 rounded-full transition disabled:opacity-50 inline-flex items-center gap-1.5 shadow-sm"
                             title="Reactivar espacio"
                           >
                             {actionLoading === space.id ? (
