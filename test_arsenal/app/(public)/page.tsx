@@ -15,5 +15,10 @@ export default async function HomePage() {
     console.error('Aviso: Base de datos no conectada aún durante renderizado estático de Home:', err);
   }
 
-  return <HomeSections featuredSpaces={featuredSpaces} />;
+  const serializedSpaces = featuredSpaces.map((space) => ({
+    ...space,
+    pricePerHour: Number(space.pricePerHour),
+  }));
+
+  return <HomeSections featuredSpaces={serializedSpaces} />;
 }

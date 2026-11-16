@@ -14,5 +14,10 @@ export default async function SpacesCatalogPage() {
     console.error('Aviso: Error al consultar espacios en catálogo:', err);
   }
 
-  return <SpacesCatalogView spaces={spaces} />;
+  const serializedSpaces = spaces.map((space) => ({
+    ...space,
+    pricePerHour: Number(space.pricePerHour),
+  }));
+
+  return <SpacesCatalogView spaces={serializedSpaces} />;
 }
