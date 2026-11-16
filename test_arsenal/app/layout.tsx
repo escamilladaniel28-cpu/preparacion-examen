@@ -11,13 +11,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className="dark">
+    <html lang="es" className="dark overflow-x-hidden">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script src="https://cdn.tailwindcss.com"></script>
       </head>
-      <body className="min-h-screen bg-[#0B0F19] text-white antialiased selection:bg-purple-600 selection:text-white">
+      <body className="min-h-screen bg-[#0B0F19] text-white antialiased selection:bg-purple-600 selection:text-white overflow-x-hidden">
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
