@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 
 export interface SpaceItemData {
   id: string;
@@ -11,6 +10,9 @@ export interface SpaceItemData {
   pricePerHour: number | string | { toNumber?: () => number; toString?: () => string };
   imageUrl?: string | null;
   isActive?: boolean;
+  category?: string;
+  location?: string;
+  capacity?: string | number;
 }
 
 export interface SpaceCardProps {
@@ -21,6 +23,28 @@ export interface SpaceCardProps {
   pricePerHour?: number | string | { toNumber?: () => number; toString?: () => string };
   isActive?: boolean;
   space?: SpaceItemData;
+  variant?: 'normal' | 'wide' | 'tall';
+  className?: string;
+  category?: string;
+  location?: string;
+  capacity?: string | number;
+}
+
+function deriveMetadata(name: string, description?: string): { category: string; location: string; capacity: string } {
+  const lower = `${name} ${description || ''}`.toLowerCase();
+  if (lower.includes('junta') || lower.includes('board') || lower.includes('reunión')) {
+    return { category: 'Sala de Juntas', location: 'Piso 4 · Centro Empresarial', capacity: 'Hasta 10 personas' };
+  }
+  if (lower.includes('suite') || lower.includes('ejecutiv') || lower.includes('oficina')) {
+    return { category: 'Suite Privada', location: 'Piso 3 · Vista Exterior', capacity: '1 a 4 personas' };
+  }
+  if (lower.includes('cabina') || lower.includes('silent') || lower.includes('acústic') || lower.includes('focus')) {
+    return { category: 'Cabina Focus', location: 'Piso 2 · Zona Silenciosa', capacity: '1 persona' };
+  }
+  if (lower.includes('coworking') || lower.includes('open') || lower.includes('escritorio') || lower.includes('estación')) {
+    return { category: 'Escritorio Dedicado', location: 'Piso 1 · Atrio Principal', capacity: '1 persona' };
+  }
+  return { category: 'Espacio de Trabajo', location: 'Piso 2 · CoSpace', capacity: '2 a 6 personas' };
 }
 
 export function SpaceCard(props: SpaceCardProps) {
@@ -31,7 +55,12 @@ export function SpaceCard(props: SpaceCardProps) {
     imageUrl: props.imageUrl,
     pricePerHour: props.pricePerHour ?? 0,
     isActive: props.isActive !== undefined ? props.isActive : true,
+    category: props.category,
+    location: props.location,
+    capacity: props.capacity,
   };
+
+  const variant = props.variant || 'normal';
 
   let price = 0;
   if (typeof item.pricePerHour === 'number') {
@@ -43,66 +72,99 @@ export function SpaceCard(props: SpaceCardProps) {
   }
 
   const isAvailable = item.isActive !== false;
-  const descriptionText =
-    item.description && item.description.trim().length > 0
-      ? item.description
-      : 'Espacio de alto rendimiento diseñado para tu productividad.';
+  const meta = deriveMetadata(item.name, item.description);
+  const category = item.category || props.category || meta.category;
+  const location = item.location || props.location || meta.location;
+  const capacity = item.capacity || props.capacity || meta.capacity;
+
+  const displayImage =
+    item.imageUrl && item.imageUrl.trim().length > 0
+      ? item.imageUrl
+      : 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80';
+
+  // Control de aspect-ratio según variante para protagonismo de la imagen
+  const imageWrapperClasses = {
+    normal: 'aspect-[4/3] w-full',
+    wide: 'aspect-[16/10] sm:aspect-auto sm:w-7/12 sm:min-h-[260px]',
+    tall: 'aspect-[3/4] sm:aspect-[4/5] w-full flex-1 min-h-[300px]',
+  }[variant];
+
+  const layoutClasses = {
+    normal: 'flex flex-col h-full',
+    wide: 'flex flex-col sm:flex-row h-full',
+    tall: 'flex flex-col h-full justify-between',
+  }[variant];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      whileHover={{ y: -5 }}
-      className="group relative rounded-2xl overflow-hidden bg-[#131A2B] border border-white/5 hover:border-purple-500/50 transition-all duration-500 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] flex flex-col h-full w-full max-w-full"
+    <Link
+      href={`/spaces/${item.id}`}
+      aria-label={`${item.name}, ${category}, $${price.toFixed(2)} por hora`}
+      className={`group relative rounded-lg overflow-hidden bg-surface border border-border hover:border-border-strong transition-all duration-300 hover:shadow-card focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${layoutClasses} ${props.className || ''}`}
     >
-      <div className="relative h-56 w-full max-w-full overflow-hidden bg-[#0B0F19]">
+      {/* Contenedor de la Imagen Protagonista */}
+      <div className={`relative overflow-hidden bg-muted ${imageWrapperClasses}`}>
         <Image
-          src={item.imageUrl || 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500'}
-          alt={item.name}
+          src={displayImage}
+          alt={`Fotografía del espacio ${item.name}`}
           fill
           unoptimized
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover w-full max-w-full transition-transform duration-700 group-hover:scale-110"
+          sizes={
+            variant === 'wide'
+              ? '(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw'
+              : '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+          }
+          className="object-cover w-full h-full brightness-95 group-hover:brightness-100 group-hover:scale-[1.03] transition-all duration-500 ease-out"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#131A2B] via-transparent to-transparent opacity-90" />
+
+        {/* Badge sutil y sobrio de estado */}
+        <div className="absolute top-3 left-3 z-10">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[11px] font-sans font-medium tracking-wide uppercase bg-surface/90 text-primary backdrop-blur-sm border border-border shadow-subtle">
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isAvailable ? 'bg-emerald-600 dark:bg-emerald-400' : 'bg-secondary'
+              }`}
+            />
+            {isAvailable ? 'Disponible' : 'No disponible'}
+          </span>
+        </div>
       </div>
 
-      <div className="p-6 relative z-10 flex flex-col justify-between flex-1">
+      {/* Información mínima y jerarquizada */}
+      <div
+        className={`p-5 flex flex-col justify-between ${
+          variant === 'wide' ? 'sm:w-5/12 sm:p-6' : 'flex-1'
+        }`}
+      >
         <div>
-          <div className="flex justify-between items-start mb-2 gap-2">
-            <h3 className="font-bold text-xl text-white tracking-wide line-clamp-1">{item.name}</h3>
-            {isAvailable ? (
-              <span className="bg-emerald-500/10 text-emerald-400 text-xs font-semibold px-3 py-0.5 rounded-full border border-emerald-500/20 shrink-0">
-                Disponible
-              </span>
-            ) : (
-              <span className="bg-red-500/10 text-red-400 text-xs font-semibold px-3 py-0.5 rounded-full border border-red-500/20 shrink-0">
-                No disponible
-              </span>
-            )}
-          </div>
-
-          <p className="text-slate-300 text-sm mb-6 line-clamp-2 leading-relaxed">
-            {descriptionText}
+          {/* Ubicación / Categoría en texto secundario pequeño */}
+          <p className="text-[11px] font-sans uppercase tracking-wider text-secondary font-medium">
+            {category} · {location}
           </p>
+
+          {/* Nombre en Serif con hover a color acento */}
+          <h3 className="font-heading text-lg sm:text-xl font-normal text-primary mt-1.5 tracking-tight group-hover:text-accent transition-colors duration-200 line-clamp-1">
+            {item.name}
+          </h3>
+
+          {item.description && (
+            <p className="text-secondary text-xs sm:text-sm mt-2 line-clamp-2 leading-relaxed font-sans font-normal">
+              {item.description}
+            </p>
+          )}
         </div>
 
-        <div className="flex items-center justify-between pt-2">
-          <p className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent font-extrabold text-2xl">
-            ${price.toFixed(2)}{' '}
-            <span className="text-sm text-slate-400 font-normal">/ hora</span>
-          </p>
-
-          <Link
-            href={`/spaces/${item.id}`}
-            className="rounded-full px-6 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold text-sm shadow-md shadow-purple-500/20 hover:shadow-purple-500/40 hover:scale-105 transition-all"
-          >
-            Reservar
-          </Link>
+        {/* Precio y capacidad en Sans */}
+        <div className="flex items-baseline justify-between pt-4 mt-4 border-t border-border font-sans">
+          <span className="text-xs text-secondary font-normal">{capacity}</span>
+          <div className="text-right">
+            <span className="text-base sm:text-lg font-semibold text-primary font-sans">
+              ${price.toFixed(2)}
+            </span>
+            <span className="text-xs text-secondary font-normal ml-1">/ hora</span>
+          </div>
         </div>
       </div>
-    </motion.div>
+    </Link>
   );
 }
 

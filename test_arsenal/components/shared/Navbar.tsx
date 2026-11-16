@@ -56,10 +56,8 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
   useEffect(() => {
     syncSession();
 
-    // Detección y recuperación ante el Back/Forward Cache (BFCache)
     const handlePageShow = (event: PageTransitionEvent) => {
       if (event.persisted) {
-        // La página se cargó desde el BFCache del navegador: forzar recarga para revalidar sesión
         window.location.reload();
       } else {
         syncSession();
@@ -94,29 +92,29 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0B0F19]/80 backdrop-blur-md border-b border-white/5 transition-colors w-full">
+    <header className="sticky top-0 z-50 bg-surface/90 backdrop-blur-md border-b border-border transition-colors w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4 w-full">
         {/* Marca a la izquierda */}
         <div className="flex items-center min-w-0 shrink-0">
           <Link
             href="/"
-            className="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2 sm:gap-2.5 hover:opacity-90 transition"
+            className="font-heading text-lg sm:text-xl font-normal text-primary flex items-center gap-2 sm:gap-2.5 hover:opacity-90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold shadow-md shadow-purple-500/25 shrink-0">
-              <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            <div className="w-8 h-8 rounded-sm bg-accent text-accent-fg flex items-center justify-center font-bold shadow-subtle shrink-0">
+              <Building2 className="w-4 h-4 text-accent-fg" />
             </div>
-            <span className="tracking-wider font-extrabold truncate">{t('logo')}</span>
+            <span className="font-heading tracking-tight font-medium truncate">{t('logo')}</span>
           </Link>
         </div>
 
         {/* Links en el centro (solo escritorio >= md) */}
-        <nav className="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-medium">
+        <nav className="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-sans font-medium">
           <Link
             href="/spaces"
-            className={`px-4 py-1.5 rounded-full transition ${
+            className={`px-3.5 py-1.5 rounded-sm transition ${
               pathname === '/spaces'
-                ? 'bg-white/10 text-white font-semibold'
-                : 'text-slate-300 hover:text-white hover:bg-white/5'
+                ? 'bg-muted text-primary font-semibold'
+                : 'text-secondary hover:text-primary hover:bg-muted'
             }`}
           >
             {t('catalog')}
@@ -124,10 +122,10 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
           {user && (
             <Link
               href="/dashboard"
-              className={`px-4 py-1.5 rounded-full transition ${
+              className={`px-3.5 py-1.5 rounded-sm transition ${
                 pathname === '/dashboard'
-                  ? 'bg-white/10 text-white font-semibold'
-                  : 'text-slate-300 hover:text-white hover:bg-white/5'
+                  ? 'bg-muted text-primary font-semibold'
+                  : 'text-secondary hover:text-primary hover:bg-muted'
               }`}
             >
               {t('dashboard')}
@@ -136,48 +134,49 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
           {role === 'ADMIN' && (
             <Link
               href="/admin/spaces"
-              className={`px-4 py-1.5 rounded-full transition inline-flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-sm transition inline-flex items-center gap-1.5 ${
                 pathname?.startsWith('/admin')
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-md shadow-purple-500/25'
-                  : 'bg-white/5 text-purple-300 hover:bg-white/10 border border-white/10'
+                  ? 'bg-accent text-accent-fg font-medium shadow-subtle'
+                  : 'bg-surface text-secondary hover:text-primary border border-border'
               }`}
             >
-              <Shield className="w-3.5 h-3.5 text-blue-400" />
+              <Shield className="w-3.5 h-3.5 text-accent" />
               <span>Admin Espacios</span>
             </Link>
           )}
         </nav>
 
         {/* Acciones y Botones a la derecha */}
-        <div className="flex items-center space-x-2 sm:space-x-2.5 shrink-0">
+        <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
           {/* Toggle de Tema (Claro / Oscuro) */}
           <button
             onClick={toggleTheme}
             type="button"
-            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 transition shrink-0"
+            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-sans font-medium rounded-sm border border-border bg-surface hover:bg-muted text-secondary hover:text-primary transition shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
             aria-label="Alternar tema"
           >
             {theme === 'dark' ? (
               <>
-                <Sun className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <Sun className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                 <span className="hidden sm:inline">Claro</span>
               </>
             ) : (
               <>
-                <Moon className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                <Moon className="w-3.5 h-3.5 text-accent shrink-0" />
                 <span className="hidden sm:inline">Oscuro</span>
               </>
             )}
           </button>
 
+          {/* Toggle de Idioma */}
           <button
             onClick={toggleLang}
             type="button"
-            className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 transition shrink-0"
+            className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-sans font-medium rounded-sm border border-border bg-surface hover:bg-muted text-secondary hover:text-primary transition shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             title="Switch language / Cambiar idioma"
           >
-            <Globe className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+            <Globe className="w-3.5 h-3.5 text-secondary shrink-0" />
             <span>{t('switchLang')}</span>
           </button>
 
@@ -187,9 +186,9 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
               <div className="flex items-center space-x-2">
                 <Link
                   href="/dashboard"
-                  className="bg-[#131A2B] border border-white/10 hover:border-purple-500/50 text-slate-200 text-xs sm:text-sm font-medium px-4 py-1.5 rounded-full flex items-center gap-2 transition max-w-[130px] sm:max-w-[180px]"
+                  className="bg-surface border border-border hover:border-border-strong text-primary text-xs sm:text-sm font-sans font-medium px-3.5 py-1.5 rounded-sm flex items-center gap-2 transition max-w-[140px] sm:max-w-[190px]"
                 >
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 shrink-0" />
                   <span className="truncate">{user}</span>
                 </Link>
 
@@ -197,7 +196,7 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
                   type="button"
                   onClick={handleLogout}
                   disabled={isLoggingOut}
-                  className="bg-white/5 hover:bg-red-950/60 text-slate-400 hover:text-red-300 border border-white/10 hover:border-red-500/30 text-xs font-semibold px-3.5 py-1.5 rounded-full transition disabled:opacity-50"
+                  className="bg-surface hover:bg-red-500/10 text-secondary hover:text-red-600 dark:hover:text-red-400 border border-border hover:border-red-300 text-xs font-sans font-medium px-3 py-1.5 rounded-sm transition disabled:opacity-50"
                 >
                   {isLoggingOut ? 'Saliendo...' : t('logout')}
                 </button>
@@ -206,13 +205,13 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <Link
                   href="/login"
-                  className="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white px-3 py-1.5 transition"
+                  className="text-xs sm:text-sm font-sans font-medium text-secondary hover:text-primary px-3 py-1.5 transition"
                 >
                   {t('login')}
                 </Link>
                 <Link
                   href="/register"
-                  className="text-xs sm:text-sm bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold px-6 py-2.5 rounded-full shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105 transition-all"
+                  className="text-xs sm:text-sm bg-accent hover:bg-accent-hover text-accent-fg font-sans font-medium px-4 py-2 rounded-md shadow-subtle transition"
                 >
                   {t('register')}
                 </Link>
@@ -224,7 +223,7 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
           <button
             type="button"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-xl text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition shrink-0"
+            className="md:hidden p-2 rounded-sm text-secondary hover:text-primary bg-surface hover:bg-muted border border-border transition shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             aria-label={isMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
           >
             {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -234,15 +233,15 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
 
       {/* Menú Desplegable en Móviles (< md) */}
       {isMenuOpen && (
-        <div className="md:hidden bg-[#0B0F19]/95 backdrop-blur-md border-b border-white/10 px-4 py-4 space-y-3 w-full">
+        <div className="md:hidden bg-surface border-b border-border px-4 py-4 space-y-3 w-full shadow-md">
           <nav className="flex flex-col space-y-1">
             <Link
               href="/spaces"
               onClick={() => setIsMenuOpen(false)}
-              className={`px-3 py-2 rounded-xl text-sm font-medium transition ${
+              className={`px-3 py-2 rounded-sm text-sm font-sans font-medium transition ${
                 pathname === '/spaces'
-                  ? 'bg-white/10 text-white font-semibold'
-                  : 'text-slate-300 hover:text-white hover:bg-white/5'
+                  ? 'bg-muted text-primary font-semibold'
+                  : 'text-secondary hover:text-primary hover:bg-muted'
               }`}
             >
               {t('catalog')}
@@ -251,10 +250,10 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
               <Link
                 href="/dashboard"
                 onClick={() => setIsMenuOpen(false)}
-                className={`px-3 py-2 rounded-xl text-sm font-medium transition ${
+                className={`px-3 py-2 rounded-sm text-sm font-sans font-medium transition ${
                   pathname === '/dashboard'
-                    ? 'bg-white/10 text-white font-semibold'
-                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                    ? 'bg-muted text-primary font-semibold'
+                    : 'text-secondary hover:text-primary hover:bg-muted'
                 }`}
               >
                 {t('dashboard')}
@@ -264,35 +263,34 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
               <Link
                 href="/admin/spaces"
                 onClick={() => setIsMenuOpen(false)}
-                className={`px-3 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition ${
+                className={`px-3 py-2 rounded-sm text-sm font-sans font-medium flex items-center gap-2 transition ${
                   pathname?.startsWith('/admin')
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
-                    : 'bg-white/5 text-purple-300 hover:bg-white/10 border border-white/10'
+                    ? 'bg-accent text-accent-fg shadow-subtle'
+                    : 'bg-surface text-secondary hover:text-primary border border-border'
                 }`}
               >
-                <Shield className="w-4 h-4 text-blue-400" />
+                <Shield className="w-4 h-4 text-accent" />
                 <span>Admin Espacios</span>
               </Link>
             )}
           </nav>
 
           {user ? (
-            <div className="pt-3 border-t border-white/10 flex flex-col gap-2.5">
+            <div className="pt-3 border-t border-border flex flex-col gap-2.5">
               <Link
                 href="/dashboard"
                 onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#131A2B] border border-white/10 text-slate-200 text-xs sm:text-sm font-medium w-full"
+                className="flex items-center gap-2 px-3 py-2 rounded-sm bg-muted border border-border text-primary text-xs sm:text-sm font-sans font-medium w-full"
               >
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 shrink-0" />
                 <span className="truncate flex-1">{user}</span>
                 {role === 'ADMIN' && (
-                  <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white uppercase shrink-0">
+                  <span className="text-[10px] font-sans font-semibold px-2 py-0.5 rounded-sm bg-accent text-accent-fg uppercase shrink-0">
                     ADMIN
                   </span>
                 )}
               </Link>
 
-              {/* Botón Cerrar Sesión colocado justo debajo del correo del usuario */}
               <button
                 type="button"
                 onClick={() => {
@@ -300,25 +298,25 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
                   handleLogout();
                 }}
                 disabled={isLoggingOut}
-                className="w-full flex items-center justify-center gap-2 bg-red-950/40 hover:bg-red-950/60 text-red-300 hover:text-red-200 border border-red-500/30 text-xs font-semibold px-4 py-2.5 rounded-xl transition disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 bg-surface hover:bg-red-500/10 text-secondary hover:text-red-600 dark:hover:text-red-400 border border-border hover:border-red-300 text-xs font-sans font-medium px-4 py-2.5 rounded-sm transition disabled:opacity-50"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>{isLoggingOut ? 'Saliendo...' : t('logout')}</span>
               </button>
             </div>
           ) : (
-            <div className="pt-3 border-t border-white/10 flex flex-col gap-2">
+            <div className="pt-3 border-t border-border flex flex-col gap-2">
               <Link
                 href="/login"
                 onClick={() => setIsMenuOpen(false)}
-                className="w-full text-center text-xs sm:text-sm font-semibold text-slate-300 hover:text-white py-2 rounded-xl hover:bg-white/5 transition"
+                className="w-full text-center text-xs sm:text-sm font-sans font-medium text-secondary hover:text-primary py-2 rounded-sm hover:bg-muted transition"
               >
                 {t('login')}
               </Link>
               <Link
                 href="/register"
                 onClick={() => setIsMenuOpen(false)}
-                className="w-full text-center text-xs sm:text-sm bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-2.5 rounded-full shadow-lg shadow-purple-500/25 transition"
+                className="w-full text-center text-xs sm:text-sm bg-accent hover:bg-accent-hover text-accent-fg font-sans font-medium py-2.5 rounded-md shadow-subtle transition"
               >
                 {t('register')}
               </Link>
