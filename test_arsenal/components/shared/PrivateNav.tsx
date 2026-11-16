@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Building2, LayoutDashboard, Layers, User, Shield, LogOut } from 'lucide-react';
+import { Building2, LayoutDashboard, Layers, User, Shield, LogOut, Sun, Moon } from 'lucide-react';
 import { LogoutButton } from '@/components/shared/LogoutButton';
+import { useTheme } from '@/components/context/ThemeContext';
 
 interface PrivateNavProps {
   user?: {
@@ -15,6 +16,7 @@ interface PrivateNavProps {
 
 export function PrivateNav({ user }: PrivateNavProps) {
   const pathname = usePathname();
+  const { theme, toggleTheme } = useTheme();
   const userName = user?.name || user?.email || 'Usuario';
   const isAdmin = user?.role === 'ADMIN';
 
@@ -112,6 +114,22 @@ export function PrivateNav({ user }: PrivateNavProps) {
             </div>
           </div>
 
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 transition"
+          >
+            <div className="flex items-center gap-2.5">
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-emerald-700" />
+              )}
+              <span>Modo {theme === 'dark' ? 'Claro' : 'Oscuro'}</span>
+            </div>
+            <span className="text-[10px] text-slate-400 uppercase tracking-wider">{theme}</span>
+          </button>
+
           <LogoutButton
             redirectTo="/"
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/40 border border-red-900/40 hover:border-red-500/40 transition-all shadow-sm"
@@ -141,6 +159,20 @@ export function PrivateNav({ user }: PrivateNavProps) {
             </Link>
           );
         })}
+
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="flex flex-col items-center justify-center py-1 px-2 rounded-lg text-[11px] font-medium text-slate-400 hover:text-white transition"
+          aria-label="Alternar tema"
+        >
+          {theme === 'dark' ? (
+            <Sun className="w-5 h-5 mb-0.5 text-amber-400" />
+          ) : (
+            <Moon className="w-5 h-5 mb-0.5 text-emerald-700" />
+          )}
+          <span>Tema</span>
+        </button>
 
         <LogoutButton
           redirectTo="/"

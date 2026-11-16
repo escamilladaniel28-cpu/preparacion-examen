@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect, useCallback } from 'react';
-import { Building2, Globe, Shield, Menu, X, LogOut } from 'lucide-react';
+import { Building2, Globe, Shield, Menu, X, LogOut, Sun, Moon } from 'lucide-react';
 import { useLanguage } from '@/components/context/LanguageContext';
+import { useTheme } from '@/components/context/ThemeContext';
 
 interface NavbarProps {
   userName?: string;
@@ -15,6 +16,7 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
   const router = useRouter();
   const pathname = usePathname();
   const { toggleLang, t } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
   const [user, setUser] = useState<string | null>(initialUserName || null);
   const [role, setRole] = useState<string | null>(initialUserRole || null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -147,7 +149,28 @@ export function Navbar({ userName: initialUserName, userRole: initialUserRole }:
         </nav>
 
         {/* Acciones y Botones a la derecha */}
-        <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+        <div className="flex items-center space-x-2 sm:space-x-2.5 shrink-0">
+          {/* Toggle de Tema (Claro / Oscuro) */}
+          <button
+            onClick={toggleTheme}
+            type="button"
+            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 transition shrink-0"
+            title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+            aria-label="Alternar tema"
+          >
+            {theme === 'dark' ? (
+              <>
+                <Sun className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span className="hidden sm:inline">Claro</span>
+              </>
+            ) : (
+              <>
+                <Moon className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                <span className="hidden sm:inline">Oscuro</span>
+              </>
+            )}
+          </button>
+
           <button
             onClick={toggleLang}
             type="button"

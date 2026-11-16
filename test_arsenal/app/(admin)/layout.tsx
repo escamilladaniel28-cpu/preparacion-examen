@@ -11,7 +11,7 @@ export default async function AdminLayout({
   const session = await getSession();
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-[#0B0F19] text-white">
+    <div className="min-h-screen flex flex-col md:flex-row bg-background text-primary">
       {/* Barra Superior Móvil (Pantallas pequeñas < md) */}
       <div className="md:hidden bg-[#0B0F19]/95 border-b border-white/5 p-3">
         <div className="flex items-center justify-between mb-2.5">
