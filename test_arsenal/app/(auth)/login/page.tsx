@@ -96,19 +96,36 @@ export default function LoginPage() {
   };
 
   // Verificación del PIN de Administrador
-  const handleVerifyPin = (e: React.FormEvent) => {
+  const handleVerifyPin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const adminPin = process.env.NEXT_PUBLIC_ADMIN_PIN;
-    if (adminPin && pin === adminPin) {
-      setIsPinModalOpen(false);
-      setEmail('admin@cospace.com');
-      setPassword('admin123');
+    setIsSubmitting(true);
+    setPinError(null);
+
+    try {
+      const res = await fetch('/api/admin/verify-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (res.ok && data?.success === true) {
+        setIsPinModalOpen(false);
+        setEmail('admin@cospace.com');
+        setPassword('admin123');
+        setPin('');
+        setPinError(null);
+        await executeLogin('admin@cospace.com', 'admin123');
+      } else {
+        setPinError('PIN incorrecto');
+        setPin('');
+        setIsSubmitting(false);
+      }
+    } catch {
+      setPinError('PIN incorrecto');
       setPin('');
-      setPinError(null);
-      executeLogin('admin@cospace.com', 'admin123');
-    } else {
-      setPinError('Código inválido');
-      setPin('');
+      setIsSubmitting(false);
     }
   };
 
