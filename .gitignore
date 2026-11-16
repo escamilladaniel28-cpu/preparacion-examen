@@ -1,10 +1,14 @@
 # Environment variables and secrets
 .env
+.env.local
+.env*.local
 .env*
 *.env
 **/.env*
+**/.env*.local
 !.env.example
 CREDENCIALES_LOCALES.md
+*.pem
 
 # Dependencies
 node_modules/

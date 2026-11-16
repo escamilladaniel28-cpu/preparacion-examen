@@ -2,11 +2,13 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-if (!process.env.JWT_ACCESS_SECRET) {
-  throw new Error('FATAL: JWT_ACCESS_SECRET is not defined');
+function getAccessSecret(): Uint8Array {
+  const secret = process.env.JWT_ACCESS_SECRET;
+  if (!secret) {
+    throw new Error('FATAL: JWT_ACCESS_SECRET is not defined');
+  }
+  return new TextEncoder().encode(secret);
 }
-
-const ACCESS_SECRET = new TextEncoder().encode(process.env.JWT_ACCESS_SECRET);
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -22,7 +24,7 @@ export async function proxy(request: NextRequest) {
   // 1. Redirección si el usuario ya está autenticado e intenta acceder a /login o /register
   if (isAuthRoute && token) {
     try {
-      await jwtVerify(token, ACCESS_SECRET);
+      await jwtVerify(token, getAccessSecret());
       const dashboardUrl = new URL('/dashboard', request.url);
       const redirectResponse = NextResponse.redirect(dashboardUrl);
       redirectResponse.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
@@ -43,7 +45,7 @@ export async function proxy(request: NextRequest) {
     }
 
     try {
-      const { payload } = await jwtVerify(token, ACCESS_SECRET);
+      const { payload } = await jwtVerify(token, getAccessSecret());
 
       // Si es ruta de administración, verificar rol ADMIN
       if (isAdmin && payload.role !== 'ADMIN') {

@@ -2,16 +2,21 @@ import bcrypt from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 
-if (!process.env.JWT_ACCESS_SECRET) {
-  throw new Error('FATAL: JWT_ACCESS_SECRET is not defined');
+function getAccessSecret(): Uint8Array {
+  const secret = process.env.JWT_ACCESS_SECRET;
+  if (!secret) {
+    throw new Error('FATAL: JWT_ACCESS_SECRET is not defined');
+  }
+  return new TextEncoder().encode(secret);
 }
 
-if (!process.env.JWT_REFRESH_SECRET) {
-  throw new Error('FATAL: JWT_REFRESH_SECRET is not defined');
+function getRefreshSecret(): Uint8Array {
+  const secret = process.env.JWT_REFRESH_SECRET;
+  if (!secret) {
+    throw new Error('FATAL: JWT_REFRESH_SECRET is not defined');
+  }
+  return new TextEncoder().encode(secret);
 }
-
-const ACCESS_SECRET = new TextEncoder().encode(process.env.JWT_ACCESS_SECRET);
-const REFRESH_SECRET = new TextEncoder().encode(process.env.JWT_REFRESH_SECRET);
 
 export interface TokenPayload {
   userId: string;
@@ -41,7 +46,7 @@ export async function signAccessToken(payload: TokenPayload): Promise<string> {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('15m')
-    .sign(ACCESS_SECRET);
+    .sign(getAccessSecret());
 }
 
 export async function signRefreshToken(payload: TokenPayload, tokenId: string): Promise<string> {
@@ -49,12 +54,12 @@ export async function signRefreshToken(payload: TokenPayload, tokenId: string): 
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
-    .sign(REFRESH_SECRET);
+    .sign(getRefreshSecret());
 }
 
 export async function verifyAccessToken(token: string): Promise<TokenPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, ACCESS_SECRET);
+    const { payload } = await jwtVerify(token, getAccessSecret());
     return payload as unknown as TokenPayload;
   } catch {
     return null;
@@ -63,7 +68,7 @@ export async function verifyAccessToken(token: string): Promise<TokenPayload | n
 
 export async function verifyRefreshToken(token: string): Promise<TokenPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, REFRESH_SECRET);
+    const { payload } = await jwtVerify(token, getRefreshSecret());
     return payload as unknown as TokenPayload;
   } catch {
     return null;
