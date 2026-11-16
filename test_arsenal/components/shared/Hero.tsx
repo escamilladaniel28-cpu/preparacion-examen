@@ -66,7 +66,7 @@ export function Hero() {
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
-                className="relative h-60 sm:h-72 w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#131A2B] group"
+                className="relative h-60 sm:h-72 w-full max-w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#131A2B] group"
               >
                 <Image
                   src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop"
@@ -74,7 +74,7 @@ export function Hero() {
                   fill
                   priority
                   unoptimized
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="object-cover w-full max-w-full transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19]/80 via-transparent to-transparent" />
                 <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs text-white">
@@ -91,14 +91,14 @@ export function Hero() {
                 <motion.div
                   whileHover={{ scale: 1.03 }}
                   transition={{ duration: 0.3 }}
-                  className="relative h-40 sm:h-48 rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#131A2B] group"
+                  className="relative h-40 sm:h-48 w-full max-w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#131A2B] group"
                 >
                   <Image
                     src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=1000&auto=format&fit=crop"
                     alt="Sala de Juntas"
                     fill
                     unoptimized
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="object-cover w-full max-w-full transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19]/80 via-transparent to-transparent" />
                   <div className="absolute bottom-2.5 left-3 text-[11px] font-semibold text-white">
@@ -110,14 +110,14 @@ export function Hero() {
                 <motion.div
                   whileHover={{ scale: 1.03 }}
                   transition={{ duration: 0.3 }}
-                  className="relative h-40 sm:h-48 rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#131A2B] group"
+                  className="relative h-40 sm:h-48 w-full max-w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#131A2B] group"
                 >
                   <Image
                     src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=1000&auto=format&fit=crop"
                     alt="Cabina Silenciosa"
                     fill
                     unoptimized
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="object-cover w-full max-w-full transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19]/80 via-transparent to-transparent" />
                   <div className="absolute bottom-2.5 left-3 text-[11px] font-semibold text-white">

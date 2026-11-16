@@ -54,15 +54,16 @@ export function SpaceCard(props: SpaceCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       whileHover={{ y: -5 }}
-      className="group relative rounded-2xl overflow-hidden bg-[#131A2B] border border-white/5 hover:border-purple-500/50 transition-all duration-500 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] flex flex-col h-full"
+      className="group relative rounded-2xl overflow-hidden bg-[#131A2B] border border-white/5 hover:border-purple-500/50 transition-all duration-500 hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] flex flex-col h-full w-full max-w-full"
     >
-      <div className="relative h-56 w-full overflow-hidden bg-[#0B0F19]">
+      <div className="relative h-56 w-full max-w-full overflow-hidden bg-[#0B0F19]">
         <Image
           src={item.imageUrl || 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500'}
           alt={item.name}
           fill
           unoptimized
-          className="object-cover transition-transform duration-700 group-hover:scale-110"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover w-full max-w-full transition-transform duration-700 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#131A2B] via-transparent to-transparent opacity-90" />
       </div>

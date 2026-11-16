@@ -50,13 +50,13 @@ export default async function SpaceDetailPage(props: SpaceDetailPageProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Columna Izquierda: Información del Espacio */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="relative h-72 sm:h-96 w-full rounded-2xl overflow-hidden shadow-2xl border border-white/5 bg-[#131A2B]">
+          <div className="relative h-72 sm:h-96 w-full max-w-full rounded-2xl overflow-hidden shadow-2xl border border-white/5 bg-[#131A2B]">
             <Image
               src={displayImage}
               alt={space.name}
               fill
               priority
-              className="object-cover"
+              className="object-cover w-full max-w-full"
               unoptimized
             />
           </div>
