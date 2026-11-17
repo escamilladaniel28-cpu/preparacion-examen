@@ -56,8 +56,7 @@ async function main() {
       description:
         'El epicentro del entretenimiento. Equipado con consolas de última generación, torneos de eSports y una mesa VIP para juegos de mesa. Diversión garantizada.',
       pricePerHour: 18.0,
-      imageUrl:
-        'https://images.unsplash.com/photo-1598550476439-6847785fceb2?q=80&w=1000&auto=format&fit=crop',
+      imageUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80",
       isActive: true,
     },
     {
