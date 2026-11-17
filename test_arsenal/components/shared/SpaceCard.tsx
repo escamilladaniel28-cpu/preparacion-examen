@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react'; // <-- IMPORTANTE: Agregamos useState
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -47,6 +48,9 @@ function deriveMetadata(name: string, description?: string): { category: string;
   return { category: 'Espacio de Trabajo', location: 'Piso 2 · CoSpace', capacity: '2 a 6 personas' };
 }
 
+// URL por defecto si la de la base de datos falla
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80';
+
 export function SpaceCard(props: SpaceCardProps) {
   const item: SpaceItemData = props.space || {
     id: props.id || '',
@@ -62,6 +66,7 @@ export function SpaceCard(props: SpaceCardProps) {
 
   const variant = props.variant || 'normal';
 
+  // Lógica para el precio
   let price = 0;
   if (typeof item.pricePerHour === 'number') {
     price = item.pricePerHour;
@@ -77,10 +82,9 @@ export function SpaceCard(props: SpaceCardProps) {
   const location = item.location || props.location || meta.location;
   const capacity = item.capacity || props.capacity || meta.capacity;
 
-  const displayImage =
-    item.imageUrl && item.imageUrl.trim().length > 0
-      ? item.imageUrl
-      : 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80';
+  // Usamos useState para manejar la URL de la imagen de forma reactiva
+  const initialImage = item.imageUrl && item.imageUrl.trim().length > 0 ? item.imageUrl : FALLBACK_IMAGE;
+  const [imgSrc, setImgSrc] = useState(initialImage);
 
   // Control de aspect-ratio según variante para protagonismo de la imagen
   const imageWrapperClasses = {
@@ -104,10 +108,11 @@ export function SpaceCard(props: SpaceCardProps) {
       {/* Contenedor de la Imagen Protagonista */}
       <div className={`relative overflow-hidden bg-muted ${imageWrapperClasses}`}>
         <Image
-          src={displayImage}
+          src={imgSrc}
           alt={`Fotografía del espacio ${item.name}`}
           fill
           unoptimized
+          onError={() => setImgSrc(FALLBACK_IMAGE)} // <-- AQUÍ ESTÁ LA MAGIA
           sizes={
             variant === 'wide'
               ? '(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw'
