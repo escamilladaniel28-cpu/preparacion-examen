@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   RefreshCw,
   Plus,
-  AlertCircle,
   CheckCircle2,
   X,
   Pencil,
@@ -12,7 +11,6 @@ import {
   Building2,
   DollarSign,
   AlertTriangle,
-  Image as ImageIcon,
 } from 'lucide-react';
 
 interface SpaceItem {
@@ -42,6 +40,7 @@ export default function AdminSpacesPage() {
   const [pricePerHour, setPricePerHour] = useState('25.00');
   const [imageUrl, setImageUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false); // <-- Estado movido aquí arriba
 
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -108,6 +107,40 @@ export default function AdminSpacesPage() {
     setDescription('');
     setPricePerHour('25.00');
     setImageUrl('');
+  };
+
+  // NUEVA FUNCIÓN PARA SUBIR A S3
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setFeedback(null);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.url) {
+        setImageUrl(data.url);
+        setFeedback({ message: 'Imagen subida correctamente a S3.', type: 'success' });
+      } else {
+        console.error('Error de S3:', data.error);
+        setFeedback({ message: data.error || 'Hubo un error subiendo la imagen', type: 'error' });
+      }
+    } catch (error) {
+      console.error('Error de red:', error);
+      setFeedback({ message: 'Error de conexión al subir la imagen', type: 'error' });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // Enviar formulario (POST para crear o PATCH para editar)
@@ -209,7 +242,6 @@ export default function AdminSpacesPage() {
       const data = await res.json();
 
       if (res.status === 409) {
-        // Conflicto: Regla 13 - Reservas futuras existentes
         setFeedback({
           message:
             data.error ||
@@ -336,7 +368,7 @@ export default function AdminSpacesPage() {
         </div>
       </div>
 
-      {/* Alerta de Feedback Visual (Sin alert() ni confirm()) */}
+      {/* Alerta de Feedback Visual */}
       {feedback && (
         <div
           className={`p-4 rounded-xl text-sm border flex items-start justify-between shadow-xl backdrop-blur-md animate-fadeIn ${
@@ -368,7 +400,7 @@ export default function AdminSpacesPage() {
         </div>
       )}
 
-      {/* Formulario Unificado (Creación / Edición) */}
+      {/* Formulario Unificado */}
       {isFormOpen && (
         <div
           ref={formRef}
@@ -390,12 +422,6 @@ export default function AdminSpacesPage() {
                 </p>
               </div>
             </div>
-
-            {editingSpace && (
-              <span className="px-3 py-1 text-xs font-semibold bg-white/10 text-slate-200 border border-white/10 rounded-full">
-                Modo Edición
-              </span>
-            )}
           </div>
 
           <form onSubmit={handleSubmitForm} className="space-y-4">
@@ -436,21 +462,38 @@ export default function AdminSpacesPage() {
               </div>
             </div>
 
+            {/* NUEVO INPUT PARA IMAGEN CON S3 */}
             <div>
               <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                URL de Imagen (Opcional)
+                Imagen del Espacio (Opcional)
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                  <ImageIcon className="w-4 h-4 text-purple-400" />
-                </div>
+              <div className="flex flex-col gap-3">
                 <input
-                  type="url"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/photo-..."
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-[#0B0F19] border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  disabled={isUploading}
+                  className="block w-full text-sm text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-blue-500 file:to-purple-600 file:text-white hover:file:from-blue-600 hover:file:to-purple-700 file:transition-all file:cursor-pointer bg-[#0B0F19] border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
                 />
+
+                {isUploading && (
+                  <span className="text-xs text-blue-400 animate-pulse font-medium flex items-center gap-2">
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    Subiendo imagen a S3...
+                  </span>
+                )}
+
+                {imageUrl && !isUploading && (
+                  <div className="mt-1">
+                    <p className="text-[11px] text-slate-500 mb-2">Vista previa actual:</p>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={imageUrl}
+                      alt="Vista previa"
+                      className="w-24 h-24 object-cover rounded-xl border border-white/10 shadow-sm"
+                    />
+                  </div>
+                )}
               </div>
             </div>
 

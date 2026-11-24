@@ -49,14 +49,15 @@ async function main() {
     },
   });
 
-  // 2. Espacios de Coworking (Actualizados y Nuevos)
+  // 2. Espacios de Coworking (Con URLs de S3)
   const spacesData: SeedSpace[] = [
     {
       name: 'Gamespace & Lounge',
       description:
         'El epicentro del entretenimiento. Equipado con consolas de última generación, torneos de eSports y una mesa VIP para juegos de mesa. Diversión garantizada.',
       pricePerHour: 18.0,
-      imageUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80",
+      imageUrl:
+        'https://workia-s3-img-535540411837-us-east-2-an.s3.us-east-2.amazonaws.com/photo-1511512578047-dfb367046420.avif',
       isActive: true,
     },
     {
@@ -65,7 +66,7 @@ async function main() {
         'Sala ejecutiva con pantalla 4K, videoconferencia y sillas ergonómicas. Perfecta para tomar decisiones que cambian el juego.',
       pricePerHour: 35.0,
       imageUrl:
-        'https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=1000&auto=format&fit=crop',
+        'https://workia-s3-img-535540411837-us-east-2-an.s3.us-east-2.amazonaws.com/photo-1497366811353-6870744d04b2.avif',
       isActive: true,
       legacyNames: ['Sala de Juntas A', 'Sala de Juntas'],
     },
@@ -75,7 +76,7 @@ async function main() {
         'Aislamiento acústico total. El lugar ideal para programar, escribir o hacer llamadas sin distracciones.',
       pricePerHour: 15.0,
       imageUrl:
-        'https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=1000&auto=format&fit=crop',
+        'https://workia-s3-img-535540411837-us-east-2-an.s3.us-east-2.amazonaws.com/photo-1524758631624-e2822e304c36.avif',
       isActive: true,
       legacyNames: ['Cabina Silenciosa'],
     },
@@ -85,7 +86,7 @@ async function main() {
         'Luz natural, vistas despejadas y conexión de fibra óptica. Diseñado para mantener tu productividad al máximo.',
       pricePerHour: 20.0,
       imageUrl:
-        'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop',
+        'https://workia-s3-img-535540411837-us-east-2-an.s3.us-east-2.amazonaws.com/1795525552378-sala-de-masajes-de-spa-moderno.webp',
       isActive: true,
       legacyNames: ['Escritorio Ventana'],
     },
